@@ -2,39 +2,56 @@
 
 ## Install from the complete repository
 
-1. Clone the repository with Git or download its archive.
-2. Locate `skills/create-brd`.
-3. In Claude Desktop, open the Add Skills flow and select the `create-brd` folder.
-4. Confirm the skill appears and that the Atlassian MCP connection is available.
+1. Clone the repository or download its archive.
+2. Locate `skills/create-brd` or `skills/create-product-backlog`.
+3. In Claude Desktop, open the Add Skills flow and select the required skill folder.
+4. Confirm the skill appears and the Atlassian MCP connection is available.
 
-## Download only the skill
+## Download only one skill
 
-Download or export only `skills/create-brd` while preserving its contents. The folder is independently installable and has no mandatory dependency on repository-level files.
+Download or export only the required folder from `skills/` while preserving its contents. Each folder is independently installable and has no mandatory dependency on repository-level files or another skill.
 
-The required layout is:
-
-```text
-create-brd/
-├── SKILL.md
-├── README.md
-├── references/
-└── examples/
-```
-
-`SKILL.md` must be directly inside the installed folder. This nested layout is incorrect:
+The required Stage 01 layout is:
 
 ```text
 create-brd/
-└── create-brd/
-    └── SKILL.md
+|- SKILL.md
+|- README.md
+|- references/
+`- examples/
 ```
 
-The Claude Desktop Add Skills interface is the preferred installation method. Exact local skill-directory paths may vary by client version and operating system; do not rely on one hardcoded path.
+The Stage 02 skill uses the same convention:
+
+```text
+create-product-backlog/
+|- SKILL.md
+|- README.md
+|- references/
+`- examples/
+```
+
+`SKILL.md` must be directly inside the installed folder. A duplicated nested folder is incorrect.
+
+The Claude Desktop Add Skills interface is the preferred installation method. It may accept a ZIP directly; otherwise extract the archive and select its top-level skill folder. Exact menu labels and local skill-directory paths may vary by client version and operating system.
+
+## Package the Stage 02 skill
+
+From the `amrit-sdlc-skills` directory in PowerShell:
+
+```powershell
+python .\scripts\package-skill.py create-product-backlog
+```
+
+The resulting ZIP contains one top-level `create-product-backlog` folder and no dependency on the repository or `create-brd`.
 
 ## Atlassian MCP prerequisite
 
-Before using the skill, confirm in Claude Desktop's connectors or tool availability that the organization-managed Atlassian MCP is connected and exposes equivalent Confluence search and page-read capabilities. Exact MCP setup and hosting are managed externally and are not stored in this repository.
+Before using a skill, confirm in Claude Desktop's connectors or tool availability that the organization-managed Atlassian MCP is connected:
 
-The skill cannot complete mandatory Confluence research when the Atlassian MCP is unavailable. In that case, it must report the failure and ask whether to retry or proceed with a source-limited draft; it must never pretend research succeeded.
+- `create-brd` requires equivalent Confluence search and page-read capabilities.
+- `create-product-backlog` requires Confluence and Jira read capabilities for research. Jira write capabilities are needed only for explicitly approved publication.
 
-Credentials, tokens, passwords, and MCP URLs must not be added to this repository or skill folder.
+Exact MCP setup and hosting are managed externally and are not stored in this repository. If required research is unavailable, the skill reports the limitation and asks whether to retry or proceed with a source-limited draft; it never pretends research succeeded.
+
+Credentials, tokens, passwords, and MCP URLs must not be added to this repository or a skill folder.
