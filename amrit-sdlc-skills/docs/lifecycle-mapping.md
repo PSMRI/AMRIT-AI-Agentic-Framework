@@ -53,3 +53,34 @@ Human review and Product Manager sign-off.
 The human Product Manager has reviewed, finalized, and triaged the backlog with contextual priority so that tickets are ready for analysis.
 
 `create-product-backlog` prepares **Draft - Pending Product Manager Review**. Jira remains read-only during drafting and refinement. Publication requires both explicit backlog approval or finalization and a separate explicit Jira creation request.
+
+## Stage 03 - Engineering Analysis
+
+- **Lifecycle area:** Engineering Analysis
+- **Role:** Technical Architect / Senior Developer
+- **Primary skill:** `create-technical-design`
+
+### Inputs
+
+- One or more approved Jira Stories with acceptance criteria
+- Approved BRD and FRD
+- Workflow and architecture diagrams
+- Current Confluence architecture
+- Swagger/OpenAPI specifications
+- Available repository, configuration, deployment, and operational evidence
+
+### Outputs
+
+- One review-ready technical design package
+- Requirements traceability and cross-layer impact analysis
+- High-level and low-level design with justified decisions
+- API compatibility and database schema-change determination
+- Security, performance, observability, deployment, and testability notes
+- Implementation risks and architecture-material open questions
+- Mermaid diagrams when useful and DBML only when a schema change exists
+
+### Exit criterion
+
+The human Technical Architect has reviewed the design, resolved or accepted material risks and open questions, and authorized implementation to begin.
+
+`create-technical-design` finishes with **Ready for Architect Review** and **No implementation should begin until the design is reviewed.** It is read-only, produces no implementation code, never modifies Jira or Confluence, and never claims that the exit criterion has been met.
