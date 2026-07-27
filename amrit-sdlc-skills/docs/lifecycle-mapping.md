@@ -67,7 +67,7 @@ The human Product Manager has reviewed, finalized, and triaged the backlog with 
 - Workflow and architecture diagrams
 - Current Confluence architecture
 - Swagger/OpenAPI specifications
-- Available repository, configuration, deployment, and operational evidence
+- Optional repository, configuration, deployment, and operational evidence
 
 ### Outputs
 
@@ -78,6 +78,7 @@ The human Product Manager has reviewed, finalized, and triaged the backlog with 
 - Security, performance, observability, deployment, and testability notes
 - Implementation risks and architecture-material open questions
 - Mermaid diagrams when useful and DBML only when a schema change exists
+- Optional repository-grounded Existing Architecture Summary when official DeepWiki MCP or supplied repository evidence is available
 
 ### Exit criterion
 

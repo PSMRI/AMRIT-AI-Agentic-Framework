@@ -61,7 +61,7 @@ Before using a skill, confirm in Claude Desktop's connectors or tool availabilit
 
 - `create-brd` requires equivalent Confluence search and page-read capabilities.
 - `create-product-backlog` requires Confluence and Jira read capabilities for research. Jira write capabilities are needed only for explicitly approved publication.
-- `create-technical-design` requires Confluence and Jira read capabilities, relevant Swagger/OpenAPI evidence, and access to current architecture or repository evidence. It never uses Jira or Confluence write operations.
+- `create-technical-design` requires Confluence and Jira read capabilities plus relevant Swagger/OpenAPI and architecture evidence. Official DeepWiki MCP repository intelligence is optional, configured outside the skill, and must not block design generation when absent. The skill never uses Jira, Confluence, DeepWiki, or repository write operations.
 
 Exact MCP setup and hosting are managed externally and are not stored in this repository. If required research is unavailable, the skill reports the limitation and asks whether to retry or proceed with a source-limited draft; it never pretends research succeeded.
 
