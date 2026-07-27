@@ -29,7 +29,7 @@ Jira writes require both explicit approval or finalization of the specific backl
 - Primary responsibility: Technical Architect / Senior Developer
 - Output: **Ready for Architect Review**
 
-The skill researches every approved Story and acceptance criterion, linked BRD/FRD content, current Confluence architecture, Swagger/OpenAPI contracts, related Jira work, and available repository evidence before proposing a design. It produces one traceable technical design package covering impact, HLD, LLD, APIs, automatic database-change analysis, security, performance, operations, testability, and implementation risks.
+The skill researches every approved Story and acceptance criterion, linked BRD/FRD content, current Confluence architecture, Swagger/OpenAPI contracts, related Jira work, and available repository evidence before proposing a design. When the host exposes official DeepWiki MCP repository tools, it researches only a relevant AMRIT repository shortlist and validates the design against current implementation evidence. DeepWiki is optional; its absence does not block design generation.
 
 The skill is strictly read-only. It generates no implementation code, never modifies Jira or Confluence, never publishes automatically, and requires Architect review before implementation.
 
