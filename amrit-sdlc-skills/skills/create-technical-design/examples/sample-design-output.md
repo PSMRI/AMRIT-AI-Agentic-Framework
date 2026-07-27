@@ -15,8 +15,10 @@
 | Excluded | Notifications, reporting, new integration, new endpoint, schema change |
 
 - **Confirmed** — directly supported by the fictional sample evidence.
+- **Inferred** — strongly indicated by retrieved repository patterns but not directly confirmed.
 - **Assumed** — requires confirmation.
 - **Proposed** — design choice for Architect review.
+- **Unknown** — evidence is unavailable or insufficient.
 
 ## 2. Executive Summary
 
@@ -68,7 +70,16 @@ The design deliberately does not add an endpoint, table, notification service, q
 - No API schema or database schema change.
 - No change to case ownership or access model.
 
-## 5. High-Level Design
+## 5. Existing Architecture Summary
+
+- **Repository evidence source:** Fictional supplied read-only export; this example does not claim DeepWiki was available.
+- **Confirmed components:** Case UI, Case API, Case Application Service, Case Repository, case detail DTO mapping, optimistic version handling, and Audit Service integration.
+- **Reusable behavior:** Existing `followUpAt` contract and persistence mapping, row-version conflict handling, and `FOLLOW_UP_CHANGED` audit type.
+- **Likely extension point:** Existing application-service validation flow; exact class and file names are not supplied and therefore remain Unknown.
+- **Limitation:** Audit delivery semantics and platform time-zone conventions were not established by the repository export.
+- **Confidence:** High for the component responsibilities listed in the supplied evidence; Unknown for exact implementation locations.
+
+## 6. High-Level Design
 
 ### Current architecture
 
@@ -109,7 +120,7 @@ flowchart LR
 
 **Assumed:** The existing Audit Service invocation model can reliably associate the event with the committed change. Confirm ordering and failure behavior during Architect review.
 
-## 6. Low-Level Design
+## 7. Low-Level Design
 
 ### Elements
 
@@ -185,7 +196,7 @@ sequenceDiagram
     end
 ```
 
-## 7. API Analysis
+## 8. API Analysis
 
 | Decision | Result |
 |---|---|
@@ -201,13 +212,13 @@ sequenceDiagram
 
 Consumer compatibility is preserved because the request and response shapes do not change.
 
-## 8. Database Analysis
+## 9. Database Analysis
 
 **No database schema changes required.**
 
 The confirmed `case_record.follow_up_at` and `case_record.row_version` fields support persistence and optimistic concurrency. The design adds no table, column, relationship, index, or constraint.
 
-## 9. Security Review
+## 10. Security Review
 
 - Reuse existing authentication and case access.
 - Enforce `CASE_FOLLOW_UP_MANAGE` at the API boundary and do not rely on hidden UI controls.
@@ -216,11 +227,11 @@ The confirmed `case_record.follow_up_at` and `case_record.row_version` fields su
 - Do not copy clinical notes or beneficiary details into audit, application logs, metrics, or traces.
 - No new external data flow or secret is introduced.
 
-## 10. Performance Review
+## 11. Performance Review
 
 The flow adds in-memory validation but no additional database read or remote integration on the primary path. No cache or pagination applies. Optimistic concurrency continues to protect simultaneous edits. Monitor conflict frequency because excessive conflicts may indicate a workflow or stale-screen problem.
 
-## 11. Logging, Monitoring, and Operations
+## 12. Logging, Monitoring, and Operations
 
 - Record a safe validation reason code and correlation reference.
 - Count successful follow-up changes, validation rejections, authorization failures, and version conflicts.
@@ -228,7 +239,7 @@ The flow adds in-memory validation but no additional database read or remote int
 - Deploy API validation before or with the UI.
 - Roll back the UI exposure if validation or audit behavior is unsafe; no data migration rollback is needed.
 
-## 12. Testability Notes
+## 13. Testability Notes
 
 QA implementation notes:
 
@@ -242,7 +253,7 @@ QA implementation notes:
 
 These are testability notes, not full QA test cases.
 
-## 13. Implementation Risks
+## 14. Implementation Risks
 
 | Risk | Likelihood | Impact | Mitigation / validation |
 |---|---|---|---|
@@ -251,14 +262,14 @@ These are testability notes, not full QA test cases.
 | Stale clients see unexpected conflict | Medium | Low | Preserve documented `409`; provide reload behavior |
 | Deferred notification Story leaks into scope | Low | Medium | Keep `DEMO-4710` explicitly excluded |
 
-## 14. Open Questions
+## 15. Open Questions
 
 1. Which confirmed platform time zone defines the 30-day boundary? The answer changes validation at calendar and daylight-offset boundaries.
 2. Does the existing Audit Service provide transactional delivery, an outbox, or reconciliation after a committed case update? The answer changes failure handling.
 
 Recommendation: continue using `409 Conflict` for stale version and invalid lifecycle state because both represent a valid request that conflicts with current resource state.
 
-## 15. Architect Review Checklist
+## 16. Architect Review Checklist
 
 - Confirm the time-zone convention.
 - Confirm audit delivery and post-commit failure behavior.
@@ -266,7 +277,7 @@ Recommendation: continue using `409 Conflict` for stale version and invalid life
 - Confirm the UI and application service share one rule definition or equivalent conformance coverage.
 - Reconfirm notification and reporting exclusions.
 
-## 16. Technical Design Status
+## 17. Technical Design Status
 
 **Ready for Architect Review**
 

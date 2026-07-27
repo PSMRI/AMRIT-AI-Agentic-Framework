@@ -1,6 +1,7 @@
+
 ---
 name: create-technical-design
-description: "Research the existing AMRIT system and turn one or more approved Jira Stories, with supporting BRD, FRD, workflow, architecture, Confluence, repository, and OpenAPI evidence, into one review-ready technical design package for Engineering Analysis. Use when a Technical Architect or Senior Developer needs impact analysis, HLD, LLD, API and database decisions, security and performance review, diagrams, implementation risks, and QA-oriented testability notes before implementation. Operate read-only: never generate implementation code, modify Jira or Confluence, publish a design, or bypass Architect review."
+description: "Research the existing AMRIT system and turn one or more approved Jira Stories, with supporting BRD, FRD, workflow, architecture, Confluence, repository, and OpenAPI evidence, into one review-ready technical design package for Engineering Analysis. Use when a Technical Architect or Senior Developer needs impact analysis, HLD, LLD, API and database decisions, security and performance review, diagrams, implementation risks, and QA-oriented testability notes before implementation. Optionally use official DeepWiki MCP repository intelligence when the host provides it, while continuing safely without it. Operate read-only: never generate implementation code, modify Jira or Confluence, publish a design, or bypass Architect review."
 ---
 
 # Create Technical Design
@@ -27,6 +28,8 @@ Before research, read:
 
 - [references/architecture-review-guidelines.md](references/architecture-review-guidelines.md)
 - [references/impact-analysis-guidelines.md](references/impact-analysis-guidelines.md)
+- [references/deepwiki-research-guidelines.md](references/deepwiki-research-guidelines.md) for optional repository-research capability detection and fallback behavior.
+- [references/repository-catalog.md](references/repository-catalog.md) only when selecting AMRIT repository candidates.
 
 Before drafting the relevant design sections, read:
 
@@ -47,9 +50,12 @@ Use only read/search operations for:
 - Jira issue, link, Epic, duplicate, technical-debt, and history research.
 - Confluence page and architecture research.
 - Swagger/OpenAPI retrieval and inspection.
+- Official DeepWiki repository intelligence when applicable tools are exposed by the current host.
 - Source, configuration, deployment-manifest, and repository inspection when available.
 
 Do not request Jira or Confluence write permissions. If a connected tool combines read and write capabilities, invoke only its read operations.
+
+Never assume DeepWiki is installed, rely on a particular local MCP name, hardcode function names, or invoke nonexistent tools. DeepWiki is optional: its absence must not block or downgrade the final review status.
 
 ## Qualify the request
 
@@ -62,6 +68,19 @@ If the Stories or their acceptance criteria are inaccessible, stop and request t
 ## Run the research phase
 
 Maintain a compact research ledger containing queries run, records read, useful findings, conflicts, and unresolved evidence gaps.
+
+Use this preferred order:
+
+1. Read Jira Stories and acceptance criteria.
+2. Read linked BRD, FRD, and workflow diagrams.
+3. Research Confluence.
+4. Inspect Swagger/OpenAPI.
+5. Detect and optionally use official DeepWiki repository intelligence.
+6. Research related Jira issues read-only.
+7. Consolidate evidence.
+8. Generate impact analysis, HLD, LLD, and conditional database design.
+9. Validate the proposed design against repository evidence when available.
+10. Finish with Architect Review status.
 
 ### 1. Establish scope and traceability
 
@@ -101,23 +120,53 @@ Inspect the authoritative specification when an API exists or may be affected. D
 
 Trace the exact path and operation when known. Do not infer an endpoint from naming conventions.
 
-### 4. Research Jira read-only
+### 4. Optional Repository Intelligence
+
+Follow [references/deepwiki-research-guidelines.md](references/deepwiki-research-guidelines.md).
+
+If official DeepWiki repository tools are available:
+
+1. Read [references/repository-catalog.md](references/repository-catalog.md).
+2. Start from the most likely UI/API pair and shortlist no more than three primary repositories where practical.
+3. Research only the repositories needed to answer design-specific questions.
+4. Use retrieved evidence to ground the Existing Architecture Summary, impact analysis, HLD, LLD, API and database analysis, security, performance, risks, and testability notes.
+5. Search for reusable components and similar implementations before proposing new architecture.
+6. Validate the drafted HLD and LLD against repository evidence and revise unsupported or duplicative design.
+
+Never search all catalog repositories by default. Expand the shortlist only when retrieved evidence identifies a material dependency. Add `PSMRI/AMRIT-DB` only when persistence change is plausible and `PSMRI/AMRIT-DevOps` only when deployment or configuration impact is plausible.
+
+Repository research is read-only and must never modify source code. Do not generate fake exact file paths, classes, packages, services, tables, or extension points. Concrete implementation names are Confirmed only when retrieved evidence supports them.
+
+If applicable DeepWiki tools are unavailable:
+
+- skip the phase and continue normally;
+- state **Repository research was not available in the current environment.**;
+- mark implementation-specific details **Proposed** or **Unknown**;
+- add repository verification where appropriate;
+- do not ask the user to install DeepWiki during normal execution.
+
+DeepWiki improves confidence but does not replace Confluence, Swagger/OpenAPI, Jira, BRD, FRD, workflow, or supplied evidence research.
+
+### 5. Research Jira read-only
 
 Search for related implementation Stories, linked Epics, duplicates, previous delivery, incidents, defects, technical debt, dependencies, and deferred work. Read the most relevant issues and their links. Use this evidence to identify reuse, constraints, risk, or overlapping scope.
 
 Never create or modify Jira, even if the user requests publication.
 
-### 5. Inspect implementation evidence
+### 6. Inspect supplied implementation evidence and consolidate
 
 When repositories or source snapshots are available, inspect relevant modules, services, controllers, repositories, DTOs, validators, configuration, tests, manifests, and dependency definitions. Use code only as evidence of the current system. Do not edit it or produce replacement code.
 
 When runtime, database, or infrastructure access exists, use only safe read operations explicitly available for analysis. Never query sensitive records when metadata or documentation is sufficient.
+
+Consolidate Jira, BRD/FRD, workflow, Confluence, OpenAPI, optional DeepWiki, and supplied implementation evidence. Preserve conflicts and identify which evidence represents current implementation versus intended architecture.
 
 ## Apply the evidence discipline
 
 Label material claims:
 
 - **Confirmed** — directly supported by a cited source.
+- **Inferred** — strongly indicated by retrieved repository structure or an established implementation pattern, but not explicitly confirmed.
 - **Assumed** — plausible and necessary for analysis, but not verified.
 - **Proposed** — a design choice for review, not current behavior.
 
@@ -125,7 +174,9 @@ Also record **Conflict** and **Unknown** when sources disagree or evidence is ab
 
 Separate current-state facts from proposed-state design. Use proposal names that describe responsibility without implying the component already exists.
 
-If mandatory research capability is unavailable, report exactly what could not be researched and stop by default. Offer to retry or proceed only as a prominently labelled **Source-Limited Proposal** when the user explicitly accepts that limitation. A completed search that finds no relevant evidence is not a failure; record the negative result and keep unsupported content proposed or unknown.
+Never present Inferred or Proposed repository details as Confirmed.
+
+If a mandatory research capability other than optional DeepWiki is unavailable, report exactly what could not be researched and stop by default. Offer to retry or proceed only as a prominently labelled **Source-Limited Proposal** when the user explicitly accepts that limitation. DeepWiki absence does not require this authorization and does not make the design source-limited by itself. A completed search that finds no relevant evidence is not a failure; record the negative result and keep unsupported content proposed or unknown.
 
 ## Synthesize architecture
 
@@ -156,39 +207,49 @@ For every material decision include:
 Generate one coherent Markdown artifact, not separate HLD and LLD documents. Use this order:
 
 1. **Document Control and Evidence Legend**
-   - Story keys/titles, source documents, research status, scope, exclusions, and Confirmed/Assumed/Proposed legend.
+   - Story keys/titles, source documents, research status, scope, exclusions, and Confirmed/Inferred/Assumed/Proposed/Unknown legend.
 2. **Executive Summary**
    - problem, recommended approach, principal changes, reuse, deliberate non-changes, material risks, and expected outcome.
 3. **Requirements and Traceability**
    - map Stories and acceptance criteria to design elements and verification notes.
 4. **Impact Analysis**
    - assess modules, services, repositories, controllers, UI, database, APIs, infrastructure, external integrations, configuration, security, performance, logging, monitoring, and deployment.
+   - When repository evidence exists, identify Confirmed impacted repositories, likely impacted modules, shared dependencies, `AMRIT-DB` migration impact, `AMRIT-DevOps` configuration impact, and repository evidence classification.
    - State **No impact identified from available evidence** rather than omitting an area.
-5. **High-Level Design**
-   - current architecture, proposed architecture, major components, interactions, high-level data flow, integration changes, decisions, alternatives, assumptions, risks, and a valuable Mermaid component or flow diagram when appropriate.
-6. **Low-Level Design**
-   - affected or proposed classes, services, repositories, controllers, validators, DTOs, configuration, detailed processing flow, exception handling, retry behavior, idempotency, transaction boundaries, validation rules, and useful sequence or state diagrams.
-7. **API Analysis**
+5. **Existing Architecture Summary**
+   - When DeepWiki research succeeds, list repositories inspected, relevant components and layers, reusable components, similar implementations, extension points, limitations, conflicts or uncertainties, and evidence confidence.
+   - When DeepWiki is unavailable, state **Repository research was not available in the current environment.** Do not generate fake findings.
+6. **High-Level Design**
+   - distinguish current architecture, proposed architecture, reason for change, existing components reused, new components proposed, alternatives considered, and repository evidence.
+   - describe major components, interactions, high-level data flow, integration changes, decisions, assumptions, risks, and a valuable Mermaid component or flow diagram when appropriate.
+7. **Low-Level Design**
+   - distinguish Confirmed existing components, likely impacted modules or files, Proposed new components, repository verification still required, and implementation conventions discovered through DeepWiki.
+   - Include affected or proposed classes, services, repositories, controllers, validators, DTOs, configuration, detailed processing flow, exception handling, retry behavior, idempotency, transaction boundaries, validation rules, and useful sequence or state diagrams.
+   - State concrete classes, files, or packages as Confirmed only when retrieved repository evidence supports them.
+8. **API Analysis**
    - existing, new, or modified endpoints; compatibility and breaking changes; request/response/error behavior; versioning; consumers; and Swagger impact. State when no API change is supported by the evidence.
-8. **Database Analysis**
+9. **Database Analysis**
    - make an explicit schema-change determination using the database guidelines.
+   - When change is plausible and DeepWiki is available, inspect the relevant application repository and `PSMRI/AMRIT-DB`, identify migration conventions and existing schemas, and avoid duplicate tables before producing DBML.
+   - When DeepWiki is unavailable, keep unsupported schema detail Proposed, state that existing-schema verification remains required, and never invent current table names.
    - If no schema change exists, write exactly: **No database schema changes required.** Do not add a DBA section or DBML.
    - If a schema change exists, include schema impact, tables, columns, relationships, indexes, constraints, migration and data-backfill notes, rollback considerations, and valid DBML in a fenced `dbml` block.
-9. **Security Review**
+10. **Security Review**
    - authentication, authorization, least privilege, input validation, sensitive information, audit logging, abuse cases, and security assumptions.
-10. **Performance Review**
-    - caching, large datasets, pagination, query behavior, concurrency, resource use, latency, and scalability.
-11. **Logging, Monitoring, and Operations**
-    - useful events, safe log content, metrics, traces, alerts, dashboards, runbook or support impact, deployment, rollback, and feature-control strategy.
-12. **Testability Notes**
-    - implementation notes for QA, edge cases, suggested integration tests, contract checks, and regression areas. Do not create full QA test cases.
-13. **Implementation Risks**
-    - technical, dependency, migration, security, performance, and operational risks with likelihood, impact, mitigation, owner or reviewer, and validation trigger where known.
-14. **Open Questions**
-    - include only unresolved matters that materially change architecture, contract, data, security, deployment, or scope. For ordinary engineering conventions, make and justify a recommendation instead of asking.
-15. **Architect Review Checklist**
-    - summarize evidence gaps, decisions requiring confirmation, review participants, and review focus.
-16. **Technical Design Status**
+11. **Performance Review**
+   - caching, large datasets, pagination, query behavior, concurrency, resource use, latency, and scalability.
+12. **Logging, Monitoring, and Operations**
+   - useful events, safe log content, metrics, traces, alerts, dashboards, runbook or support impact, deployment, rollback, and feature-control strategy.
+13. **Testability Notes**
+   - implementation notes for QA, edge cases, suggested integration tests, contract checks, and regression areas. Do not create full QA test cases.
+14. **Implementation Risks**
+   - technical, dependency, migration, security, performance, and operational risks with likelihood, impact, mitigation, owner or reviewer, and validation trigger where known.
+15. **Open Questions**
+   - include only unresolved matters that materially change architecture, contract, data, security, deployment, or scope. For ordinary engineering conventions, make and justify a recommendation instead of asking.
+16. **Architect Review Checklist**
+   - summarize evidence gaps, decisions requiring confirmation, review participants, and review focus.
+   - When DeepWiki was unavailable or evidence remained incomplete, include the specific repository verification required.
+17. **Technical Design Status**
     - finish with exactly:
 
       **Ready for Architect Review**
@@ -212,6 +273,10 @@ Before presenting the package, verify:
 
 - every supplied Story and acceptance criterion was read and traced;
 - BRD/FRD, Confluence, Jira, OpenAPI, and available repository research results are disclosed;
+- DeepWiki capability was detected rather than assumed, and its absence did not block the design;
+- only relevant repositories were shortlisted and no catalog-wide search was performed;
+- repository-grounded claims are correctly labelled Confirmed, Inferred, Proposed, or Unknown;
+- the proposal was checked against retrieved repository evidence when available;
 - current state is not invented;
 - assumptions and proposals are visible;
 - decisions explain why and alternatives;

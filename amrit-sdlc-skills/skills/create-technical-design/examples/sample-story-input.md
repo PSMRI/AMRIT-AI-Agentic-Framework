@@ -71,7 +71,9 @@ As an authorized care-team user, I want to reschedule or clear a pending follow-
 - The patch operation documents `400`, `403`, `404`, and `409` responses.
 - `followUpAt` is an ISO 8601 timestamp with offset.
 
-## Fictional repository evidence
+## Fictional supplied repository evidence
+
+This evidence is a supplied read-only export. The example does not assume DeepWiki availability.
 
 - `case_record.follow_up_at` already exists and is nullable.
 - `case_record.row_version` is used for optimistic concurrency.

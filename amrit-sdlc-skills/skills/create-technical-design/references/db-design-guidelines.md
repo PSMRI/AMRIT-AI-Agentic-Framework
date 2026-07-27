@@ -24,6 +24,18 @@ If no schema change is required, write exactly:
 
 Do not include DBML, migration steps, or a DBA section for that outcome.
 
+## Optional repository verification
+
+When database change is plausible and official DeepWiki repository tools are available:
+
+1. Inspect the relevant application repository for entities, repositories/DAOs, queries, transaction ownership, and current persistence conventions.
+2. Inspect `PSMRI/AMRIT-DB` for existing schemas, Flyway migration conventions, related tables, indexes, constraints, and seed-data patterns.
+3. Search for a suitable existing representation before proposing a table or column.
+4. Classify current schema claims as Confirmed, Inferred, or Unknown.
+5. Generate DBML only after considering retrieved existing-schema evidence.
+
+When DeepWiki is unavailable, continue the database analysis but keep unsupported schema design Proposed. State that existing-schema verification is required. Never invent a current table, column, migration path, or Flyway convention.
+
 ## Changes that count
 
 Include:

@@ -20,6 +20,7 @@ Attach evidence labels and references. If the current component name is unknown,
 
 Explain:
 
+- the reason for change;
 - the smallest set of changed or new responsibilities;
 - reused components and why they fit;
 - new components only when necessary;
@@ -31,6 +32,19 @@ Explain:
 - deliberate non-changes.
 
 Use **Proposed** in diagram nodes and prose for elements not confirmed to exist.
+
+## Repository evidence
+
+When DeepWiki research succeeds, precede the HLD with an Existing Architecture Summary and use its retrieved evidence to distinguish:
+
+- Confirmed current repositories, layers, and components;
+- Inferred implementation patterns;
+- existing components reused;
+- Proposed new components;
+- similar implementations and extension points;
+- limitations and repository conflicts.
+
+When repository research is unavailable, keep the HLD conceptual. Do not invent exact class, file, package, service, or table names. State that implementation-specific details require repository verification.
 
 ## Component responsibilities
 
@@ -117,6 +131,7 @@ Adapt orientation to readability. Add external systems and trust boundaries only
 Confirm that the HLD:
 
 - distinguishes current and proposed architecture;
+- explains the reason for change, reuse, new proposals, and repository evidence;
 - names ownership and boundaries;
 - explains key flows and failure behavior;
 - justifies reuse and new elements;

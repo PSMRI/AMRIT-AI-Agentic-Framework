@@ -20,6 +20,19 @@ Use a table such as:
 
 Write **No impact identified from available evidence** when research found no impact. This means "not found," not a proof that impact is impossible.
 
+## Repository-level impact
+
+When repository evidence is available, add:
+
+- Confirmed impacted repositories;
+- likely impacted modules or files with evidence classification;
+- shared `Common-UI` or `Common-API` dependencies;
+- `AMRIT-DB` impact when persistence or migrations may change;
+- `AMRIT-DevOps` impact when deployment or configuration may change;
+- the repository source and confidence for each conclusion.
+
+Never search every repository to complete this section. Start with the likely UI/API pair from [repository-catalog.md](repository-catalog.md) and expand only when evidence reveals a dependency. When DeepWiki is unavailable, record repository-specific impact as Proposed or Unknown and require later verification.
+
 ## Required areas
 
 ### Modules

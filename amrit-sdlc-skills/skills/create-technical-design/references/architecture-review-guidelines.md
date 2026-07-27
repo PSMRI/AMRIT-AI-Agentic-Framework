@@ -35,12 +35,15 @@ Do not silently resolve disagreement. Record the conflicting claims, their sourc
 Use labels at the claim, row, or subsection level:
 
 - **Confirmed:** supported by a named source.
+- **Inferred:** strongly indicated by retrieved repository structure or a repeated implementation pattern, but not directly confirmed.
 - **Assumed:** used to make progress but not verified.
 - **Proposed:** introduced by this design for review.
 - **Conflict:** credible sources disagree.
 - **Unknown:** evidence is not available.
 
 Do not label a whole document Confirmed when individual design choices are proposals.
+
+For repository-grounded claims, use Confirmed, Inferred, Proposed, or Unknown as defined in [deepwiki-research-guidelines.md](deepwiki-research-guidelines.md). Never elevate a catalog match, naming convention, or plausible component to Confirmed without retrieved evidence.
 
 ## Architecture invariants
 

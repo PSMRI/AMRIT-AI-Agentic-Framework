@@ -13,6 +13,16 @@ For a new element:
 - do not imply a language, framework, annotation, library, or package unless confirmed;
 - treat signatures and fields as design contracts, not source code.
 
+When DeepWiki research is available, distinguish:
+
+- **Confirmed existing components** — exact names or locations supported by retrieved evidence;
+- **Inferred components or conventions** — strongly indicated but not directly verified;
+- **Likely impacted modules/files** — include only with evidence and classification;
+- **Proposed new components** — recommendations requiring Architect approval;
+- **Repository verification still required** — unresolved implementation detail.
+
+Record implementation conventions discovered through DeepWiki, including layering, naming, validation, exception, transaction, security, logging, migration, and testing patterns. Never derive an exact class, path, or package from the repository catalog alone.
+
 ## Element specification
 
 For each affected or proposed element include only useful fields:
@@ -157,4 +167,5 @@ Confirm that:
 - transactions and concurrency are explicit;
 - configuration is operable;
 - details do not claim unsupported implementation facts;
+- repository-grounded names and conventions have correct evidence classification;
 - no source code has been generated.
