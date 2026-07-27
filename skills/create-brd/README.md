@@ -1,44 +1,85 @@
 # create-brd
 
-`create-brd` prepares a business-focused AMRIT BRD in Markdown from a short request or supplied sources. Every result is labelled **Draft — Pending Human Review**.
+`create-brd` prepares a traceable AMRIT Business Requirements Document in Markdown for Stage 01/12 — Business & Product. Every result is labelled **Draft — Pending Human Review**.
 
-## What it does
+## Intended users
 
-- Inspects business needs, feedback, notes, guidelines, workflows, screenshots, and existing documents.
-- Performs mandatory, iterative, read-only Confluence research through an already-connected Atlassian MCP.
-- Consolidates confirmed, assumed, missing, conflicting, and possibly outdated evidence.
-- Produces stable business and functional requirement identifiers, acceptance criteria, source references, and unresolved questions.
+The primary user is a Business Systems Analyst. Product Managers and relevant stakeholders remain required human reviewers.
 
-## What it does not do
+## Inputs
 
-It does not perform an automated Business Analyst review, score or certify completeness, approve or sign off a BRD, create an FRD, design implementation, modify Jira, or publish automatically.
+The skill supports interactive creation from a short business need or feature request and source-based creation from supplied material, including:
 
-## Why Confluence research is mandatory
+- field or stakeholder feedback;
+- government programme guidelines;
+- workflows, screenshots, and meeting notes;
+- PDFs, existing BRDs or FRDs, and product documents;
+- relevant Confluence pages.
 
-AMRIT requirements depend on existing workflows, terminology, validation rules, prior decisions, and related documents. The skill generates focused searches from the request, reads relevant pages, and uses newly discovered terminology and relationships to refine later searches. It stops when evidence is sufficient or no material leads remain, with a fixed research-round limit to prevent loops. It records source metadata when available and never fabricates missing details.
+Historical Jira material may be supplied as evidence, but the skill does not search or modify Jira.
 
-## Modes and evidence
+## Required MCP capability
 
-- **Interactive mode:** Research first, then ask small groups of questions only for critical remaining gaps.
-- **Source-based mode:** Treat supplied material as primary, research related Confluence content, and preserve supported terminology.
+An already-connected Atlassian MCP must provide Confluence search and page-read capabilities. Focused, iterative Confluence research is mandatory before every BRD draft and is read-only by default.
 
-Conflicts are not silently reconciled; the draft records both statements, their sources, impact, and clarification needed. Missing information remains visible as assumptions, open questions, or information requiring human confirmation. If Confluence is unavailable, the skill reports the limitation and asks whether to retry or proceed with a source-limited draft.
+If Confluence research fails, the skill reports the limitation and asks whether to retry or proceed with a clearly source-limited draft. It never implies that unavailable research succeeded.
 
-## Optional Confluence publishing
+Confluence page creation or update is optional. The skill may publish only after showing the full draft and receiving an explicit publication request with a clear destination.
 
-Confluence is read-only by default. After the full draft is shown, the skill may create or update a page only when the user explicitly requests it and the destination is clear. It never marks the page approved.
+## Output
 
-## Human review
+The skill produces one Markdown BRD with:
 
-Business Systems Analyst, Product Manager, and relevant stakeholder review remain mandatory. Product Manager sign-off is a lifecycle exit criterion, not an action or claim made by this skill.
+- stable business and functional requirement identifiers;
+- traceable acceptance criteria and source references;
+- confirmed information, assumptions, gaps, conflicts, and possibly outdated evidence;
+- unresolved questions and review status.
 
-## Example invocations
+It does not create an FRD or technical design.
 
-- `Create a BRD for enabling username editing in Employee Master.`
-- `Create a BRD from these meeting notes.`
-- `Create a BRD from these programme guidelines and related Confluence documents.`
-- `Draft the BRD first, then publish it to the Product Requirements space after I approve it.`
+## Human review and publishing guardrails
 
-## Independent installation
+The skill never scores, certifies, approves, rejects, signs off, or automatically publishes a BRD. Optional Confluence publishing does not mark the document approved. Business Systems Analyst, Product Manager, and relevant stakeholder review remain mandatory.
 
-Download or copy this `create-brd` folder and add it through Claude Desktop's Add Skills flow. `SKILL.md` must be directly inside the selected folder. The folder is self-contained and does not depend on repository-level files. An already-connected Atlassian MCP with Confluence search and page-read capabilities is required.
+## Install for Claude Code
+
+From the repository root:
+
+```bash
+python scripts/install-skill.py create-brd
+```
+
+Use `--scope project` to install only for the current repository. After installation, invoke the skill with:
+
+```text
+/create-brd
+```
+
+Example:
+
+```text
+/create-brd
+
+Create a BRD from these programme guidelines and related Confluence documents.
+Keep it as a draft for human review.
+```
+
+## Install in Claude Desktop
+
+1. Download [`skill-zips/create-brd.zip`](../../skill-zips/create-brd.zip).
+2. Open Claude Desktop.
+3. Open the **Add Skills** interface.
+4. Upload `create-brd.zip`.
+5. Confirm that the skill appears and the required Atlassian MCP connection is available.
+
+## Generate the skill package
+
+From the repository root:
+
+```bash
+python scripts/package-skill.py create-brd
+```
+
+The generated archive is written to `skill-zips/create-brd.zip`.
+
+For all installer options, see the [repository installation guide](../../docs/installation.md). For lifecycle inputs and review gates, see the [lifecycle mapping](../../docs/lifecycle-mapping.md).

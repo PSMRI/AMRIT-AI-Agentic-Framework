@@ -1,68 +1,175 @@
 # Installation
 
-## Install from the complete repository
+This repository supports two installation flows:
 
-1. Clone the repository or download its archive.
-2. Locate `skills/create-brd`, `skills/create-product-backlog`, or `skills/create-technical-design`.
-3. In Claude Desktop, open the Add Skills flow and select the required skill folder.
-4. Confirm the skill appears and the Atlassian MCP connection is available.
+- **Claude Code:** copy skills into user scope or project scope with `scripts/install-skill.py`.
+- **Claude Desktop:** upload an individual ZIP from `skill-zips/` through the **Add Skills** interface.
 
-## Download only one skill
+Each skill is self-contained and can be installed without the other skills.
 
-Download or export only the required folder from `skills/` while preserving its contents. Each folder is independently installable and has no mandatory dependency on repository-level files or another skill.
+## Claude Code
 
-The required Stage 01 layout is:
+Run all commands from the repository root.
 
-```text
-create-brd/
-|- SKILL.md
-|- README.md
-|- references/
-`- examples/
+### List available skills
+
+```bash
+python scripts/install-skill.py --list
 ```
 
-The Stage 02 skill uses the same convention:
+The current skills are:
+
+- `create-brd`
+- `create-product-backlog`
+- `create-technical-design`
+
+### User scope
+
+User scope is the default. Installed skills are available across projects at:
 
 ```text
-create-product-backlog/
-|- SKILL.md
-|- README.md
-|- references/
-`- examples/
+~/.claude/skills/<skill-name>
 ```
 
-The Stage 03 skill uses the same convention:
+Install one skill:
+
+```bash
+python scripts/install-skill.py create-brd
+```
+
+Install all skills:
+
+```bash
+python scripts/install-skill.py --all
+```
+
+Upgrade one skill or all skills by replacing the installed copy:
+
+```bash
+python scripts/install-skill.py create-brd --upgrade
+python scripts/install-skill.py --all --upgrade
+```
+
+Uninstall one skill:
+
+```bash
+python scripts/install-skill.py --uninstall create-brd
+```
+
+`--force` is supported as a backward-compatible alias for `--upgrade`.
+
+### Project scope
+
+Project-scoped skills are available only within the target repository and are installed at:
 
 ```text
-create-technical-design/
-|- SKILL.md
-|- README.md
-|- references/
-`- examples/
+<repository>/.claude/skills/<skill-name>
 ```
 
-`SKILL.md` must be directly inside the installed folder. A duplicated nested folder is incorrect.
+When these commands are run from the repository root, that repository is the default project target.
 
-The Claude Desktop Add Skills interface is the preferred installation method. It may accept a ZIP directly; otherwise extract the archive and select its top-level skill folder. Exact menu labels and local skill-directory paths may vary by client version and operating system.
+Install one skill or all skills for the current project:
+
+```bash
+python scripts/install-skill.py create-brd --scope project
+python scripts/install-skill.py --all --scope project
+```
+
+Upgrade project-scoped skills:
+
+```bash
+python scripts/install-skill.py create-brd --scope project --upgrade
+python scripts/install-skill.py --all --scope project --upgrade
+```
+
+Uninstall one project-scoped skill:
+
+```bash
+python scripts/install-skill.py --uninstall create-brd --scope project
+```
+
+To target a different project directory, add `--project-path <path>` together with `--scope project`.
+
+### PowerShell path style
+
+The same commands can use PowerShell-style relative paths:
+
+```powershell
+python .\scripts\install-skill.py --list
+python .\scripts\install-skill.py create-brd
+python .\scripts\install-skill.py --all --scope project
+```
+
+### Use the installed skills
+
+Invoke an installed skill in Claude Code with its slash command:
+
+```text
+/create-brd
+/create-product-backlog
+/create-technical-design
+```
+
+Keep the installed folder intact. `SKILL.md` must remain directly inside `<skill-name>/`.
+
+## Claude Desktop
+
+Current skill packages are:
+
+- [`skill-zips/create-brd.zip`](../skill-zips/create-brd.zip)
+- [`skill-zips/create-product-backlog.zip`](../skill-zips/create-product-backlog.zip)
+- [`skill-zips/create-technical-design.zip`](../skill-zips/create-technical-design.zip)
+
+Install one package:
+
+1. Download the required skill ZIP.
+2. Open Claude Desktop.
+3. Open the **Add Skills** interface.
+4. Upload the selected ZIP.
+5. Confirm that the skill appears and that its required MCP connections are available.
+
+The ZIP is the primary installation artifact for Claude Desktop. Cloning the repository or copying an extracted skill folder is an optional developer workflow, not a normal installation requirement.
+
+Each package contains this structure:
+
+```text
+<skill-name>/
+├── SKILL.md
+├── README.md
+├── references/
+└── examples/
+```
 
 ## Package a skill
 
-From the `amrit-sdlc-skills` directory in PowerShell:
+Run the packaging command from the repository root:
 
-```powershell
-python .\scripts\package-skill.py create-technical-design
+```bash
+python scripts/package-skill.py create-brd
 ```
 
-The resulting ZIP contains one top-level folder named for the selected skill and no dependency on the rest of the repository.
+PowerShell equivalent:
 
-## Atlassian MCP prerequisite
+```powershell
+python .\scripts\package-skill.py create-brd
+```
 
-Before using a skill, confirm in Claude Desktop's connectors or tool availability that the organization-managed Atlassian MCP is connected:
+The command writes:
 
-- `create-brd` requires equivalent Confluence search and page-read capabilities.
-- `create-product-backlog` requires Confluence and Jira read capabilities for research. Jira write capabilities are needed only for explicitly approved publication.
-- `create-technical-design` requires Confluence and Jira read capabilities plus relevant Swagger/OpenAPI and architecture evidence. Official DeepWiki MCP repository intelligence is optional, configured outside the skill, and must not block design generation when absent. The skill never uses Jira, Confluence, DeepWiki, or repository write operations.
+```text
+skill-zips/create-brd.zip
+```
 
-Exact MCP setup and hosting are managed externally and are not stored in this repository. If required research is unavailable, the skill reports the limitation and asks whether to retry or proceed with a source-limited draft; it never pretends research succeeded.
+Substitute `create-product-backlog` or `create-technical-design` to package either of those skills. The script packages exactly one named skill per invocation and has no all-skills option.
 
-Credentials, tokens, passwords, and MCP URLs must not be added to this repository or a skill folder.
+## MCP prerequisites
+
+MCP connections and credentials are configured outside this repository.
+
+- `create-brd` requires Atlassian MCP Confluence search and page-read capabilities. It treats Confluence as read-only unless the user explicitly requests publication after reviewing the draft.
+- `create-product-backlog` requires Atlassian MCP Confluence and Jira read capabilities. Jira write capabilities are needed only for an explicitly approved and separately requested publication.
+- `create-technical-design` requires Jira and Confluence read capabilities plus applicable architecture and Swagger/OpenAPI evidence. Official DeepWiki MCP repository research is optional. The skill uses read operations only and never publishes a design.
+
+If required research is unavailable, the skill reports the limitation rather than pretending that research succeeded. Never add credentials, tokens, passwords, private MCP URLs, or environment-specific configuration to a skill package.
+
+For skill behavior and review gates, see the [lifecycle mapping](lifecycle-mapping.md).

@@ -1,44 +1,62 @@
 # create-product-backlog
 
-`create-product-backlog` supports the AMRIT Product Manager at SDLC Stage 02. It converts an approved BRD or FRD, or an L2-escalated production defect, into a traceable and prioritized backlog draft containing Epics, Stories, Tasks or Subtasks, acceptance criteria, and meaningful INVEST reviews.
+`create-product-backlog` supports AMRIT Product Managers at Stage 02 — Product Backlog Creation. It converts approved feature requirements or an L2-escalated production defect into a traceable, prioritized backlog draft.
 
-## Supported inputs
+## Intended users
 
-- Signed-off BRD or FRD
-- Approved Confluence requirement page
-- Uploaded approved requirement document
-- L2-escalated bug and supporting evidence
-- Existing Jira production-defect issue
+The primary user and required reviewer is the Product Manager.
 
-An already-connected Atlassian MCP must provide equivalent Confluence and Jira read capabilities. Jira write capabilities are needed only for an explicitly authorized publication.
+## Inputs
 
-## Two entry paths
+The feature path requires one of:
 
-### Approved feature requirements
+- a signed-off BRD or FRD;
+- an approved Confluence requirement page;
+- an uploaded approved requirement document.
 
-The skill confirms approval, reads the full source, performs bounded Confluence and Jira research, checks for duplicates and project conventions, decomposes the scope, and presents a review-ready backlog.
+The defect path accepts an L2-escalated bug, an existing Jira production defect, or supporting incident evidence. It does not require a BRD or FRD.
 
-### L2 escalation or production defect
+## Required MCP capability
 
-The skill reads the existing defect and evidence, researches expected behavior and related issues, proposes classification and priority, and preserves **Product defect - CAPA required at closure**. It never invents root cause or CAPA findings.
+An already-connected Atlassian MCP must provide relevant Confluence and Jira search and read capabilities. The skill uses these capabilities to retrieve source material, check related work and possible duplicates, and discover actual Jira hierarchy, fields, and project conventions.
 
-## Human review and Jira safety
+Jira write capabilities are optional and used only for an explicitly authorized publication. No DeepWiki integration is required.
 
-Drafting and refinement are Jira read-only. The default statuses are:
+## Output
+
+The default output is a Markdown backlog labelled:
 
 - **Draft - Pending Product Manager Review**
 - **Jira Publication Status: Not Published**
 
-Jira writes require both:
+It may contain Epics, Stories, Tasks, or Subtasks with testable acceptance criteria, an INVEST review for each Story, priority rationale, source traceability, dependencies, risks, possible duplicates, and fields needing confirmation.
 
-1. Explicit human approval or finalization of the specific backlog.
+For a production defect, the skill preserves **Product defect - CAPA required at closure** and never invents root cause or CAPA findings.
+
+## Human review and Jira guardrails
+
+Drafting and refinement are Jira read-only. Jira publication requires both:
+
+1. Explicit human approval or finalization of the specific backlog version.
 2. A separate explicit request to create or publish that finalized backlog in Jira.
 
-Approval by itself is not publication permission. Before writing, the skill discovers the target project's actual fields and hierarchy, rechecks duplicates, and shows a publication preview. It does not automatically transition issues, assign a sprint, or complete CAPA.
+Approval alone is not publication permission. Before writing, the skill rechecks duplicates, discovers the target project's current fields and hierarchy, and shows a publication preview. It does not automatically transition issues, assign a sprint, replace a production-defect priority, or complete CAPA.
 
-## Example invocations
+## Install for Claude Code
 
-Invocation syntax depends on the client. In clients that expose skills as slash commands, prompts may look like:
+From the repository root:
+
+```bash
+python scripts/install-skill.py create-product-backlog
+```
+
+Use `--scope project` to install only for the current repository. After installation, invoke the skill with:
+
+```text
+/create-product-backlog
+```
+
+Example:
 
 ```text
 /create-product-backlog
@@ -47,40 +65,22 @@ Convert the attached signed-off BRD into a proposed product backlog.
 Do not create Jira issues yet.
 ```
 
-```text
-/create-product-backlog
-
-Review production defect AMRIT-123, classify it, propose priority and required follow-up work.
-Do not modify Jira.
-```
-
-```text
-/create-product-backlog
-
-The backlog is approved and finalized.
-Create the approved tickets in Jira project AMRIT.
-```
-
-Slash-command availability is client-dependent; selecting the installed skill and using the same natural-language request is equivalent.
-
-## Package as a ZIP
-
-From the repository's `amrit-sdlc-skills` directory in PowerShell:
-
-```powershell
-python .\scripts\package-skill.py create-product-backlog
-```
-
-The ZIP must contain one top-level `create-product-backlog` folder with `SKILL.md` directly inside it. Do not add repository-level files or external dependencies.
-
 ## Install in Claude Desktop
 
-1. Download `create-product-backlog.zip`.
-2. Open Claude Desktop's **Add Skills** flow.
-3. Select and upload `create-product-backlog.zip`.
-4. Confirm that the skill appears in Claude Desktop.
-5. Ensure the organization-managed Atlassian MCP is already connected before using Confluence or Jira operations.
+1. Download [`skill-zips/create-product-backlog.zip`](../../skill-zips/create-product-backlog.zip).
+2. Open Claude Desktop.
+3. Open the **Add Skills** interface.
+4. Upload `create-product-backlog.zip`.
+5. Confirm that the skill appears and the required Atlassian MCP connection is available.
 
-Claude Desktop requires a supported skill file such as `.zip`, `.skill`, or `.md`. Upload the ZIP directly; do not select the extracted folder.
+## Generate the skill package
 
-Exact menu labels may vary by Claude Desktop version. Do not add Atlassian credentials, URLs, or configuration to the skill package.
+From the repository root:
+
+```bash
+python scripts/package-skill.py create-product-backlog
+```
+
+The generated archive is written to `skill-zips/create-product-backlog.zip`.
+
+For all installer options, see the [repository installation guide](../../docs/installation.md). For lifecycle inputs and review gates, see the [lifecycle mapping](../../docs/lifecycle-mapping.md).

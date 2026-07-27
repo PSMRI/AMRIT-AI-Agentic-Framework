@@ -1,43 +1,43 @@
 # AMRIT SDLC lifecycle mapping
 
-## Stage 01/12 - BRD
+The three skills are independently installable but align to consecutive lifecycle stages. A downstream skill may consume an approved upstream output without requiring the upstream skill itself to be installed.
 
-- **Lifecycle area:** Business & Product
-- **Role:** Business Systems Analyst
-- **Primary skill:** `create-brd`
+| Stage | Primary role | Skill | Review status |
+| --- | --- | --- | --- |
+| Stage 01/12 — Business & Product | Business Systems Analyst | [`create-brd`](../skills/create-brd/README.md) | Draft — Pending Human Review |
+| Stage 02 — Product Backlog Creation | Product Manager | [`create-product-backlog`](../skills/create-product-backlog/README.md) | Draft - Pending Product Manager Review |
+| Stage 03 — Engineering Analysis | Technical Architect / Senior Developer | [`create-technical-design`](../skills/create-technical-design/README.md) | Ready for Architect Review |
+
+## Stage 01/12 — BRD
 
 ### Inputs
 
-- Business need
-- Feature request
-- Field feedback
-- Government guidelines
-- Existing documents
-- Confluence context
+- Business need or feature request
+- Field or stakeholder feedback
+- Government programme guidelines
+- Workflows, screenshots, meeting notes, and existing documents
+- Relevant Confluence context
 
 ### Outputs
 
-- Draft BRD
-- Workflow information
-- Functional requirement inputs
-- Data mapping requirements where applicable
+- Traceable draft BRD
+- Business workflows and functional requirements
+- Acceptance criteria and source references
+- Data-mapping requirements where applicable
+- Assumptions, conflicts, missing information, and open questions
 
 ### Exit criterion
 
-Human review and Product Manager sign-off.
+Business Systems Analyst, Product Manager, and relevant stakeholder review, followed by Product Manager sign-off.
 
-`create-brd` prepares **Draft - Pending Human Review** and never claims that the exit criterion has been completed.
+`create-brd` prepares **Draft — Pending Human Review**. Mandatory Confluence research is read-only by default, publishing requires an explicit request after the draft is shown, and the skill never claims that the exit criterion has been met.
 
-## Stage 02 - Product Backlog Creation
-
-- **Lifecycle area:** Product Management
-- **Role:** Product Manager
-- **Primary skill:** `create-product-backlog`
+## Stage 02 — Product Backlog Creation
 
 ### Inputs
 
 - Signed-off BRD or FRD
-- Approved Confluence requirement page or uploaded document
+- Approved Confluence requirement page or uploaded approved document
 - L2-escalated bug or existing Jira production defect
 
 ### Outputs
@@ -50,15 +50,11 @@ Human review and Product Manager sign-off.
 
 ### Exit criterion
 
-The human Product Manager has reviewed, finalized, and triaged the backlog with contextual priority so that tickets are ready for analysis.
+The Product Manager has reviewed, finalized, and triaged the backlog with contextual priority so that tickets are ready for Engineering Analysis.
 
-`create-product-backlog` prepares **Draft - Pending Product Manager Review**. Jira remains read-only during drafting and refinement. Publication requires both explicit backlog approval or finalization and a separate explicit Jira creation request.
+`create-product-backlog` prepares **Draft - Pending Product Manager Review**. Jira remains read-only during drafting and refinement. Publication requires approval or finalization of the specific backlog and a separate explicit Jira creation request.
 
-## Stage 03 - Engineering Analysis
-
-- **Lifecycle area:** Engineering Analysis
-- **Role:** Technical Architect / Senior Developer
-- **Primary skill:** `create-technical-design`
+## Stage 03 — Engineering Analysis
 
 ### Inputs
 
@@ -66,7 +62,7 @@ The human Product Manager has reviewed, finalized, and triaged the backlog with 
 - Approved BRD and FRD
 - Workflow and architecture diagrams
 - Current Confluence architecture
-- Swagger/OpenAPI specifications
+- Applicable Swagger/OpenAPI specifications
 - Optional repository, configuration, deployment, and operational evidence
 
 ### Outputs
@@ -78,10 +74,12 @@ The human Product Manager has reviewed, finalized, and triaged the backlog with 
 - Security, performance, observability, deployment, and testability notes
 - Implementation risks and architecture-material open questions
 - Mermaid diagrams when useful and DBML only when a schema change exists
-- Optional repository-grounded Existing Architecture Summary when official DeepWiki MCP or supplied repository evidence is available
+- Repository-grounded Existing Architecture Summary when official DeepWiki MCP or supplied repository evidence is available
 
 ### Exit criterion
 
-The human Technical Architect has reviewed the design, resolved or accepted material risks and open questions, and authorized implementation to begin.
+The Technical Architect has reviewed the design, resolved or accepted material risks and open questions, and authorized implementation to begin.
 
-`create-technical-design` finishes with **Ready for Architect Review** and **No implementation should begin until the design is reviewed.** It is read-only, produces no implementation code, never modifies Jira or Confluence, and never claims that the exit criterion has been met.
+`create-technical-design` finishes with **Ready for Architect Review** and **No implementation should begin until the design is reviewed.** It is read-only, produces no implementation code, never modifies or publishes to Jira or Confluence, and never claims that the exit criterion has been met.
+
+See the [installation guide](installation.md) for Claude Code and Claude Desktop setup.
