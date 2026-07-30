@@ -13,3 +13,12 @@ Desktop.ini
 *.tmp
 *.temp
 *.bak
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Generated skill packages
+dist/
+*.zip

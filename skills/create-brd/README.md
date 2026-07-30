@@ -41,45 +41,9 @@ It does not create an FRD or technical design.
 
 The skill never scores, certifies, approves, rejects, signs off, or automatically publishes a BRD. Optional Confluence publishing does not mark the document approved. Business Systems Analyst, Product Manager, and relevant stakeholder review remain mandatory.
 
-## Install for Claude Code
+## Use and distribution
 
-From the repository root:
-
-```bash
-python scripts/install-skill.py create-brd
-```
-
-Use `--scope project` to install only for the current repository. After installation, invoke the skill with:
-
-```text
-/create-brd
-```
-
-Example:
-
-```text
-/create-brd
-
-Create a BRD from these programme guidelines and related Confluence documents.
-Keep it as a draft for human review.
-```
-
-## Install in Claude Desktop
-
-1. Download [`skill-zips/create-brd.zip`](../../skill-zips/create-brd.zip).
-2. Open Claude Desktop.
-3. Open the **Add Skills** interface.
-4. Upload `create-brd.zip`.
-5. Confirm that the skill appears and the required Atlassian MCP connection is available.
-
-## Generate the skill package
-
-From the repository root:
-
-```bash
-python scripts/package-skill.py create-brd
-```
-
-The generated archive is written to `skill-zips/create-brd.zip`.
-
-For all installer options, see the [repository installation guide](../../docs/installation.md). For lifecycle inputs and review gates, see the [lifecycle mapping](../../docs/lifecycle-mapping.md).
+Invoke `/create-brd` in Claude Code from the repository root. Claude Desktop
+users can download [create-brd.zip](../../releases/latest/download/create-brd.zip).
+See the [distribution guide](../../docs/installation.md) and
+[lifecycle mapping](../../docs/lifecycle-mapping.md).

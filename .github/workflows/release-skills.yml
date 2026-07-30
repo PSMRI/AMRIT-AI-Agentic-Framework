@@ -1,0 +1,81 @@
+name: Release skill packages
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing v* tag to publish
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  validate-package-and-release:
+    name: Validate, package, and publish release
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Check out tagged commit
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+          fetch-depth: 0
+
+      - name: Verify release tag
+        shell: bash
+        run: |
+          case "$RELEASE_TAG" in
+            v*) ;;
+            *)
+              echo "::error::Release tag must match v*: $RELEASE_TAG"
+              exit 1
+              ;;
+          esac
+          git rev-parse --verify "refs/tags/${RELEASE_TAG}^{commit}"
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Validate skill sources and project mappings
+        run: python scripts/validate-skills.py
+
+      - name: Package every skill
+        run: python scripts/package-skills.py --all
+
+      - name: Confirm every package was generated
+        shell: bash
+        run: |
+          for skill_directory in skills/*; do
+            [ -d "$skill_directory" ] || continue
+            skill_name="$(basename "$skill_directory")"
+            package="dist/${skill_name}.zip"
+            if [ ! -f "$package" ]; then
+              echo "::error::Missing expected package: $package"
+              exit 1
+            fi
+          done
+
+      - name: Create or update GitHub Release
+        shell: bash
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" dist/*.zip --clobber
+          else
+            gh release create "$RELEASE_TAG" dist/*.zip \
+              --verify-tag \
+              --generate-notes \
+              --title "$RELEASE_TAG"
+          fi

@@ -42,45 +42,10 @@ Drafting and refinement are Jira read-only. Jira publication requires both:
 
 Approval alone is not publication permission. Before writing, the skill rechecks duplicates, discovers the target project's current fields and hierarchy, and shows a publication preview. It does not automatically transition issues, assign a sprint, replace a production-defect priority, or complete CAPA.
 
-## Install for Claude Code
+## Use and distribution
 
-From the repository root:
-
-```bash
-python scripts/install-skill.py create-product-backlog
-```
-
-Use `--scope project` to install only for the current repository. After installation, invoke the skill with:
-
-```text
-/create-product-backlog
-```
-
-Example:
-
-```text
-/create-product-backlog
-
-Convert the attached signed-off BRD into a proposed product backlog.
-Do not create Jira issues yet.
-```
-
-## Install in Claude Desktop
-
-1. Download [`skill-zips/create-product-backlog.zip`](../../skill-zips/create-product-backlog.zip).
-2. Open Claude Desktop.
-3. Open the **Add Skills** interface.
-4. Upload `create-product-backlog.zip`.
-5. Confirm that the skill appears and the required Atlassian MCP connection is available.
-
-## Generate the skill package
-
-From the repository root:
-
-```bash
-python scripts/package-skill.py create-product-backlog
-```
-
-The generated archive is written to `skill-zips/create-product-backlog.zip`.
-
-For all installer options, see the [repository installation guide](../../docs/installation.md). For lifecycle inputs and review gates, see the [lifecycle mapping](../../docs/lifecycle-mapping.md).
+Invoke `/create-product-backlog` in Claude Code from the repository root.
+Claude Desktop users can download
+[create-product-backlog.zip](../../releases/latest/download/create-product-backlog.zip).
+See the [distribution guide](../../docs/installation.md) and
+[lifecycle mapping](../../docs/lifecycle-mapping.md).

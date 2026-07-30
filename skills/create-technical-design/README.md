@@ -50,47 +50,10 @@ The skill never creates implementation code, SQL migrations, infrastructure code
 
 If a mandatory research capability other than optional DeepWiki is unavailable, the skill stops by default. It may continue only after the user explicitly accepts a prominently labelled **Source-Limited Proposal**.
 
-## Install for Claude Code
+## Use and distribution
 
-From the repository root:
-
-```bash
-python scripts/install-skill.py create-technical-design
-```
-
-Use `--scope project` to install only for the current repository. After installation, invoke the skill with:
-
-```text
-/create-technical-design
-```
-
-Example:
-
-```text
-/create-technical-design
-
-Create a technical design for the approved Stories AMRIT-101 and AMRIT-102.
-Use available architecture, OpenAPI, and repository evidence. Do not modify Jira or Confluence.
-```
-
-## Install in Claude Desktop
-
-1. Download [`skill-zips/create-technical-design.zip`](../../skill-zips/create-technical-design.zip).
-2. Open Claude Desktop.
-3. Open the **Add Skills** interface.
-4. Upload `create-technical-design.zip`.
-5. Confirm that the skill appears and the required Atlassian MCP and evidence sources are available.
-
-Official DeepWiki MCP access, when used, is configured separately and is not included in the skill package.
-
-## Generate the skill package
-
-From the repository root:
-
-```bash
-python scripts/package-skill.py create-technical-design
-```
-
-The generated archive is written to `skill-zips/create-technical-design.zip`.
-
-For all installer options, see the [repository installation guide](../../docs/installation.md). For lifecycle inputs and review gates, see the [lifecycle mapping](../../docs/lifecycle-mapping.md).
+Invoke `/create-technical-design` in Claude Code from the repository root.
+Claude Desktop users can download
+[create-technical-design.zip](../../releases/latest/download/create-technical-design.zip).
+See the [distribution guide](../../docs/installation.md) and
+[lifecycle mapping](../../docs/lifecycle-mapping.md).

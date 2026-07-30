@@ -1,0 +1,55 @@
+name: Validate skills
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-package:
+    name: Validate and package skills
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Validate skill sources and project mappings
+        run: python scripts/validate-skills.py
+
+      - name: Package every skill
+        run: python scripts/package-skills.py --all
+
+      - name: Confirm every package was generated
+        shell: bash
+        run: |
+          for skill_directory in skills/*; do
+            [ -d "$skill_directory" ] || continue
+            skill_name="$(basename "$skill_directory")"
+            package="dist/${skill_name}.zip"
+            if [ ! -f "$package" ]; then
+              echo "::error::Missing expected package: $package"
+              exit 1
+            fi
+          done
+
+      - name: Upload packages for inspection
+        uses: actions/upload-artifact@v6
+        with:
+          name: skill-packages
+          path: dist/*.zip
+          if-no-files-found: error
+          retention-days: 7
