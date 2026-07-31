@@ -48,7 +48,7 @@ jobs:
 
       - name: Upload create-brd package
         if: github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           path: dist/create-brd.zip
           archive: false
@@ -57,7 +57,7 @@ jobs:
 
       - name: Upload create-product-backlog package
         if: github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           path: dist/create-product-backlog.zip
           archive: false
@@ -66,7 +66,7 @@ jobs:
 
       - name: Upload create-technical-design package
         if: github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           path: dist/create-technical-design.zip
           archive: false
