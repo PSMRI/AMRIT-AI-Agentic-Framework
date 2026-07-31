@@ -46,11 +46,29 @@ jobs:
             fi
           done
 
-      - name: Upload skill packages
+      - name: Upload create-brd package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v6
         with:
-          name: skill-packages
-          path: dist/*.zip
+          path: dist/create-brd.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload create-product-backlog package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v6
+        with:
+          path: dist/create-product-backlog.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload create-technical-design package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v6
+        with:
+          path: dist/create-technical-design.zip
+          archive: false
           if-no-files-found: error
           retention-days: 90
