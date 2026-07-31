@@ -1,11 +1,11 @@
 # AMRIT SDLC Skills
 
-This repository contains reusable Claude skills for the AMRIT software
+This repository contains reusable agent skills for the AMRIT software
 development lifecycle. The source of truth is [`skills/`](skills/); project
-discovery and release packages are generated from those same source
-directories.
+discovery bridges and installable packages are generated from those same
+source directories.
 
-[Download the latest skill packages](../../releases/latest)
+[Download skill packages from GitHub Actions](../../actions/workflows/validate-skills.yml)
 
 ## Available skills
 
@@ -18,9 +18,10 @@ directories.
 The skills are independent. A downstream skill can consume an approved
 upstream output without requiring the upstream skill at runtime.
 
-## Claude Code: use the project skills immediately
+## Project use: discover skills immediately
 
-Developers can clone the repository and start Claude Code from its root:
+Developers can clone the repository and start a supported coding agent from its
+root:
 
 ```bash
 git clone https://github.com/PSMRI/AMRIT-AI-Agentic-Framework.git
@@ -29,38 +30,43 @@ claude
 ```
 
 No project-level installation command is required. Claude Code discovers
-project skills under `.claude/skills/`. Each project skill is a small,
-Windows-safe `SKILL.md` bridge that loads its canonical implementation from
-`skills/`:
+project skills under `.claude/skills/`. Cursor and Antigravity discover project
+skills under `.agents/skills/`. Each project skill is a small, Windows-safe
+`SKILL.md` bridge that loads its canonical implementation from `skills/`.
+
+Both bridge locations contain all three skills:
 
 ```text
-.claude/skills/create-brd/SKILL.md
+<bridge-root>/create-brd/SKILL.md
     -> skills/create-brd/SKILL.md
-.claude/skills/create-product-backlog/SKILL.md
+<bridge-root>/create-product-backlog/SKILL.md
     -> skills/create-product-backlog/SKILL.md
-.claude/skills/create-technical-design/SKILL.md
+<bridge-root>/create-technical-design/SKILL.md
     -> skills/create-technical-design/SKILL.md
 ```
 
-Invoke a skill directly with `/create-brd`, `/create-product-backlog`, or
-`/create-technical-design`. Claude may also load a skill automatically when a
-request matches its description.
+Invoke a skill using the supported client workflow. Clients may also load a
+skill automatically when a request matches its description.
 
-## Claude Desktop: download a release ZIP
+## Install skill packages from GitHub Actions
 
-Claude Desktop users do not need to clone the repository:
+Repository users can download the current packages without creating a version
+tag:
 
-1. Open [the latest GitHub Release](../../releases/latest).
-2. Download the ZIP for the desired skill.
-3. Open Claude Desktop's skill interface.
-4. Upload the downloaded ZIP.
-5. Confirm that the skill and any required MCP connections are available.
+1. Open the GitHub repository.
+2. Open the **Actions** tab.
+3. Select **Validate and package skills**.
+4. Open the latest successful run for `main`.
+5. Download the **skill-packages** artifact.
+6. Extract the outer artifact archive.
+7. Select the required individual skill ZIP.
+8. Install or upload that ZIP using the supported client workflow.
 
-Direct downloads:
+The artifact contains:
 
-- [Download Create BRD](../../releases/latest/download/create-brd.zip)
-- [Download Create Product Backlog](../../releases/latest/download/create-product-backlog.zip)
-- [Download Create Technical Design](../../releases/latest/download/create-technical-design.zip)
+- `create-brd.zip`
+- `create-product-backlog.zip`
+- `create-technical-design.zip`
 
 Each ZIP contains one top-level skill directory with `SKILL.md` and all of that
 skill's references, examples, templates, scripts, and assets.
@@ -73,18 +79,18 @@ skills/                         Canonical source; edit skills here
 ├── create-product-backlog/
 └── create-technical-design/
 
-.claude/skills/                 Small project bridges to canonical skills/
+.claude/skills/                 Claude project bridges
+.agents/skills/                 Cursor and Antigravity project bridges
 scripts/package-skills.py       Deterministic ZIP packaging into dist/
-scripts/validate-skills.py      Release and project-discovery checks
+scripts/validate-skills.py      Packaging and project-discovery checks
 .github/workflows/
-├── validate-skills.yml         PR/main validation and temporary artifacts
-└── release-skills.yml          Tagged GitHub Release assets
+└── validate-skills.yml         PR/main validation and Actions artifacts
 ```
 
 Generated `dist/` content and all ZIP files are ignored by Git. GitHub Actions
-creates packages from `skills/`; short-lived validation artifacts are for
-maintainer inspection, while GitHub Releases are the permanent download
-location for Claude Desktop users.
+creates packages from `skills/` and distributes them through the
+`skill-packages` artifact. GitHub Releases and version tags are not currently
+used.
 
 ## Maintainer workflow
 
@@ -104,21 +110,22 @@ python scripts/package-skills.py create-brd
 
 Packages are written to ignored `dist/`.
 
-When adding a new `skills/<name>/` source directory, also add the corresponding
-small `.claude/skills/<name>/SKILL.md` bridge. Validation fails if a source or
-bridge is missing; packaging discovers valid source directories automatically.
+When adding a new `skills/<name>/` source directory, also add corresponding
+small bridges at `.claude/skills/<name>/SKILL.md` and
+`.agents/skills/<name>/SKILL.md`. Validation fails if a source or either bridge
+is missing; packaging discovers valid source directories automatically.
 
-To publish a release, create and push a version tag:
+To distribute updates:
 
-```bash
-git tag v0.1.0
-git push origin v0.1.0
-```
+1. Update the canonical skills under `skills/`.
+2. Merge the changes into `main`.
+3. The **Validate and package skills** workflow runs automatically and
+   generates updated packages.
+4. A maintainer may also run the workflow manually against `main`.
 
-The tag triggers tests, validation, packaging, GitHub Release creation (or
-update), generated release notes for a new release, and upload of every skill
-ZIP. The release workflow can also be started manually for an existing `v*`
-tag.
+The workflow uploads `skill-packages` for pushes to `main` and manual runs.
+Pull requests run the same tests, validation, packaging, and package-existence
+checks without uploading a downloadable artifact.
 
 ## MCP requirements and guardrails
 

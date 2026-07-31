@@ -2,12 +2,23 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+import re
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
 from types import ModuleType
 from zipfile import BadZipFile, ZipFile
+
+
+BRIDGE_ROOTS = (
+    Path(".claude") / "skills",
+    Path(".agents") / "skills",
+)
+FRONTMATTER_KEY_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_-]*$")
+CANONICAL_LINK_PATTERN = re.compile(
+    r"\]\(([^)\r\n]*/skills/[^)\r\n]+/SKILL\.md)\)"
+)
 
 
 def get_repo_root() -> Path:
@@ -51,9 +62,68 @@ def validate_manifests(skills: list[Path]) -> list[str]:
     return errors
 
 
-def validate_project_mappings(repo_root: Path, skills: list[Path]) -> list[str]:
+def parse_bridge_frontmatter(
+    bridge: Path, bridge_text: str
+) -> tuple[dict[str, str], list[str]]:
+    lines = bridge_text.splitlines()
+    if not lines or lines[0].strip() != "---":
+        return {}, [f"{bridge}: missing opening YAML frontmatter delimiter"]
+
+    try:
+        closing_index = next(
+            index
+            for index, line in enumerate(lines[1:], start=1)
+            if line.strip() == "---"
+        )
+    except StopIteration:
+        return {}, [f"{bridge}: missing closing YAML frontmatter delimiter"]
+
+    fields: dict[str, str] = {}
     errors: list[str] = []
-    mappings_root = repo_root / ".claude" / "skills"
+    for line_number, line in enumerate(lines[1:closing_index], start=2):
+        if not line.strip():
+            continue
+        key, separator, value = line.partition(":")
+        key = key.strip()
+        value = value.strip()
+        if (
+            not separator
+            or not FRONTMATTER_KEY_PATTERN.fullmatch(key)
+            or not value
+        ):
+            errors.append(
+                f"{bridge}:{line_number}: malformed YAML frontmatter entry"
+            )
+            continue
+        if key in fields:
+            errors.append(
+                f"{bridge}:{line_number}: duplicate YAML frontmatter key '{key}'"
+            )
+            continue
+        if value[:1] in {"'", '"'}:
+            if len(value) < 2 or value[-1] != value[0]:
+                errors.append(
+                    f"{bridge}:{line_number}: malformed quoted YAML value"
+                )
+                continue
+            value = value[1:-1]
+        fields[key] = value
+
+    for required_key in ("name", "description"):
+        if required_key not in fields:
+            errors.append(
+                f"{bridge}: YAML frontmatter is missing '{required_key}'"
+            )
+    return fields, errors
+
+
+def validate_bridge_mappings(
+    repo_root: Path,
+    skills: list[Path],
+    relative_mappings_root: Path,
+) -> list[str]:
+    errors: list[str] = []
+    mappings_root = repo_root / relative_mappings_root
     if not mappings_root.is_dir():
         return [f"Missing project skills directory: {mappings_root}"]
 
@@ -69,7 +139,9 @@ def validate_project_mappings(repo_root: Path, skills: list[Path]) -> list[str]:
             errors.append(f"{bridge}: missing project skill bridge")
             continue
 
-        expected_relative = Path("..") / ".." / ".." / "skills" / skill.name / "SKILL.md"
+        expected_relative = (
+            Path("..") / ".." / ".." / "skills" / skill.name / "SKILL.md"
+        )
         expected_link = expected_relative.as_posix()
         try:
             bridge_text = bridge.read_text(encoding="utf-8")
@@ -79,7 +151,20 @@ def validate_project_mappings(repo_root: Path, skills: list[Path]) -> list[str]:
             errors.append(f"{bridge}: could not resolve canonical skill: {error}")
             continue
 
-        if expected_link not in bridge_text:
+        frontmatter, frontmatter_errors = parse_bridge_frontmatter(
+            bridge, bridge_text
+        )
+        errors.extend(frontmatter_errors)
+        if frontmatter.get("name") != skill.name:
+            errors.append(
+                f"{bridge}: frontmatter name must match directory name '{skill.name}'"
+            )
+
+        canonical_links = [
+            link.replace("\\", "/")
+            for link in CANONICAL_LINK_PATTERN.findall(bridge_text)
+        ]
+        if canonical_links != [expected_link]:
             errors.append(
                 f"{bridge}: must reference canonical skill {expected_link}"
             )
@@ -92,6 +177,13 @@ def validate_project_mappings(repo_root: Path, skills: list[Path]) -> list[str]:
         errors.append(
             f"{mappings_root / extra_name}: has no matching source skill"
         )
+    return errors
+
+
+def validate_project_mappings(repo_root: Path, skills: list[Path]) -> list[str]:
+    errors: list[str] = []
+    for mappings_root in BRIDGE_ROOTS:
+        errors.extend(validate_bridge_mappings(repo_root, skills, mappings_root))
     return errors
 
 
@@ -175,7 +267,7 @@ def validate_repository(repo_root: Path) -> tuple[list[str], list[str]]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Validate AMRIT release and project-discovery invariants."
+        description="Validate AMRIT packaging and project-discovery invariants."
     )
     parser.add_argument(
         "--repo-root",

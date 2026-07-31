@@ -1,4 +1,4 @@
-name: Validate skills
+name: Validate and package skills
 
 on:
   pull_request:
@@ -27,7 +27,7 @@ jobs:
       - name: Run tests
         run: python -m unittest discover -s tests -v
 
-      - name: Validate skill sources and project mappings
+      - name: Validate canonical skills and project bridges
         run: python scripts/validate-skills.py
 
       - name: Package every skill
@@ -46,10 +46,11 @@ jobs:
             fi
           done
 
-      - name: Upload packages for inspection
+      - name: Upload skill packages
+        if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v6
         with:
           name: skill-packages
           path: dist/*.zip
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 90

@@ -11,6 +11,7 @@ from zipfile import ZIP_DEFLATED, BadZipFile, ZipFile, ZipInfo
 
 SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 EXCLUDED_DIRECTORY_NAMES = {
+    ".agents",
     ".claude",
     ".git",
     ".github",
@@ -19,7 +20,7 @@ EXCLUDED_DIRECTORY_NAMES = {
     "dist",
 }
 EXCLUDED_FILE_NAMES = {".DS_Store", "Desktop.ini", "Thumbs.db"}
-EXCLUDED_FILE_SUFFIXES = {".bak", ".pyc", ".pyo", ".temp", ".tmp", ".zip"}
+EXCLUDED_FILE_SUFFIXES = {".bak", ".pyc", ".pyo", ".temp", ".tmp"}
 DETERMINISTIC_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
 
 
@@ -209,7 +210,7 @@ def package_all(repo_root: Path, output_directory: Path | None = None) -> list[P
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Package AMRIT skills as deterministic Claude Desktop ZIP files."
+        description="Package AMRIT skills as deterministic installable ZIP files."
     )
     parser.add_argument(
         "skill_name",
