@@ -35,14 +35,21 @@ def create_skill(repo_root: Path, name: str, body: str = "Instructions.") -> Pat
     return skill_directory
 
 
-def create_bridge(repo_root: Path, name: str, target_name: str | None = None) -> Path:
+def create_bridge(
+    repo_root: Path,
+    name: str,
+    target_name: str | None = None,
+    bridge_root: str = ".claude",
+    frontmatter_name: str | None = None,
+) -> Path:
     target_name = target_name or name
-    bridge_directory = repo_root / ".claude" / "skills" / name
+    frontmatter_name = frontmatter_name or name
+    bridge_directory = repo_root / bridge_root / "skills" / name
     bridge_directory.mkdir(parents=True)
     bridge = bridge_directory / "SKILL.md"
     bridge.write_text(
         "---\n"
-        f"name: {name}\n"
+        f"name: {frontmatter_name}\n"
         "description: Test project bridge.\n"
         "---\n\n"
         f"[Canonical skill](../../../skills/{target_name}/SKILL.md)\n",
@@ -111,6 +118,7 @@ class PackagingTests(unittest.TestCase):
             skill_directory / ".pytest_cache" / "state",
             skill_directory / ".git" / "config",
             skill_directory / ".github" / "workflow.yml",
+            skill_directory / ".agents" / "settings.json",
             skill_directory / ".claude" / "settings.json",
             skill_directory / "dist" / "old.zip",
             skill_directory / "scratch.tmp",
@@ -169,22 +177,136 @@ class ValidationTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.temporary_directory.cleanup()
 
-    def test_accepts_project_bridge_and_resolves_target(self) -> None:
+    def test_accepts_claude_project_bridge_and_resolves_target(self) -> None:
         skill = create_skill(self.repo_root, "mapped-skill")
         create_bridge(self.repo_root, "mapped-skill")
 
-        errors = validation.validate_project_mappings(self.repo_root, [skill])
+        errors = validation.validate_bridge_mappings(
+            self.repo_root, [skill], Path(".claude") / "skills"
+        )
         self.assertEqual(errors, [])
 
-    def test_rejects_mapping_to_wrong_source(self) -> None:
+    def test_rejects_claude_mapping_to_wrong_source(self) -> None:
         skill = create_skill(self.repo_root, "mapped-skill")
         create_skill(self.repo_root, "other-skill")
         create_bridge(self.repo_root, "mapped-skill", "other-skill")
 
-        errors = validation.validate_project_mappings(self.repo_root, [skill])
+        errors = validation.validate_bridge_mappings(
+            self.repo_root, [skill], Path(".claude") / "skills"
+        )
 
         self.assertEqual(len(errors), 1)
         self.assertIn("must reference canonical skill", errors[0])
+
+    def test_accepts_agents_project_bridge_and_resolves_target(self) -> None:
+        skill = create_skill(self.repo_root, "mapped-skill")
+        create_bridge(self.repo_root, "mapped-skill", bridge_root=".agents")
+
+        errors = validation.validate_bridge_mappings(
+            self.repo_root, [skill], Path(".agents") / "skills"
+        )
+
+        self.assertEqual(errors, [])
+
+    def test_rejects_missing_agents_bridge(self) -> None:
+        skill = create_skill(self.repo_root, "mapped-skill")
+        (self.repo_root / ".agents" / "skills").mkdir(parents=True)
+
+        errors = validation.validate_bridge_mappings(
+            self.repo_root, [skill], Path(".agents") / "skills"
+        )
+
+        self.assertEqual(len(errors), 1)
+        self.assertIn("missing project skill bridge", errors[0])
+
+    def test_rejects_agents_mapping_to_wrong_source(self) -> None:
+        skill = create_skill(self.repo_root, "mapped-skill")
+        create_skill(self.repo_root, "other-skill")
+        create_bridge(
+            self.repo_root,
+            "mapped-skill",
+            target_name="other-skill",
+            bridge_root=".agents",
+        )
+
+        errors = validation.validate_bridge_mappings(
+            self.repo_root, [skill], Path(".agents") / "skills"
+        )
+
+        self.assertEqual(len(errors), 1)
+        self.assertIn("must reference canonical skill", errors[0])
+
+    def test_rejects_agents_bridge_with_mismatched_frontmatter_name(self) -> None:
+        skill = create_skill(self.repo_root, "mapped-skill")
+        create_bridge(
+            self.repo_root,
+            "mapped-skill",
+            bridge_root=".agents",
+            frontmatter_name="other-skill",
+        )
+
+        errors = validation.validate_bridge_mappings(
+            self.repo_root, [skill], Path(".agents") / "skills"
+        )
+
+        self.assertEqual(len(errors), 1)
+        self.assertIn("frontmatter name must match directory name", errors[0])
+
+    def test_rejects_malformed_agents_bridge(self) -> None:
+        skill = create_skill(self.repo_root, "mapped-skill")
+        bridge = create_bridge(
+            self.repo_root, "mapped-skill", bridge_root=".agents"
+        )
+        bridge.write_text(
+            "name: mapped-skill\n"
+            "[Canonical skill](../../../skills/mapped-skill/SKILL.md)\n",
+            encoding="utf-8",
+        )
+
+        errors = validation.validate_bridge_mappings(
+            self.repo_root, [skill], Path(".agents") / "skills"
+        )
+
+        self.assertTrue(
+            any(
+                "missing opening YAML frontmatter delimiter" in error
+                for error in errors
+            )
+        )
+
+    def test_rejects_agents_bridge_directory_without_skill_manifest(self) -> None:
+        skill = create_skill(self.repo_root, "mapped-skill")
+        (self.repo_root / ".agents" / "skills" / "mapped-skill").mkdir(
+            parents=True
+        )
+
+        errors = validation.validate_bridge_mappings(
+            self.repo_root, [skill], Path(".agents") / "skills"
+        )
+
+        self.assertEqual(len(errors), 1)
+        self.assertIn("missing project skill bridge", errors[0])
+
+    def test_rejects_stale_agents_bridge_directory(self) -> None:
+        skill = create_skill(self.repo_root, "mapped-skill")
+        create_bridge(self.repo_root, "mapped-skill", bridge_root=".agents")
+        create_bridge(self.repo_root, "stale-skill", bridge_root=".agents")
+
+        errors = validation.validate_bridge_mappings(
+            self.repo_root, [skill], Path(".agents") / "skills"
+        )
+
+        self.assertEqual(len(errors), 1)
+        self.assertIn("has no matching source skill", errors[0])
+
+    def test_project_mapping_validation_requires_both_bridge_roots(self) -> None:
+        skill = create_skill(self.repo_root, "mapped-skill")
+        create_bridge(self.repo_root, "mapped-skill")
+
+        errors = validation.validate_project_mappings(self.repo_root, [skill])
+
+        self.assertEqual(len(errors), 1)
+        self.assertIn(".agents", errors[0])
 
 
 if __name__ == "__main__":

@@ -44,8 +44,8 @@ Approval alone is not publication permission. Before writing, the skill rechecks
 
 ## Use and distribution
 
-Invoke `/create-product-backlog` in Claude Code from the repository root.
-Claude Desktop users can download
-[create-product-backlog.zip](../../releases/latest/download/create-product-backlog.zip).
-See the [distribution guide](../../docs/installation.md) and
+Invoke `/create-product-backlog` from the repository root using a supported
+coding agent. The `skill-packages` GitHub Actions artifact includes
+`create-product-backlog.zip` for clients that install packaged skills. See the
+[distribution guide](../../docs/installation.md) and
 [lifecycle mapping](../../docs/lifecycle-mapping.md).

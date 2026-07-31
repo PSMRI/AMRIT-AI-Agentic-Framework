@@ -43,7 +43,8 @@ The skill never scores, certifies, approves, rejects, signs off, or automaticall
 
 ## Use and distribution
 
-Invoke `/create-brd` in Claude Code from the repository root. Claude Desktop
-users can download [create-brd.zip](../../releases/latest/download/create-brd.zip).
-See the [distribution guide](../../docs/installation.md) and
+Invoke `/create-brd` from the repository root using a supported coding agent.
+The `skill-packages` GitHub Actions artifact includes `create-brd.zip` for
+clients that install packaged skills. See the
+[distribution guide](../../docs/installation.md) and
 [lifecycle mapping](../../docs/lifecycle-mapping.md).

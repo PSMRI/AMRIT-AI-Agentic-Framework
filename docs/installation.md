@@ -2,15 +2,17 @@
 
 The repository supports two primary audiences:
 
-- **Claude Code developers** use the committed project skills immediately
-  after cloning.
-- **Claude Desktop users** download prebuilt ZIP files from GitHub Releases.
+- **Coding-agent users** use the committed project skills immediately after
+  cloning.
+- **Skill-package users** download prebuilt ZIP files from GitHub Actions
+  artifacts.
 
-Every complete implementation lives only under `skills/`.
+Every complete implementation lives only under `skills/`, which is the
+canonical source.
 
-## Claude Code project use
+## Project use
 
-Clone the repository and launch Claude Code from its root:
+Clone the repository and launch a supported coding agent from its root:
 
 ```bash
 git clone https://github.com/PSMRI/AMRIT-AI-Agentic-Framework.git
@@ -25,9 +27,19 @@ There is no project installation step. Claude Code discovers:
 ```
 
 Each `.claude/skills/<skill-name>/SKILL.md` is a small project bridge that
-loads the canonical implementation from `skills/<skill-name>/SKILL.md`. These
-are ordinary directories and files, so a normal Windows, Linux, or macOS clone
-does not require symbolic-link configuration.
+loads the canonical implementation from `skills/<skill-name>/SKILL.md`.
+
+Cursor and Antigravity use the equivalent project bridges at:
+
+```text
+.agents/skills/<skill-name>/SKILL.md
+```
+
+Both bridge locations defer to the same authoritative canonical skill and
+resolve references, examples, templates, scripts, and assets from its
+`skills/<skill-name>/` directory. The bridges are ordinary directories and
+files, so a normal Windows, Linux, or macOS clone does not require symbolic-link
+configuration.
 
 The available project skills are:
 
@@ -35,24 +47,25 @@ The available project skills are:
 - `/create-product-backlog`
 - `/create-technical-design`
 
-## Claude Desktop
+## Install packaged skills
 
-[Download the latest skill packages](../../releases/latest)
+Generated ZIP files are distributed through the **skill-packages** GitHub
+Actions artifact:
 
-Install one package:
+1. Open the GitHub repository.
+2. Open the **Actions** tab.
+3. Select **Validate and package skills**.
+4. Open the latest successful run for `main`.
+5. Download the **skill-packages** artifact.
+6. Extract the outer artifact archive.
+7. Select the required individual skill ZIP.
+8. Install or upload that ZIP using the supported client workflow.
 
-1. Open the repository's latest GitHub Release.
-2. Download the ZIP for the desired skill.
-3. Open Claude Desktop.
-4. Open the skill interface and upload the ZIP.
-5. Confirm that the skill appears and its required MCP connections are
-   available.
+The artifact contains:
 
-Direct release assets:
-
-- [Create BRD](../../releases/latest/download/create-brd.zip)
-- [Create Product Backlog](../../releases/latest/download/create-product-backlog.zip)
-- [Create Technical Design](../../releases/latest/download/create-technical-design.zip)
+- `create-brd.zip`
+- `create-product-backlog.zip`
+- `create-technical-design.zip`
 
 Each package has exactly one top-level skill directory:
 
@@ -86,26 +99,24 @@ python scripts/package-skills.py create-brd
 Generated files are written to `dist/`. The directory and all ZIP files are
 ignored by Git.
 
-Validation checks that each source skill has `SKILL.md`, every project bridge
+Validation checks that each source skill has `SKILL.md`, every source has valid
+bridges under both `.claude/skills/` and `.agents/skills/`, every bridge
 resolves to its canonical skill, packaging succeeds with one top-level skill
 directory per ZIP, and generated ZIPs are not tracked.
 
-## Publishing a release
+## Maintainer distribution workflow
 
-Create and push a tag following the `v*` convention:
+1. Update the canonical skills under `skills/`.
+2. Merge the changes into `main`.
+3. The **Validate and package skills** workflow runs automatically and
+   generates updated packages.
+4. A maintainer may also manually run the workflow against `main`.
 
-```bash
-git tag v0.1.0
-git push origin v0.1.0
-```
-
-The release workflow checks out that exact tag, runs tests and validation,
-packages every skill, creates or updates the corresponding GitHub Release, and
-uploads all ZIP assets. New releases receive generated release notes.
-
-The validation workflow runs separately for pull requests, pushes to `main`,
-and manual dispatch. Its uploaded packages are temporary inspection artifacts,
-not the permanent user download location.
+The workflow runs tests, validates canonical skills and both bridge locations,
+packages every canonical skill, confirms all expected ZIPs exist, and uploads
+`skill-packages` on pushes to `main` and manual runs. Pull requests perform all
+validation and packaging checks but do not upload an artifact. GitHub Releases
+and version tags are not currently used.
 
 ## MCP prerequisites
 
