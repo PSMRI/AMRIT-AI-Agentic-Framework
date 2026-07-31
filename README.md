@@ -77,6 +77,44 @@ Never commit real Jira, Confluence, or OpenProject tokens. Make credential
 changes only in your local working copy, and check that they are not staged or
 committed before sharing or pushing changes.
 
+### Obtaining required API tokens
+
+The committed MCP configuration files contain token placeholders. Before using
+the Atlassian or OpenProject MCP servers, generate your own personal access
+tokens and replace the placeholders in your local working copy.
+
+#### Jira
+
+1. Log in to Jira.
+2. Open your account settings.
+3. Navigate to **API Tokens** or **Personal Access Tokens**.
+4. Create a new token.
+5. Copy and securely store the token.
+6. Replace the Jira placeholder in your local MCP configuration.
+
+#### Confluence
+
+1. Log in to https://pmp.piramalswasthya.org/confluence.
+2. Open your account settings.
+3. Navigate to **Personal Access Tokens**.
+4. Create a new token.
+5. Copy and securely store the token.
+6. Replace the Confluence placeholder in your local MCP configuration.
+
+#### OpenProject
+
+1. Log in to https://openproject.piramalswasthya.org/.
+2. Click your profile avatar in the upper-right corner.
+3. Open **My Account**.
+4. Navigate to **Access Tokens** or **API Tokens**.
+5. Generate a new API token.
+6. Copy and securely store the token.
+7. Replace the OpenProject placeholder in your local MCP configuration.
+
+Never commit real tokens to the repository. Keep credentials only in your local
+working copy.
+
+
 Claude Desktop does not use these project-scoped files. It still requires its
 own user-level connector or configuration setup. Keep Claude Desktop-only
 fields such as `coworkUserFilesPath` and `preferences` out of `.mcp.json`,
