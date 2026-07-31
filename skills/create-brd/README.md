@@ -44,7 +44,11 @@ The skill never scores, certifies, approves, rejects, signs off, or automaticall
 ## Use and distribution
 
 Invoke `/create-brd` from the repository root using a supported coding agent.
-The `skill-packages` GitHub Actions artifact includes `create-brd.zip` for
-clients that install packaged skills. See the
+For a packaged installation, open the repository on GitHub, open the
+**Actions** tab, select the latest successful **Validate and package skills**
+workflow run on `main`, scroll to **Artifacts**, and download `create-brd.zip`
+directly. Upload or install that ZIP using the relevant client workflow. It is
+the actual skill package, so no additional archive extraction is required.
+See the
 [distribution guide](../../docs/installation.md) and
 [lifecycle mapping](../../docs/lifecycle-mapping.md).

@@ -50,26 +50,25 @@ skill automatically when a request matches its description.
 
 ## Install skill packages from GitHub Actions
 
-Repository users can download the current packages without creating a version
-tag:
+Each skill is published as an individual GitHub Actions artifact. To install
+one:
 
-1. Open the GitHub repository.
+1. Open the repository on GitHub.
 2. Open the **Actions** tab.
-3. Select **Validate and package skills**.
-4. Open the latest successful run for `main`.
-5. Download the **skill-packages** artifact.
-6. Extract the outer artifact archive.
-7. Select the required individual skill ZIP.
-8. Install or upload that ZIP using the supported client workflow.
+3. Select the latest successful **Validate and package skills** workflow run on
+   `main`.
+4. Scroll to the **Artifacts** section.
+5. Download the required skill ZIP directly:
+   - `create-brd.zip`
+   - `create-product-backlog.zip`
+   - `create-technical-design.zip`
+6. Upload or install that ZIP using the relevant client workflow.
 
-The artifact contains:
-
-- `create-brd.zip`
-- `create-product-backlog.zip`
-- `create-technical-design.zip`
-
-Each ZIP contains one top-level skill directory with `SKILL.md` and all of that
-skill's references, examples, templates, scripts, and assets.
+The packages are separate artifacts, not a combined artifact. No additional
+archive extraction is required: the ZIP downloaded from GitHub Actions is the
+actual skill package. Each ZIP contains one top-level skill directory with
+`SKILL.md` and all of that skill's references, examples, templates, scripts,
+and assets.
 
 ## Distribution architecture
 
@@ -88,9 +87,8 @@ scripts/validate-skills.py      Packaging and project-discovery checks
 ```
 
 Generated `dist/` content and all ZIP files are ignored by Git. GitHub Actions
-creates packages from `skills/` and distributes them through the
-`skill-packages` artifact. GitHub Releases and version tags are not currently
-used.
+creates packages from `skills/` and publishes each ZIP as an individual
+artifact. GitHub Releases and version tags are not currently used.
 
 ## Maintainer workflow
 
@@ -120,12 +118,13 @@ To distribute updates:
 1. Update the canonical skills under `skills/`.
 2. Merge the changes into `main`.
 3. The **Validate and package skills** workflow runs automatically and
-   generates updated packages.
+   packages and publishes the three individual ZIP artifacts.
 4. A maintainer may also run the workflow manually against `main`.
 
-The workflow uploads `skill-packages` for pushes to `main` and manual runs.
+Pushes to `main` and manual workflow runs publish the individual ZIP artifacts.
 Pull requests run the same tests, validation, packaging, and package-existence
-checks without uploading a downloadable artifact.
+checks but do not publish downloadable artifacts. Maintainers do not need to
+create a release or version tag.
 
 ## MCP requirements and guardrails
 

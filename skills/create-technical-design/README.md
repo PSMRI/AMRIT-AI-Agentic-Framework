@@ -53,7 +53,11 @@ If a mandatory research capability other than optional DeepWiki is unavailable, 
 ## Use and distribution
 
 Invoke `/create-technical-design` from the repository root using a supported
-coding agent. The `skill-packages` GitHub Actions artifact includes
-`create-technical-design.zip` for clients that install packaged skills. See the
+coding agent. For a packaged installation, open the repository on GitHub, open
+the **Actions** tab, select the latest successful
+**Validate and package skills** workflow run on `main`, scroll to
+**Artifacts**, and download `create-technical-design.zip` directly. Upload or
+install that ZIP using the relevant client workflow. It is the actual skill
+package, so no additional archive extraction is required. See the
 [distribution guide](../../docs/installation.md) and
 [lifecycle mapping](../../docs/lifecycle-mapping.md).

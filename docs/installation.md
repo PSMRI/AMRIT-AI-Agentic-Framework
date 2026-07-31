@@ -49,23 +49,23 @@ The available project skills are:
 
 ## Install packaged skills
 
-Generated ZIP files are distributed through the **skill-packages** GitHub
-Actions artifact:
+Each generated ZIP is published as an individual GitHub Actions artifact:
 
-1. Open the GitHub repository.
+1. Open the repository on GitHub.
 2. Open the **Actions** tab.
-3. Select **Validate and package skills**.
-4. Open the latest successful run for `main`.
-5. Download the **skill-packages** artifact.
-6. Extract the outer artifact archive.
-7. Select the required individual skill ZIP.
-8. Install or upload that ZIP using the supported client workflow.
+3. Select the latest successful **Validate and package skills** workflow run on
+   `main`.
+4. Scroll to the **Artifacts** section.
+5. Download the required skill ZIP directly:
+   - `create-brd.zip`
+   - `create-product-backlog.zip`
+   - `create-technical-design.zip`
+6. Upload or install that ZIP using the relevant client workflow.
 
-The artifact contains:
-
-- `create-brd.zip`
-- `create-product-backlog.zip`
-- `create-technical-design.zip`
+The three ZIPs are separate artifacts. There is no combined artifact, and no
+additional archive extraction is required. The ZIP downloaded from GitHub
+Actions is the actual skill package. Claude Desktop users can upload that ZIP
+directly through the skill interface.
 
 Each package has exactly one top-level skill directory:
 
@@ -109,14 +109,16 @@ directory per ZIP, and generated ZIPs are not tracked.
 1. Update the canonical skills under `skills/`.
 2. Merge the changes into `main`.
 3. The **Validate and package skills** workflow runs automatically and
-   generates updated packages.
+   packages and publishes the three individual ZIP artifacts.
 4. A maintainer may also manually run the workflow against `main`.
 
 The workflow runs tests, validates canonical skills and both bridge locations,
-packages every canonical skill, confirms all expected ZIPs exist, and uploads
-`skill-packages` on pushes to `main` and manual runs. Pull requests perform all
-validation and packaging checks but do not upload an artifact. GitHub Releases
-and version tags are not currently used.
+packages every canonical skill, and confirms all expected ZIPs exist. Pushes to
+`main` and manual workflow runs publish the individual ZIP artifacts. Pull
+requests perform all validation and packaging checks but do not publish
+downloadable artifacts. Maintainers only need to merge canonical skill changes
+into `main`; no release or version tag is required. GitHub Releases and version
+tags are not currently used.
 
 ## MCP prerequisites
 
