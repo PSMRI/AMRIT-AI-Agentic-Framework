@@ -18,7 +18,7 @@ The defect path accepts an L2-escalated bug, an existing Jira production defect,
 
 ## Required MCP capability
 
-An already-connected Atlassian MCP must provide relevant Confluence and Jira search and read capabilities. The skill uses these capabilities to retrieve source material, check related work and possible duplicates, and discover actual Jira hierarchy, fields, and project conventions.
+An Atlassian MCP connection must provide relevant Confluence and Jira search and read capabilities. A cloned repository supplies the project-scoped server definition through `.mcp.json` for Claude Code, `.cursor/mcp.json` for Cursor, and `.agents/mcp_config.json` for Antigravity. These files intentionally contain the same `mcpServers` definitions at client-specific discovery paths. The skill uses these capabilities to retrieve source material, check related work and possible duplicates, and discover actual Jira hierarchy, fields, and project conventions.
 
 Jira write capabilities are optional and used only for an explicitly authorized publication. No DeepWiki integration is required.
 
@@ -45,7 +45,18 @@ Approval alone is not publication permission. Before writing, the skill rechecks
 ## Use and distribution
 
 Invoke `/create-product-backlog` from the repository root using a supported
-coding agent. For a packaged installation, open the repository on GitHub, open
+coding agent. After cloning, replace the token placeholders only in the
+relevant local MCP file, open the repository in the chosen client, reload or
+restart if required, and approve or trust the servers when prompted. Tokens
+are not preconfigured. Never commit real Jira, Confluence, or OpenProject
+tokens; confirm local credential changes are not staged or committed.
+
+Claude Desktop does not use the repository MCP files and requires its own
+user-level connector or configuration setup. Do not copy Claude Desktop-only
+fields such as `coworkUserFilesPath` or `preferences` into repository MCP
+files.
+
+For a packaged installation, open the repository on GitHub, open
 the **Actions** tab, select the latest successful
 **Validate and package skills** workflow run on `main`, scroll to
 **Artifacts**, and download `create-product-backlog.zip` directly. Upload or

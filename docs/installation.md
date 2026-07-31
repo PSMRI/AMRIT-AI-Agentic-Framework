@@ -47,6 +47,50 @@ The available project skills are:
 - `/create-product-backlog`
 - `/create-technical-design`
 
+## Project-scoped MCP setup
+
+The cloned repository already contains project-level MCP configuration for the
+three supported coding clients:
+
+| Client | Project configuration |
+| --- | --- |
+| Claude Code | [`.mcp.json`](../.mcp.json) |
+| Cursor | [`.cursor/mcp.json`](../.cursor/mcp.json) |
+| Antigravity | [`.agents/mcp_config.json`](../.agents/mcp_config.json) |
+
+All three files intentionally contain the same `mcpServers` definitions. The
+copies live at different paths because each client expects project
+configuration in a different location; users do not need to recreate the
+server list in a global configuration.
+
+To connect the project:
+
+1. Clone the repository.
+2. In the MCP file for the chosen client, replace each applicable
+   `<put your token here>` placeholder with the user's Jira, Confluence, or
+   OpenProject token.
+3. Open the repository root in Claude Code, Cursor, or Antigravity.
+4. Reload or restart the client if required for it to discover the project
+   configuration.
+5. Approve or trust the MCP servers when prompted by the client.
+
+The committed files contain token placeholders, not configured credentials.
+Never commit real Jira, Confluence, or OpenProject tokens. Replace placeholders
+only in the local working copy, and confirm that accidental credential changes
+are not staged or committed before sharing or pushing changes.
+
+### Claude Desktop
+
+Claude Desktop does not read the repository-scoped files above. It requires
+its own user-level connector or configuration setup. Do not copy
+Claude Desktop-only fields such as `coworkUserFilesPath` or `preferences` into
+`.mcp.json`, `.cursor/mcp.json`, or `.agents/mcp_config.json`.
+
+The repository-level MCP files are also not bundled inside the standalone skill
+ZIP artifacts. A packaged-skill user must use the MCP setup supported by the
+client where the package is installed; for Claude Desktop, that is the
+user-level setup described above.
+
 ## Install packaged skills
 
 Each generated ZIP is published as an individual GitHub Actions artifact:
@@ -65,7 +109,9 @@ Each generated ZIP is published as an individual GitHub Actions artifact:
 The three ZIPs are separate artifacts. There is no combined artifact, and no
 additional archive extraction is required. The ZIP downloaded from GitHub
 Actions is the actual skill package. Claude Desktop users can upload that ZIP
-directly through the skill interface.
+directly through the skill interface, but must configure the required
+user-level connectors separately because Claude Desktop does not read the
+repository-scoped MCP files.
 
 Each package has exactly one top-level skill directory:
 
@@ -122,7 +168,10 @@ tags are not currently used.
 
 ## MCP prerequisites
 
-MCP connections and credentials are configured outside this repository.
+For cloned-project use, the repository-provided MCP files define the
+connections for Claude Code, Cursor, and Antigravity. Users supply only their
+local token values and complete any client trust prompt as described in
+[Project-scoped MCP setup](#project-scoped-mcp-setup).
 
 - `create-brd` requires Atlassian MCP Confluence search and page-read
   capabilities.
@@ -134,7 +183,8 @@ MCP connections and credentials are configured outside this repository.
   research is optional.
 
 Never add credentials, tokens, passwords, private MCP URLs, or
-environment-specific configuration to a skill package.
+environment-specific configuration to a skill package. Never stage or commit
+real Jira, Confluence, or OpenProject tokens from a local project MCP file.
 
 For skill behavior and review gates, see the
 [lifecycle mapping](lifecycle-mapping.md).

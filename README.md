@@ -20,13 +20,12 @@ upstream output without requiring the upstream skill at runtime.
 
 ## Project use: discover skills immediately
 
-Developers can clone the repository and start a supported coding agent from its
+Developers can clone the repository and use a supported coding agent from its
 root:
 
 ```bash
 git clone https://github.com/PSMRI/AMRIT-AI-Agentic-Framework.git
 cd AMRIT-AI-Agentic-Framework
-claude
 ```
 
 No project-level installation command is required. Claude Code discovers
@@ -47,6 +46,41 @@ Both bridge locations contain all three skills:
 
 Invoke a skill using the supported client workflow. Clients may also load a
 skill automatically when a request matches its description.
+
+### Project-scoped MCP setup
+
+The repository includes project-scoped MCP configuration for every supported
+coding client:
+
+| Client | Project configuration |
+| --- | --- |
+| Claude Code | [`.mcp.json`](.mcp.json) |
+| Cursor | [`.cursor/mcp.json`](.cursor/mcp.json) |
+| Antigravity | [`.agents/mcp_config.json`](.agents/mcp_config.json) |
+
+These files intentionally contain the same `mcpServers` definitions. They are
+stored at different paths only because each client discovers project MCP
+configuration at a different location.
+
+After cloning:
+
+1. Open the MCP file for the client you intend to use.
+2. Replace each applicable `<put your token here>` placeholder in your local
+   working copy with your Jira, Confluence, or OpenProject token.
+3. Open the repository root in Claude Code, Cursor, or Antigravity.
+4. Reload or restart the client if it does not detect the configuration
+   immediately.
+5. Approve or trust the configured MCP servers when the client prompts you.
+
+The committed files contain placeholders; tokens are not preconfigured.
+Never commit real Jira, Confluence, or OpenProject tokens. Make credential
+changes only in your local working copy, and check that they are not staged or
+committed before sharing or pushing changes.
+
+Claude Desktop does not use these project-scoped files. It still requires its
+own user-level connector or configuration setup. Keep Claude Desktop-only
+fields such as `coworkUserFilesPath` and `preferences` out of `.mcp.json`,
+`.cursor/mcp.json`, and `.agents/mcp_config.json`.
 
 ## Install skill packages from GitHub Actions
 
@@ -128,8 +162,10 @@ create a release or version tag.
 
 ## MCP requirements and guardrails
 
-MCP services are externally managed; this repository stores no endpoints,
-credentials, tokens, or secrets.
+The project-scoped files described above provide the server definitions and
+endpoints needed by Claude Code, Cursor, and Antigravity. Their committed token
+values remain placeholders and must be replaced only in each user's local
+working copy.
 
 - `create-brd` requires connected Atlassian MCP Confluence search and page-read
   capabilities. Confluence is read-only by default.

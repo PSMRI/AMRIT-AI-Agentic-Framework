@@ -20,7 +20,7 @@ If Stories or acceptance criteria are inaccessible, the skill stops. If approval
 
 ## Required and optional research capabilities
 
-Connected Atlassian MCP Jira and Confluence search/read capabilities are required. The authoritative Swagger/OpenAPI contract must be readable when an API exists or may be affected. All research is read-only.
+Atlassian MCP Jira and Confluence search/read capabilities are required. A cloned repository supplies the project-scoped server definition through `.mcp.json` for Claude Code, `.cursor/mcp.json` for Cursor, and `.agents/mcp_config.json` for Antigravity. These files intentionally contain the same `mcpServers` definitions at client-specific discovery paths. The authoritative Swagger/OpenAPI contract must be readable when an API exists or may be affected. All research is read-only.
 
 Official DeepWiki MCP repository intelligence is optional. When available, the skill researches only a small, relevant repository shortlist and validates design proposals against retrieved evidence. When unavailable, it continues without blocking the design, states that repository research was unavailable, marks implementation-specific details **Proposed** or **Unknown**, and identifies later repository verification.
 
@@ -53,7 +53,18 @@ If a mandatory research capability other than optional DeepWiki is unavailable, 
 ## Use and distribution
 
 Invoke `/create-technical-design` from the repository root using a supported
-coding agent. For a packaged installation, open the repository on GitHub, open
+coding agent. After cloning, replace the token placeholders only in the
+relevant local MCP file, open the repository in the chosen client, reload or
+restart if required, and approve or trust the servers when prompted. Tokens
+are not preconfigured. Never commit real Jira, Confluence, or OpenProject
+tokens; confirm local credential changes are not staged or committed.
+
+Claude Desktop does not use the repository MCP files and requires its own
+user-level connector or configuration setup. Do not copy Claude Desktop-only
+fields such as `coworkUserFilesPath` or `preferences` into repository MCP
+files.
+
+For a packaged installation, open the repository on GitHub, open
 the **Actions** tab, select the latest successful
 **Validate and package skills** workflow run on `main`, scroll to
 **Artifacts**, and download `create-technical-design.zip` directly. Upload or
