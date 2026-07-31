@@ -20,7 +20,7 @@ EXCLUDED_DIRECTORY_NAMES = {
     "dist",
 }
 EXCLUDED_FILE_NAMES = {".DS_Store", "Desktop.ini", "Thumbs.db"}
-EXCLUDED_FILE_SUFFIXES = {".bak", ".pyc", ".pyo", ".temp", ".tmp"}
+EXCLUDED_FILE_SUFFIXES = {".bak", ".pyc", ".pyo", ".temp", ".tmp", ".zip"}
 DETERMINISTIC_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
 
 
