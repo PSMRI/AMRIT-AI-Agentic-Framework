@@ -22,3 +22,4 @@ __pycache__/
 # Generated skill packages
 dist/
 *.zip
+.claude/settings.local.json

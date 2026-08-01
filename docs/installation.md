@@ -46,6 +46,7 @@ The available project skills are:
 - `/create-brd`
 - `/create-product-backlog`
 - `/create-technical-design`
+- `/answer-codebase-questions`
 
 ## Project-scoped MCP setup
 
@@ -104,9 +105,10 @@ Each generated ZIP is published as an individual GitHub Actions artifact:
    - `create-brd.zip`
    - `create-product-backlog.zip`
    - `create-technical-design.zip`
+   - `answer-codebase-questions.zip`
 6. Upload or install that ZIP using the relevant client workflow.
 
-The three ZIPs are separate artifacts. There is no combined artifact, and no
+The ZIPs are separate artifacts. There is no combined artifact, and no
 additional archive extraction is required. The ZIP downloaded from GitHub
 Actions is the actual skill package. Claude Desktop users can upload that ZIP
 directly through the skill interface, but must configure the required
@@ -155,7 +157,7 @@ directory per ZIP, and generated ZIPs are not tracked.
 1. Update the canonical skills under `skills/`.
 2. Merge the changes into `main`.
 3. The **Validate and package skills** workflow runs automatically and
-   packages and publishes the three individual ZIP artifacts.
+   packages and publishes the individual ZIP artifacts.
 4. A maintainer may also manually run the workflow against `main`.
 
 The workflow runs tests, validates canonical skills and both bridge locations,
@@ -181,6 +183,8 @@ local token values and complete any client trust prompt as described in
 - `create-technical-design` requires Jira and Confluence reads plus applicable
   architecture and Swagger/OpenAPI evidence. Official DeepWiki MCP repository
   research is optional.
+- `answer-codebase-questions` uses read-only DeepWiki first, then Confluence
+  when needed, with Graphify as the final fallback. It never uses Jira.
 
 Never add credentials, tokens, passwords, private MCP URLs, or
 environment-specific configuration to a skill package. Never stage or commit

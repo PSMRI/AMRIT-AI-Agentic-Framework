@@ -14,6 +14,7 @@ source directories.
 | [`create-brd`](skills/create-brd/README.md) | `/create-brd` | Stage 01/12 — Business & Product | A traceable AMRIT BRD labelled **Draft — Pending Human Review** after mandatory read-only Confluence research. |
 | [`create-product-backlog`](skills/create-product-backlog/README.md) | `/create-product-backlog` | Stage 02 — Product Backlog Creation | A review-ready backlog from an approved BRD/FRD or L2-escalated production defect, labelled **Draft - Pending Product Manager Review**. |
 | [`create-technical-design`](skills/create-technical-design/README.md) | `/create-technical-design` | Stage 03 — Engineering Analysis | One evidence-based technical design package labelled **Ready for Architect Review**. |
+| [`answer-codebase-questions`](skills/answer-codebase-questions/README.md) | `/answer-codebase-questions` | Cross-lifecycle — Codebase knowledge | A concise, evidence-backed AMRIT codebase answer from DeepWiki, Confluence, and Graphify; never Jira. |
 
 The skills are independent. A downstream skill can consume an approved
 upstream output without requiring the upstream skill at runtime.
@@ -33,7 +34,7 @@ project skills under `.claude/skills/`. Cursor and Antigravity discover project
 skills under `.agents/skills/`. Each project skill is a small, Windows-safe
 `SKILL.md` bridge that loads its canonical implementation from `skills/`.
 
-Both bridge locations contain all three skills:
+Both bridge locations contain every available skill:
 
 ```text
 <bridge-root>/create-brd/SKILL.md
@@ -42,6 +43,8 @@ Both bridge locations contain all three skills:
     -> skills/create-product-backlog/SKILL.md
 <bridge-root>/create-technical-design/SKILL.md
     -> skills/create-technical-design/SKILL.md
+<bridge-root>/answer-codebase-questions/SKILL.md
+    -> skills/answer-codebase-questions/SKILL.md
 ```
 
 Invoke a skill using the supported client workflow. Clients may also load a
@@ -134,6 +137,7 @@ one:
    - `create-brd.zip`
    - `create-product-backlog.zip`
    - `create-technical-design.zip`
+   - `answer-codebase-questions.zip`
 6. Upload or install that ZIP using the relevant client workflow.
 
 The packages are separate artifacts, not a combined artifact. No additional
@@ -148,7 +152,8 @@ and assets.
 skills/                         Canonical source; edit skills here
 ├── create-brd/
 ├── create-product-backlog/
-└── create-technical-design/
+├── create-technical-design/
+└── answer-codebase-questions/
 
 .claude/skills/                 Claude project bridges
 .agents/skills/                 Cursor and Antigravity project bridges
@@ -190,7 +195,7 @@ To distribute updates:
 1. Update the canonical skills under `skills/`.
 2. Merge the changes into `main`.
 3. The **Validate and package skills** workflow runs automatically and
-   packages and publishes the three individual ZIP artifacts.
+   packages and publishes the individual ZIP artifacts.
 4. A maintainer may also run the workflow manually against `main`.
 
 Pushes to `main` and manual workflow runs publish the individual ZIP artifacts.
@@ -213,6 +218,8 @@ working copy.
 - `create-technical-design` requires relevant Jira, Confluence, architecture,
   and Swagger/OpenAPI evidence. Official DeepWiki MCP repository research is
   optional and read-only.
+- `answer-codebase-questions` uses read-only DeepWiki first, then Confluence
+  when needed, with Graphify as the final fallback. It never uses Jira.
 
 All outputs require human review. No skill automatically approves or publishes
 content, and `create-technical-design` never modifies Jira, Confluence,

@@ -1,12 +1,13 @@
 # AMRIT SDLC lifecycle mapping
 
-The three skills are independently installable but align to consecutive lifecycle stages. A downstream skill may consume an approved upstream output without requiring the upstream skill itself to be installed.
+The skills are independently installable. The first three align to consecutive lifecycle stages; `answer-codebase-questions` is available across the lifecycle. A downstream skill may consume an approved upstream output without requiring the upstream skill itself to be installed.
 
 | Stage | Primary role | Skill | Review status |
 | --- | --- | --- | --- |
 | Stage 01/12 — Business & Product | Business Systems Analyst | [`create-brd`](../skills/create-brd/README.md) | Draft — Pending Human Review |
 | Stage 02 — Product Backlog Creation | Product Manager | [`create-product-backlog`](../skills/create-product-backlog/README.md) | Draft - Pending Product Manager Review |
 | Stage 03 — Engineering Analysis | Technical Architect / Senior Developer | [`create-technical-design`](../skills/create-technical-design/README.md) | Ready for Architect Review |
+| Cross-lifecycle — Codebase knowledge | Software Engineer | [`answer-codebase-questions`](../skills/answer-codebase-questions/README.md) | Evidence-backed codebase answer |
 
 ## Stage 01/12 — BRD
 
@@ -81,5 +82,24 @@ The Product Manager has reviewed, finalized, and triaged the backlog with contex
 The Technical Architect has reviewed the design, resolved or accepted material risks and open questions, and authorized implementation to begin.
 
 `create-technical-design` finishes with **Ready for Architect Review** and **No implementation should begin until the design is reviewed.** It is read-only, produces no implementation code, never modifies or publishes to Jira or Confluence, and never claims that the exit criterion has been met.
+
+## Cross-lifecycle — Codebase knowledge
+
+### Inputs
+
+- Questions about AMRIT repositories, services, APIs, modules, data flows, integrations, implementation behaviour, or architecture rationale
+
+### Outputs
+
+- Direct, evidence-backed codebase answer
+- Concrete implementation and documentation references when available
+- Confidence, conflicts, and unresolved evidence gaps when relevant
+
+### Research order
+
+`answer-codebase-questions` researches DeepWiki first, Confluence when
+implementation evidence does not fully answer the question or design context is
+needed, and Graphify only as the final fallback for unresolved relationships.
+It is read-only and never uses Jira.
 
 See the [installation guide](installation.md) for Claude Code and Claude Desktop setup.

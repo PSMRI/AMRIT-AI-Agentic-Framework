@@ -72,3 +72,12 @@ jobs:
           archive: false
           if-no-files-found: error
           retention-days: 90
+
+      - name: Upload answer-codebase-questions package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/answer-codebase-questions.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
