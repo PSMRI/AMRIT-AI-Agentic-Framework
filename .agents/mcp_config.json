@@ -1,0 +1,46 @@
+{
+  "mcpServers": {
+    "mcp-atlassian": {
+      "command": "npx.cmd",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://amrittools.piramalswasthya.org/atlassian/mcp",
+        "--header",
+        "X-Atlassian-Jira-Url: https://support.piramalfoundation.org/jira",
+        "--header",
+        "X-Atlassian-Jira-Personal-Token: <put your token here>",
+        "--header",
+        "X-Atlassian-Confluence-Url: https://pmp.piramalswasthya.org/confluence",
+        "--header",
+        "X-Atlassian-Confluence-Personal-Token: <put your token here>"
+      ]
+    },
+    "deepwiki": {
+      "command": "npx.cmd",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.deepwiki.com/mcp"
+      ]
+    },
+    "mcp-openproject": {
+      "command": "npx.cmd",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://amrittools.piramalswasthya.org/openproject/mcp",
+        "--header",
+        "Authorization: Bearer <put your token here>"
+      ]
+    },
+    "graphify-agent": {
+      "command": "npx.cmd",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://amrittools.piramalswasthya.org/amrit/mcp"
+      ]
+    }
+  }
+}

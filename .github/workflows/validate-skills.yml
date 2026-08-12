@@ -1,0 +1,83 @@
+name: Validate and package skills
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-package:
+    name: Validate and package skills
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Validate canonical skills and project bridges
+        run: python scripts/validate-skills.py
+
+      - name: Package every skill
+        run: python scripts/package-skills.py --all
+
+      - name: Confirm every package was generated
+        shell: bash
+        run: |
+          for skill_directory in skills/*; do
+            [ -d "$skill_directory" ] || continue
+            skill_name="$(basename "$skill_directory")"
+            package="dist/${skill_name}.zip"
+            if [ ! -f "$package" ]; then
+              echo "::error::Missing expected package: $package"
+              exit 1
+            fi
+          done
+
+      - name: Upload create-brd package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/create-brd.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload create-product-backlog package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/create-product-backlog.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload create-technical-design package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/create-technical-design.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload answer-codebase-questions package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/answer-codebase-questions.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90

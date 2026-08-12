@@ -1,0 +1,25 @@
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor files
+.idea/
+.vscode/
+*.swp
+*~
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Generated skill packages
+dist/
+*.zip
+.claude/settings.local.json
