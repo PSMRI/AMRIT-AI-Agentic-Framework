@@ -94,7 +94,7 @@ The skill **may** inspect `git status`, `git diff`, and history to understand co
 
 The skill **must not** create or rename a branch, commit, amend, squash, rebase, merge, push, force-push, create, merge, or approve a Pull Request, or claim code-review sign-off. It never transitions the Jira issue or writes to Jira or Confluence, and it never runs destructive Git commands such as `git reset --hard` or `git clean -fd` or discards existing uncommitted work.
 
-Branch creation, Git operations, PR title and description, PR creation, and review preparation belong to the downstream Git/PR skill.
+Branch creation, Git operations, PR title and description, PR creation, and review preparation belong to the downstream [`create-development-pr`](../create-development-pr/README.md) skill. That skill is independently installable; this one completes without it.
 
 ## Example invocation
 

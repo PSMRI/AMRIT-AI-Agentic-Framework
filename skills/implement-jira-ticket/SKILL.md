@@ -16,6 +16,7 @@ metadata:
     - Approved Jira Bug
   primary_input: Approved Jira ticket
   primary_output: Implemented and locally verified code with unit tests
+  next_skill: create-development-pr
 ---
 
 # Implement Jira Ticket
@@ -151,7 +152,7 @@ Produce the completion output described below.
 
 This skill may inspect `git status`, `git diff`, and history when needed to understand conventions.
 
-It must not create or rename a branch, commit, amend, squash, rebase, merge, push, force-push, create, merge, or approve a Pull Request, or claim code-review sign-off. It must not modify Jira status when implementation finishes. A separate downstream skill owns branch creation, Git operations, PR title and description, PR creation, and review preparation.
+It must not create or rename a branch, commit, amend, squash, rebase, merge, push, force-push, create, merge, or approve a Pull Request, or claim code-review sign-off. It must not modify Jira status when implementation finishes. The downstream `create-development-pr` skill owns branch creation, Git operations, PR title and description, PR creation, and review preparation. That skill is independently installable and is not required for this one to complete.
 
 ## Security and safety
 
