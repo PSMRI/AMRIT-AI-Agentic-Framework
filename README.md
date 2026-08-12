@@ -15,10 +15,13 @@ source directories.
 | [`create-product-backlog`](skills/create-product-backlog/README.md) | `/create-product-backlog` | Stage 02 — Product Backlog Creation | A review-ready backlog from an approved BRD/FRD or L2-escalated production defect, labelled **Draft - Pending Product Manager Review**. |
 | [`create-technical-design`](skills/create-technical-design/README.md) | `/create-technical-design` | Stage 03 — Engineering Analysis | One evidence-based technical design package labelled **Ready for Architect Review**. |
 | [`implement-jira-ticket`](skills/implement-jira-ticket/README.md) | `/implement-jira-ticket` | Stage 04 — In Development | Implemented and locally verified code with unit tests, with any schema change placed in `AMRIT-DB`, ready for PR preparation. |
+| [`create-development-pr`](skills/create-development-pr/README.md) | `/create-development-pr` | Stage 04 — In Development | A GitHub Pull Request for an implemented Jira ticket, from a Jira-named branch against the correct `release-X.Y.Z` branch, labelled **Awaiting code review**. |
 | [`answer-codebase-questions`](skills/answer-codebase-questions/README.md) | `/answer-codebase-questions` | Cross-lifecycle — Codebase knowledge | A concise, evidence-backed AMRIT codebase answer from DeepWiki, Confluence, and Graphify; never Jira. |
 
-`implement-jira-ticket` is the only skill that changes source files. The others
-are read-only.
+`implement-jira-ticket` is the implementation and source-editing skill.
+`create-development-pr` performs Git and GitHub write operations — branch,
+commit, push, and Pull Request creation — but no substantive implementation. The
+other three skills are read-only.
 
 The skills are independent. A downstream skill can consume an approved
 upstream output without requiring the upstream skill at runtime.
@@ -49,6 +52,8 @@ Both bridge locations contain every available skill:
     -> skills/create-technical-design/SKILL.md
 <bridge-root>/implement-jira-ticket/SKILL.md
     -> skills/implement-jira-ticket/SKILL.md
+<bridge-root>/create-development-pr/SKILL.md
+    -> skills/create-development-pr/SKILL.md
 <bridge-root>/answer-codebase-questions/SKILL.md
     -> skills/answer-codebase-questions/SKILL.md
 ```
@@ -144,6 +149,7 @@ one:
    - `create-product-backlog.zip`
    - `create-technical-design.zip`
    - `implement-jira-ticket.zip`
+   - `create-development-pr.zip`
    - `answer-codebase-questions.zip`
 6. Upload or install that ZIP using the relevant client workflow.
 
@@ -161,6 +167,7 @@ skills/                         Canonical source; edit skills here
 ├── create-product-backlog/
 ├── create-technical-design/
 ├── implement-jira-ticket/
+├── create-development-pr/
 └── answer-codebase-questions/
 
 .claude/skills/                 Claude project bridges
@@ -230,6 +237,14 @@ working copy.
   DeepWiki repository research, and the host's repository-editing and
   command-execution capabilities. Jira and Confluence are never written to, and
   Graphify is not required.
+- `create-development-pr` requires a read-only Jira capability, local Git and
+  repository access through the host, and a GitHub capability for remote branch
+  inspection, Pull Request lookup, Pull Request creation, and check status where
+  available. Jira is never written to. Confluence, DeepWiki, and Graphify are not
+  required. GitHub write access is not part of the project-scoped MCP files
+  above; it comes from the host, such as a connected GitHub capability or an
+  authenticated GitHub CLI. Without it the skill performs safe local preparation
+  only and reports that PR creation could not be completed.
 - `answer-codebase-questions` uses read-only DeepWiki first, then Confluence
   when needed, with Graphify as the final fallback. It never uses Jira.
 
@@ -240,7 +255,14 @@ repositories, or implementation files.
 `implement-jira-ticket` edits source files by design. It still never writes to
 Jira or Confluence, never creates a branch, commit, push, or Pull Request, and
 never claims code-review sign-off; those operations belong to the downstream
-Git and Pull Request workflow.
+`create-development-pr` skill.
+
+`create-development-pr` creates branches, commits, pushes, and Pull Requests by
+design. It still never writes to Jira, never implements missing functionality,
+never stages unrelated user work or secrets, never pushes to a protected branch,
+and never approves, merges, or squash-merges a Pull Request or claims
+code-review sign-off or green CI it did not observe. The two Stage 04 skills are
+independently installable; neither requires the other at runtime.
 
 See the [lifecycle mapping](docs/lifecycle-mapping.md) for inputs, outputs, and
 review gates.

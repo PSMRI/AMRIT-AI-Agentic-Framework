@@ -47,6 +47,7 @@ The available project skills are:
 - `/create-product-backlog`
 - `/create-technical-design`
 - `/implement-jira-ticket`
+- `/create-development-pr`
 - `/answer-codebase-questions`
 
 ## Project-scoped MCP setup
@@ -107,6 +108,7 @@ Each generated ZIP is published as an individual GitHub Actions artifact:
    - `create-product-backlog.zip`
    - `create-technical-design.zip`
    - `implement-jira-ticket.zip`
+   - `create-development-pr.zip`
    - `answer-codebase-questions.zip`
 6. Upload or install that ZIP using the relevant client workflow.
 
@@ -189,6 +191,15 @@ local token values and complete any client trust prompt as described in
   repository research, and the host's repository-editing and command-execution
   capabilities. It writes only to source files, never to Jira or Confluence, and
   does not require Graphify.
+- `create-development-pr` requires Jira reads, local Git and repository access
+  through the host's command execution, and a GitHub capability for remote
+  branch inspection, Pull Request lookup, Pull Request creation, and check
+  status where available. It never writes to Jira and does not require
+  Confluence, DeepWiki, or Graphify. GitHub write access is **not** provided by
+  the project-scoped MCP files; supply it through the host, such as a connected
+  GitHub capability or an authenticated GitHub CLI in the local environment.
+  Without it the skill performs safe local preparation only, fabricates no PR
+  URL, and reports that PR creation could not be completed.
 - `answer-codebase-questions` uses read-only DeepWiki first, then Confluence
   when needed, with Graphify as the final fallback. It never uses Jira.
 

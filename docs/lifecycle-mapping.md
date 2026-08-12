@@ -1,6 +1,6 @@
 # AMRIT SDLC lifecycle mapping
 
-The skills are independently installable. The first four align to consecutive lifecycle stages; `answer-codebase-questions` is available across the lifecycle. A downstream skill may consume an approved upstream output without requiring the upstream skill itself to be installed.
+The skills are independently installable. The first five align to consecutive lifecycle stages, with two skills covering Stage 04; `answer-codebase-questions` is available across the lifecycle. A downstream skill may consume an approved upstream output without requiring the upstream skill itself to be installed.
 
 | Stage | Primary role | Skill | Review status |
 | --- | --- | --- | --- |
@@ -8,6 +8,7 @@ The skills are independently installable. The first four align to consecutive li
 | Stage 02 — Product Backlog Creation | Product Manager | [`create-product-backlog`](../skills/create-product-backlog/README.md) | Draft - Pending Product Manager Review |
 | Stage 03 — Engineering Analysis | Technical Architect / Senior Developer | [`create-technical-design`](../skills/create-technical-design/README.md) | Ready for Architect Review |
 | Stage 04 — In Development | Developer / Senior Developer | [`implement-jira-ticket`](../skills/implement-jira-ticket/README.md) | Ready for PR preparation |
+| Stage 04 — In Development | Developer / Senior Developer | [`create-development-pr`](../skills/create-development-pr/README.md) | Awaiting code review |
 | Cross-lifecycle — Codebase knowledge | Software Engineer | [`answer-codebase-questions`](../skills/answer-codebase-questions/README.md) | Evidence-backed codebase answer |
 
 ## Stage 01/12 — BRD
@@ -86,6 +87,20 @@ The Technical Architect has reviewed the design, resolved or accepted material r
 
 ## Stage 04 — In Development
 
+Two skills cover this stage in sequence:
+
+```text
+Stage 04 — In Development
+
+implement-jira-ticket
+    ↓
+create-development-pr
+    ↓
+Senior Developer review
+    ↓
+CI green + approval + squash merge
+```
+
 ### Inputs
 
 - Sprint-ready Jira ticket with acceptance criteria
@@ -97,10 +112,11 @@ The Technical Architect has reviewed the design, resolved or accepted material r
 
 ### Outputs
 
-- Implementation code
-- Unit tests
-- Required `AMRIT-DB` schema changes
-- Local verification results
+- Code and unit tests — `implement-jira-ticket`
+- Required `AMRIT-DB` schema changes — `implement-jira-ticket`
+- Local verification results — both skills
+- Pull Request targeting the appropriate `release-X.Y.Z` branch — `create-development-pr`
+- Code review sign-off — Senior Developer / human review
 
 ### Exit criterion
 
@@ -108,14 +124,20 @@ The Pull Request is approved with code-review sign-off, CI is green, and the cha
 
 `implement-jira-ticket` finishes with either **Implementation complete and locally verified. Ready for PR preparation.** or **Implementation incomplete. Resolve the items above before PR preparation.**
 
-The skill prepares code for PR creation but does not satisfy the full phase exit criteria by itself. The actual phase exit still requires:
+`create-development-pr` finishes with either **Development PR created. Awaiting code review.** or **Development PR not created. Resolve the items above before retrying.**
+
+Together the two skills contribute to the phase but do not satisfy the full phase exit criteria by themselves. The actual phase exit still requires:
 
 - PR approval;
 - code-review sign-off;
-- squash merge to the appropriate release branch;
-- green CI.
+- green CI;
+- squash merge to the appropriate release branch.
 
-Those responsibilities belong to the following Git, Pull Request, and review workflow rather than this skill. It is the only skill that edits source files; Jira and Confluence remain read-only, and it never creates a branch, commit, push, or Pull Request, never transitions a Jira issue, and never claims that the exit criterion has been met. Any actual database schema change is implemented in `AMRIT-DB`, never in an application repository.
+Those responsibilities belong to human review and the repository's merge workflow rather than to either skill. Both skills are independently installable, and neither requires the other at runtime.
+
+`implement-jira-ticket` is the implementation and source-editing skill. Jira and Confluence remain read-only, and it never creates a branch, commit, push, or Pull Request, never transitions a Jira issue, and never claims that the exit criterion has been met. Any actual database schema change is implemented in `AMRIT-DB`, never in an application repository.
+
+`create-development-pr` performs the Git and GitHub write operations — branch, commit, push, and Pull Request creation against a validated `release-X.Y.Z` branch — but performs no substantive implementation. Jira remains strictly read-only. It never approves, merges, or squash-merges a Pull Request, never claims code-review sign-off or green CI it did not observe, and stops and returns the work to implementation when the change is materially incomplete or a required `AMRIT-DB` change is missing.
 
 ## Cross-lifecycle — Codebase knowledge
 
