@@ -46,6 +46,7 @@ The available project skills are:
 - `/create-brd`
 - `/create-product-backlog`
 - `/create-technical-design`
+- `/implement-jira-ticket`
 - `/answer-codebase-questions`
 
 ## Project-scoped MCP setup
@@ -105,6 +106,7 @@ Each generated ZIP is published as an individual GitHub Actions artifact:
    - `create-brd.zip`
    - `create-product-backlog.zip`
    - `create-technical-design.zip`
+   - `implement-jira-ticket.zip`
    - `answer-codebase-questions.zip`
 6. Upload or install that ZIP using the relevant client workflow.
 
@@ -183,6 +185,10 @@ local token values and complete any client trust prompt as described in
 - `create-technical-design` requires Jira and Confluence reads plus applicable
   architecture and Swagger/OpenAPI evidence. Official DeepWiki MCP repository
   research is optional.
+- `implement-jira-ticket` requires Jira and Confluence reads, DeepWiki
+  repository research, and the host's repository-editing and command-execution
+  capabilities. It writes only to source files, never to Jira or Confluence, and
+  does not require Graphify.
 - `answer-codebase-questions` uses read-only DeepWiki first, then Confluence
   when needed, with Graphify as the final fallback. It never uses Jira.
 

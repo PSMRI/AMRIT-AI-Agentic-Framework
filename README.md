@@ -14,7 +14,11 @@ source directories.
 | [`create-brd`](skills/create-brd/README.md) | `/create-brd` | Stage 01/12 — Business & Product | A traceable AMRIT BRD labelled **Draft — Pending Human Review** after mandatory read-only Confluence research. |
 | [`create-product-backlog`](skills/create-product-backlog/README.md) | `/create-product-backlog` | Stage 02 — Product Backlog Creation | A review-ready backlog from an approved BRD/FRD or L2-escalated production defect, labelled **Draft - Pending Product Manager Review**. |
 | [`create-technical-design`](skills/create-technical-design/README.md) | `/create-technical-design` | Stage 03 — Engineering Analysis | One evidence-based technical design package labelled **Ready for Architect Review**. |
+| [`implement-jira-ticket`](skills/implement-jira-ticket/README.md) | `/implement-jira-ticket` | Stage 04 — In Development | Implemented and locally verified code with unit tests, with any schema change placed in `AMRIT-DB`, ready for PR preparation. |
 | [`answer-codebase-questions`](skills/answer-codebase-questions/README.md) | `/answer-codebase-questions` | Cross-lifecycle — Codebase knowledge | A concise, evidence-backed AMRIT codebase answer from DeepWiki, Confluence, and Graphify; never Jira. |
+
+`implement-jira-ticket` is the only skill that changes source files. The others
+are read-only.
 
 The skills are independent. A downstream skill can consume an approved
 upstream output without requiring the upstream skill at runtime.
@@ -43,6 +47,8 @@ Both bridge locations contain every available skill:
     -> skills/create-product-backlog/SKILL.md
 <bridge-root>/create-technical-design/SKILL.md
     -> skills/create-technical-design/SKILL.md
+<bridge-root>/implement-jira-ticket/SKILL.md
+    -> skills/implement-jira-ticket/SKILL.md
 <bridge-root>/answer-codebase-questions/SKILL.md
     -> skills/answer-codebase-questions/SKILL.md
 ```
@@ -137,6 +143,7 @@ one:
    - `create-brd.zip`
    - `create-product-backlog.zip`
    - `create-technical-design.zip`
+   - `implement-jira-ticket.zip`
    - `answer-codebase-questions.zip`
 6. Upload or install that ZIP using the relevant client workflow.
 
@@ -153,6 +160,7 @@ skills/                         Canonical source; edit skills here
 ├── create-brd/
 ├── create-product-backlog/
 ├── create-technical-design/
+├── implement-jira-ticket/
 └── answer-codebase-questions/
 
 .claude/skills/                 Claude project bridges
@@ -218,12 +226,21 @@ working copy.
 - `create-technical-design` requires relevant Jira, Confluence, architecture,
   and Swagger/OpenAPI evidence. Official DeepWiki MCP repository research is
   optional and read-only.
+- `implement-jira-ticket` requires read-only Jira and Confluence capabilities,
+  DeepWiki repository research, and the host's repository-editing and
+  command-execution capabilities. Jira and Confluence are never written to, and
+  Graphify is not required.
 - `answer-codebase-questions` uses read-only DeepWiki first, then Confluence
   when needed, with Graphify as the final fallback. It never uses Jira.
 
 All outputs require human review. No skill automatically approves or publishes
 content, and `create-technical-design` never modifies Jira, Confluence,
 repositories, or implementation files.
+
+`implement-jira-ticket` edits source files by design. It still never writes to
+Jira or Confluence, never creates a branch, commit, push, or Pull Request, and
+never claims code-review sign-off; those operations belong to the downstream
+Git and Pull Request workflow.
 
 See the [lifecycle mapping](docs/lifecycle-mapping.md) for inputs, outputs, and
 review gates.

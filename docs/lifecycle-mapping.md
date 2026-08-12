@@ -1,12 +1,13 @@
 # AMRIT SDLC lifecycle mapping
 
-The skills are independently installable. The first three align to consecutive lifecycle stages; `answer-codebase-questions` is available across the lifecycle. A downstream skill may consume an approved upstream output without requiring the upstream skill itself to be installed.
+The skills are independently installable. The first four align to consecutive lifecycle stages; `answer-codebase-questions` is available across the lifecycle. A downstream skill may consume an approved upstream output without requiring the upstream skill itself to be installed.
 
 | Stage | Primary role | Skill | Review status |
 | --- | --- | --- | --- |
 | Stage 01/12 — Business & Product | Business Systems Analyst | [`create-brd`](../skills/create-brd/README.md) | Draft — Pending Human Review |
 | Stage 02 — Product Backlog Creation | Product Manager | [`create-product-backlog`](../skills/create-product-backlog/README.md) | Draft - Pending Product Manager Review |
 | Stage 03 — Engineering Analysis | Technical Architect / Senior Developer | [`create-technical-design`](../skills/create-technical-design/README.md) | Ready for Architect Review |
+| Stage 04 — In Development | Developer / Senior Developer | [`implement-jira-ticket`](../skills/implement-jira-ticket/README.md) | Ready for PR preparation |
 | Cross-lifecycle — Codebase knowledge | Software Engineer | [`answer-codebase-questions`](../skills/answer-codebase-questions/README.md) | Evidence-backed codebase answer |
 
 ## Stage 01/12 — BRD
@@ -82,6 +83,39 @@ The Product Manager has reviewed, finalized, and triaged the backlog with contex
 The Technical Architect has reviewed the design, resolved or accepted material risks and open questions, and authorized implementation to begin.
 
 `create-technical-design` finishes with **Ready for Architect Review** and **No implementation should begin until the design is reviewed.** It is read-only, produces no implementation code, never modifies or publishes to Jira or Confluence, and never claims that the exit criterion has been met.
+
+## Stage 04 — In Development
+
+### Inputs
+
+- Sprint-ready Jira ticket with acceptance criteria
+- Functional specification or BRD where available
+- Wireframes where applicable
+- Approved technical-design or architecture context where available
+- The relevant application repository
+- `AMRIT-DB` when schema changes are required
+
+### Outputs
+
+- Implementation code
+- Unit tests
+- Required `AMRIT-DB` schema changes
+- Local verification results
+
+### Exit criterion
+
+The Pull Request is approved with code-review sign-off, CI is green, and the change is squash-merged to the appropriate release branch.
+
+`implement-jira-ticket` finishes with either **Implementation complete and locally verified. Ready for PR preparation.** or **Implementation incomplete. Resolve the items above before PR preparation.**
+
+The skill prepares code for PR creation but does not satisfy the full phase exit criteria by itself. The actual phase exit still requires:
+
+- PR approval;
+- code-review sign-off;
+- squash merge to the appropriate release branch;
+- green CI.
+
+Those responsibilities belong to the following Git, Pull Request, and review workflow rather than this skill. It is the only skill that edits source files; Jira and Confluence remain read-only, and it never creates a branch, commit, push, or Pull Request, never transitions a Jira issue, and never claims that the exit criterion has been met. Any actual database schema change is implemented in `AMRIT-DB`, never in an application repository.
 
 ## Cross-lifecycle — Codebase knowledge
 
