@@ -5,7 +5,7 @@ development lifecycle. The source of truth is [`skills/`](skills/); project
 discovery bridges and installable packages are generated from those same
 source directories.
 
-[Download skill packages from GitHub Actions](../../actions/workflows/validate-skills.yml)
+[Download skill packages from the latest GitHub Release](../../releases/latest)
 
 ## Available skills
 
@@ -134,30 +134,33 @@ own user-level connector or configuration setup. Keep Claude Desktop-only
 fields such as `coworkUserFilesPath` and `preferences` out of `.mcp.json`,
 `.cursor/mcp.json`, and `.agents/mcp_config.json`.
 
-## Install skill packages from GitHub Actions
+## Install skill packages from GitHub Releases
 
-Each skill is published as an individual GitHub Actions artifact. To install
-one:
+GitHub Releases are the official distribution channel. To install a skill:
 
 1. Open the repository on GitHub.
-2. Open the **Actions** tab.
-3. Select the latest successful **Validate and package skills** workflow run on
-   `main`.
-4. Scroll to the **Artifacts** section.
-5. Download the required skill ZIP directly:
+2. Open the **Releases** page and select the latest release, named
+   **AMRIT SDLC Skills vX.Y.Z**.
+3. Open its **Assets** section.
+4. Download the required skill ZIP directly:
    - `create-brd.zip`
    - `create-product-backlog.zip`
    - `create-technical-design.zip`
    - `implement-jira-ticket.zip`
    - `create-development-pr.zip`
    - `answer-codebase-questions.zip`
-6. Upload or install that ZIP using the relevant client workflow.
+5. Upload or install that ZIP using the relevant client workflow.
 
-The packages are separate artifacts, not a combined artifact. No additional
-archive extraction is required: the ZIP downloaded from GitHub Actions is the
-actual skill package. Each ZIP contains one top-level skill directory with
-`SKILL.md` and all of that skill's references, examples, templates, scripts,
-and assets.
+Every release contains all currently packaged skills as individual assets, so
+the asset list above grows automatically as skills are added. The packages are
+separate assets, not a combined archive, and no additional extraction is
+required: the ZIP downloaded from the release is the actual skill package. Each
+ZIP contains one top-level skill directory with `SKILL.md` and all of that
+skill's references, examples, templates, scripts, and assets.
+
+GitHub Actions artifacts from the **Validate and package skills** workflow
+remain available for CI inspection and debugging. They are not the installation
+path; ordinary users should always install from a release.
 
 ## Distribution architecture
 
@@ -174,13 +177,17 @@ skills/                         Canonical source; edit skills here
 .agents/skills/                 Cursor and Antigravity project bridges
 scripts/package-skills.py       Deterministic ZIP packaging into dist/
 scripts/validate-skills.py      Packaging and project-discovery checks
+scripts/next-release-version.py Next vX.Y.Z tag from .release-version and tags
+.release-version                Manually controlled X.Y release line
 .github/workflows/
-└── validate-skills.yml         PR/main validation and Actions artifacts
+├── validate-skills.yml         PR/main validation and CI build artifacts
+└── release-skills.yml          Official GitHub Release publication from main
 ```
 
-Generated `dist/` content and all ZIP files are ignored by Git. GitHub Actions
-creates packages from `skills/` and publishes each ZIP as an individual
-artifact. GitHub Releases and version tags are not currently used.
+Generated `dist/` content and all ZIP files are ignored by Git; release assets
+are build outputs, never repository sources. Official, stable distribution is
+GitHub Releases. GitHub Actions artifacts are retained only for CI and build
+debugging.
 
 ## Maintainer workflow
 
@@ -205,18 +212,69 @@ small bridges at `.claude/skills/<name>/SKILL.md` and
 `.agents/skills/<name>/SKILL.md`. Validation fails if a source or either bridge
 is missing; packaging discovers valid source directories automatically.
 
+Check the next release tag the workflow would choose, using the local tags:
+
+```bash
+python scripts/next-release-version.py
+```
+
 To distribute updates:
 
 1. Update the canonical skills under `skills/`.
 2. Merge the changes into `main`.
-3. The **Validate and package skills** workflow runs automatically and
-   packages and publishes the individual ZIP artifacts.
-4. A maintainer may also run the workflow manually against `main`.
+3. The **Release Skills** workflow runs automatically, verifies the repository,
+   packages every skill, and publishes one GitHub Release whose assets are the
+   individual skill ZIPs.
 
-Pushes to `main` and manual workflow runs publish the individual ZIP artifacts.
-Pull requests run the same tests, validation, packaging, and package-existence
-checks but do not publish downloadable artifacts. Maintainers do not need to
-create a release or version tag.
+Every successful merge to `main` automatically creates a patch release. A
+change that reaches `main` is considered release-worthy, so `main` always
+represents the latest officially distributable state of the skills.
+
+Pull requests run the **Validate and package skills** workflow only: the same
+tests, validation, packaging, and package-existence checks, with no release and
+no tag. That workflow also continues to upload Actions artifacts on `main` and
+on manual runs for CI and build inspection.
+
+## Release versioning
+
+Releases are tagged `vX.Y.Z`:
+
+- `X.Y` is human-controlled in [`.release-version`](.release-version).
+- `Z` is automatic, one above the highest existing `vX.Y.Z` tag on that release
+  line, or `0` when the line has no tags yet.
+- Git tags are the source of truth for `Z`. No patch number is stored in
+  `.release-version` and no version bump is ever committed back to the
+  repository.
+- Release lines are never inferred from commit messages, PR labels,
+  Conventional Commits, or semantic-release rules.
+
+With `.release-version` set to `1.2`, consecutive merges to `main` produce:
+
+```text
+merge 1 → v1.2.0
+merge 2 → v1.2.1
+merge 3 → v1.2.2
+```
+
+To deliberately move the minor line, a maintainer edits `.release-version`:
+
+```diff
+-1.2
++1.3
+```
+
+Once that change reaches `main`, the next release is `v1.3.0`, then `v1.3.1`,
+`v1.3.2`, and so on. Moving `1.9` to `2.0` likewise makes the next release
+`v2.0.0`. Change this file only when deliberately moving the major/minor
+release line.
+
+The release workflow runs tests, validation, and packaging **before** it
+calculates a version or creates anything. A failed run publishes no tag, no
+release, and no assets; the failed run stays visible in GitHub Actions so
+maintainers can repair the problem and re-run. A failed release means
+publication failed — not that the commit should be skipped. Releases are
+always traceable to the commit SHA that triggered them, and the workflow never
+moves, overwrites, or deletes an existing tag or release.
 
 ## MCP requirements and guardrails
 
