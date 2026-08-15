@@ -20,9 +20,11 @@ The two skills split Stage 04 cleanly:
 | Writes to Jira | No | No |
 | Approves or merges | No | No |
 
-`implement-jira-ticket` → changes source code and unit tests.
+`implement-jira-ticket` → orchestrates the Stage 04 engineering personas that change source code and unit tests. It routes to the specialist skills the ticket actually needs — `review-implementation-architecture`, `implement-database-change`, `implement-backend-change`, `implement-frontend-change`, `implement-android-change`, `validate-ux-implementation`, and `write-unit-tests` — none of which perform Git or Pull Request work either.
 
 `create-development-pr` → packages an already implemented change into the correct Git/GitHub workflow.
+
+The boundary is unchanged by that orchestration: everything upstream edits files, and this skill alone creates the branch, commit, push, and Pull Request. A change that legitimately spans an application repository and `AMRIT-DB` is still treated as separate Git repositories that may need separate Pull Requests.
 
 This skill is normally used **after** `implement-jira-ticket` completes successfully, but invoking that skill is **not a hard dependency**. Each packaged skill remains independently installable, and this one works from the Jira ticket and the actual repository state. If the implementation is materially incomplete, the skill stops and sends the work back to implementation rather than quietly completing development work itself.
 

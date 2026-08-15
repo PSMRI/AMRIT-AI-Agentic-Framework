@@ -2,6 +2,8 @@
 
 This example is fictional. The keys, tables, columns, paths, and migration names below are invented for illustration only and do not describe a real AMRIT schema, repository, or migration convention. It shows the ownership rule in both situations: `AMRIT-DB` available, and `AMRIT-DB` unavailable.
 
+Routing note: the orchestrator selects the DBA persona here and runs `implement-database-change` **before** `implement-backend-change`, because the migration publishes the schema contract the application side is written against. The application-side entities, repositories, and DTOs below belong to `implement-backend-change`.
+
 ## Fictional ticket
 
 - `DEMO-5402` — Record the reason a demo request was reassigned
