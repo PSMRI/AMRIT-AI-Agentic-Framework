@@ -42,7 +42,7 @@ A signal that appears only in a document and is contradicted by the code is not 
 
 ### Technical Architect — `review-implementation-architecture`
 
-Runs **before** implementation for architecturally significant work, and again briefly after it when the change spans modules or repositories. During Stage 04 its purpose is conformance, not redesign: approved HLD and LLD, architecture patterns, module boundaries, API contracts, integration boundaries, and security and performance constraints.
+Runs **before** implementation for architecturally significant work, and again briefly after it when the change spans modules or repositories. During Stage 05 its purpose is conformance, not redesign: approved HLD and LLD, architecture patterns, module boundaries, API contracts, integration boundaries, and security and performance constraints.
 
 It does not re-open an approved design. When the design cannot be implemented safely as written, it reports the discrepancy for design review.
 

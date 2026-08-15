@@ -1,6 +1,6 @@
 # validate-ux-implementation
 
-`validate-ux-implementation` is the **UX / UI specialist** for Stage 04 — In Development. It validates that an implemented AMRIT user interface matches the approved UX.
+`validate-ux-implementation` is the **UX / UI specialist** for Stage 05 — In Development. It validates that an implemented AMRIT user interface matches the approved UX.
 
 **This skill is read-only.** Corrections go back to the implementing skill.
 

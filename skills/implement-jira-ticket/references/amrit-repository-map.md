@@ -78,7 +78,7 @@ Kotlin Android applications consuming AMRIT REST APIs. They route to `implement-
 |---|---|---|
 | `AMRIT-DB` | Database schema management through Flyway migrations | `implement-database-change` |
 | `AMRIT-Docs` | Developer documentation synchronized with GitBook | Research only |
-| `AMRIT-DevOps` | Deployment, infrastructure, and DevOps configuration | Out of Stage 04 implementation scope unless the ticket explicitly requires it |
+| `AMRIT-DevOps` | Deployment, infrastructure, and DevOps configuration | Out of Stage 05 implementation scope unless the ticket explicitly requires it |
 | `AMRIT-Website` | Public AMRIT website | Only when the ticket affects the public website |
 | `AMRIT` | Central repository, issue hub, and repository catalog | Research only |
 

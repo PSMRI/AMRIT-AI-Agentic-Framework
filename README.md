@@ -14,18 +14,18 @@ source directories.
 | [`create-brd`](skills/create-brd/README.md) | `/create-brd` | Stage 01/12 — Business & Product | A traceable AMRIT BRD labelled **Draft — Pending Human Review** after mandatory read-only Confluence research. |
 | [`create-product-backlog`](skills/create-product-backlog/README.md) | `/create-product-backlog` | Stage 02 — Product Backlog Creation | A review-ready backlog from an approved BRD/FRD or L2-escalated production defect, labelled **Draft - Pending Product Manager Review**. |
 | [`create-technical-design`](skills/create-technical-design/README.md) | `/create-technical-design` | Stage 03 — Engineering Analysis | One evidence-based technical design package labelled **Ready for Architect Review**. |
-| [`implement-jira-ticket`](skills/implement-jira-ticket/README.md) | `/implement-jira-ticket` | Stage 04 — In Development | The Stage 04 entry point and engineering orchestrator: implemented and locally verified code with unit tests, produced by the specialist personas the ticket actually needs, with any schema change placed in `AMRIT-DB`. |
-| [`review-implementation-architecture`](skills/review-implementation-architecture/README.md) | `/review-implementation-architecture` | Stage 04 — In Development | A read-only architecture conformance assessment of an implementation against the approved Stage 03 design. |
-| [`implement-database-change`](skills/implement-database-change/README.md) | `/implement-database-change` | Stage 04 — In Development | The `AMRIT-DB` migration for a ticket, plus the schema contract the application implements against. |
-| [`implement-backend-change`](skills/implement-backend-change/README.md) | `/implement-backend-change` | Stage 04 — In Development | The server-side change in a Spring Boot API repository, plus the API and persistence contracts it establishes. |
-| [`implement-frontend-change`](skills/implement-frontend-change/README.md) | `/implement-frontend-change` | Stage 04 — In Development | The web UI change in an Angular repository, consistent with the design system and the real API contract. |
-| [`implement-android-change`](skills/implement-android-change/README.md) | `/implement-android-change` | Stage 04 — In Development | The Kotlin/Android change, consistent with the app architecture, offline behaviour, and platform constraints. |
-| [`validate-ux-implementation`](skills/validate-ux-implementation/README.md) | `/validate-ux-implementation` | Stage 04 — In Development | A read-only UX conformance assessment of an implemented interface against approved wireframes, the design system, and accessibility expectations. |
-| [`write-unit-tests`](skills/write-unit-tests/README.md) | `/write-unit-tests` | Stage 04 — In Development | Code-level unit tests for an implemented change, with executed results; separate from `draft-test-cases` and Stage 07 QA. |
-| [`create-development-pr`](skills/create-development-pr/README.md) | `/create-development-pr` | Stage 04 — In Development | A GitHub Pull Request for an implemented Jira ticket, from a Jira-named branch against the correct `release-X.Y.Z` branch, labelled **Awaiting code review**. |
+| [`implement-jira-ticket`](skills/implement-jira-ticket/README.md) | `/implement-jira-ticket` | Stage 05 — In Development | The Stage 05 entry point and engineering orchestrator: implemented and locally verified code with unit tests, produced by the specialist personas the ticket actually needs, with any schema change placed in `AMRIT-DB`. |
+| [`review-implementation-architecture`](skills/review-implementation-architecture/README.md) | `/review-implementation-architecture` | Stage 05 — In Development | A read-only architecture conformance assessment of an implementation against the approved Stage 03 design. |
+| [`implement-database-change`](skills/implement-database-change/README.md) | `/implement-database-change` | Stage 05 — In Development | The `AMRIT-DB` migration for a ticket, plus the schema contract the application implements against. |
+| [`implement-backend-change`](skills/implement-backend-change/README.md) | `/implement-backend-change` | Stage 05 — In Development | The server-side change in a Spring Boot API repository, plus the API and persistence contracts it establishes. |
+| [`implement-frontend-change`](skills/implement-frontend-change/README.md) | `/implement-frontend-change` | Stage 05 — In Development | The web UI change in an Angular repository, consistent with the design system and the real API contract. |
+| [`implement-android-change`](skills/implement-android-change/README.md) | `/implement-android-change` | Stage 05 — In Development | The Kotlin/Android change, consistent with the app architecture, offline behaviour, and platform constraints. |
+| [`validate-ux-implementation`](skills/validate-ux-implementation/README.md) | `/validate-ux-implementation` | Stage 05 — In Development | A read-only UX conformance assessment of an implemented interface against approved wireframes, the design system, and accessibility expectations. |
+| [`write-unit-tests`](skills/write-unit-tests/README.md) | `/write-unit-tests` | Stage 05 — In Development | Code-level unit tests for an implemented change, with executed results; separate from `draft-test-cases` and Stage 07 QA. |
+| [`create-development-pr`](skills/create-development-pr/README.md) | `/create-development-pr` | Stage 05 — In Development | A GitHub Pull Request for an implemented Jira ticket, from a Jira-named branch against the correct `release-X.Y.Z` branch, labelled **Awaiting code review**. |
 | [`answer-codebase-questions`](skills/answer-codebase-questions/README.md) | `/answer-codebase-questions` | Cross-lifecycle — Codebase knowledge | A concise, evidence-backed AMRIT codebase answer from DeepWiki, Confluence, and Graphify; never Jira. |
 
-`implement-jira-ticket` is the Stage 04 entry point. It inspects the Jira
+`implement-jira-ticket` is the Stage 05 entry point. It inspects the Jira
 ticket, the knowledge sources, and the actual source code, classifies which
 engineering personas the change requires, and invokes only those specialist
 skills — `review-implementation-architecture`, `implement-database-change`,
@@ -46,13 +46,19 @@ upstream output without requiring the upstream skill at runtime, and
 `implement-jira-ticket` applies a persona's contract inline when that
 persona's specialist skill is not installed.
 
-## Stage 04 — In Development
+## Stage 05 — In Development
 
-Stage 04 is entered through one skill. `implement-jira-ticket` orchestrates the
+Stage 05 is entered through one skill. `implement-jira-ticket` orchestrates the
 engineering personas the ticket actually requires and hands off to
 `create-development-pr`:
 
 ```text
+Stage 03 — Analysis
+        ↓
+Stage 04 — Ready for Development      (no skill; human Definition of Ready)
+        ↓
+Stage 05 — In Development
+
 implement-jira-ticket
         |
         |-- review-implementation-architecture   (architecturally significant change)
@@ -65,7 +71,14 @@ implement-jira-ticket
                  |
                  v
         create-development-pr
+        ↓
+Stage 06 — Pending QA
 ```
+
+Stage 05 begins with a ticket that Stage 04 — Ready for Development has already
+made sprint-ready. That readiness check is performed by humans; no skill in this
+repository covers Stage 04. See the
+[lifecycle mapping](docs/lifecycle-mapping.md#stage-04--ready-for-development).
 
 The specialists are **conditionally selected from the ticket, the approved
 Stage 03 design, and the actual source code** — not an unconditional sequence.
@@ -232,7 +245,7 @@ GitHub Releases are the official distribution channel. To install a skill:
    - `answer-codebase-questions.zip`
 5. Upload or install that ZIP using the relevant client workflow.
 
-For Stage 04, install `implement-jira-ticket` together with the specialist
+For Stage 05, install `implement-jira-ticket` together with the specialist
 packages relevant to the repositories you work in. The orchestrator still works
 alone — it applies a missing persona's contract inline — but each installed
 specialist keeps its own guidance and code-inspection discipline.
@@ -255,14 +268,14 @@ skills/                         Canonical source; edit skills here
 ├── create-brd/
 ├── create-product-backlog/
 ├── create-technical-design/
-├── implement-jira-ticket/              Stage 04 orchestrator
-├── review-implementation-architecture/ Stage 04 specialist
-├── implement-database-change/          Stage 04 specialist
-├── implement-backend-change/           Stage 04 specialist
-├── implement-frontend-change/          Stage 04 specialist
-├── implement-android-change/           Stage 04 specialist
-├── validate-ux-implementation/         Stage 04 specialist
-├── write-unit-tests/                   Stage 04 specialist
+├── implement-jira-ticket/              Stage 05 orchestrator
+├── review-implementation-architecture/ Stage 05 specialist
+├── implement-database-change/          Stage 05 specialist
+├── implement-backend-change/           Stage 05 specialist
+├── implement-frontend-change/          Stage 05 specialist
+├── implement-android-change/           Stage 05 specialist
+├── validate-ux-implementation/         Stage 05 specialist
+├── write-unit-tests/                   Stage 05 specialist
 ├── create-development-pr/
 └── answer-codebase-questions/
 
@@ -391,7 +404,7 @@ working copy.
   required. Jira and Confluence are never written to. Access to the actual
   checked-out source code is mandatory: the skill stops rather than implementing
   a ticket from documentation alone.
-- The Stage 04 specialists — `review-implementation-architecture`,
+- The Stage 05 specialists — `review-implementation-architecture`,
   `implement-database-change`, `implement-backend-change`,
   `implement-frontend-change`, `implement-android-change`,
   `validate-ux-implementation`, and `write-unit-tests` — require read-only Jira
@@ -416,7 +429,7 @@ All outputs require human review. No skill automatically approves or publishes
 content, and `create-technical-design` never modifies Jira, Confluence,
 repositories, or implementation files.
 
-`implement-jira-ticket` and its Stage 04 specialists edit source files by
+`implement-jira-ticket` and its Stage 05 specialists edit source files by
 design. They still never write to Jira or Confluence, never create a branch,
 commit, push, or Pull Request, and never claim architecture, DBA, code-review,
 QA, CI, or release approval; Git and Pull Request operations belong to the
@@ -427,7 +440,7 @@ decision.
 design. It still never writes to Jira, never implements missing functionality,
 never stages unrelated user work or secrets, never pushes to a protected branch,
 and never approves, merges, or squash-merges a Pull Request or claims
-code-review sign-off or green CI it did not observe. Every Stage 04 skill is
+code-review sign-off or green CI it did not observe. Every Stage 05 skill is
 independently installable; none requires another at runtime.
 
 See the [lifecycle mapping](docs/lifecycle-mapping.md) for inputs, outputs, and

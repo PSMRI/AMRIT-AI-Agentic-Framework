@@ -1,6 +1,6 @@
 # implement-backend-change
 
-`implement-backend-change` is the **Backend Developer** specialist for Stage 04 — In Development. It implements the server-side portion of one approved AMRIT Jira ticket in a Spring Boot API repository.
+`implement-backend-change` is the **Backend Developer** specialist for Stage 05 — In Development. It implements the server-side portion of one approved AMRIT Jira ticket in a Spring Boot API repository.
 
 **This skill changes source files.**
 
@@ -10,7 +10,7 @@ Turn the backend scope of an approved ticket into a minimal, convention-respecti
 
 ## Relationship to `implement-jira-ticket`
 
-`implement-jira-ticket` is the normal Stage 04 entry point. It reads the ticket, researches the knowledge sources, inspects the code, classifies the impacted personas, and invokes this skill only when the ticket actually changes the backend.
+`implement-jira-ticket` is the normal Stage 05 entry point. It reads the ticket, researches the knowledge sources, inspects the code, classifies the impacted personas, and invokes this skill only when the ticket actually changes the backend.
 
 ```text
 implement-jira-ticket
@@ -38,7 +38,7 @@ Any real schema change belongs to `implement-database-change` and lives in `AMRI
 
 ## Approved-design boundary
 
-Stage 04 implements the approved Stage 03 technical design; it does not redesign the system. When the actual code shows the approved design cannot be implemented safely as written, the skill stops and reports the discrepancy for design review instead of deviating silently.
+Stage 05 implements the approved Stage 03 technical design; it does not redesign the system. When the actual code shows the approved design cannot be implemented safely as written, the skill stops and reports the discrepancy for design review instead of deviating silently.
 
 ## Git, Jira, and approval boundaries
 

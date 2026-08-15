@@ -2,7 +2,7 @@
 
 ## Contents
 
-- [Stage 04 posture](#stage-04-posture)
+- [Stage 05 posture](#stage-05-posture)
 - [When this review is warranted](#when-this-review-is-warranted)
 - [Evidence discipline](#evidence-discipline)
 - [What to assess](#what-to-assess)
@@ -12,9 +12,9 @@
 - [Handing constraints to specialists](#handing-constraints-to-specialists)
 - [Review checklist](#review-checklist)
 
-## Stage 04 posture
+## Stage 05 posture
 
-Stage 03 designs. Stage 04 implements. This review exists to keep the implementation faithful to the approved design, not to improve the design during implementation.
+Stage 03 designs. Stage 05 implements. This review exists to keep the implementation faithful to the approved design, not to improve the design during implementation.
 
 Three rules follow:
 

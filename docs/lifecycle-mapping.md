@@ -1,21 +1,45 @@
 # AMRIT SDLC lifecycle mapping
 
-The skills are independently installable. They align to consecutive lifecycle stages, with one orchestrator, seven conditionally selected specialists, and one Pull Request skill covering Stage 04; `answer-codebase-questions` is available across the lifecycle. A downstream skill may consume an approved upstream output without requiring the upstream skill itself to be installed.
+## The AMRIT 12-stage lifecycle
+
+The official lifecycle is the authority for stage numbering. Skills are mapped onto it; they do not define it.
+
+| Stage | Official name | Skill coverage |
+| --- | --- | --- |
+| Stage 01 | BRD | [`create-brd`](../skills/create-brd/README.md) |
+| Stage 02 | Open | [`create-product-backlog`](../skills/create-product-backlog/README.md) |
+| Stage 03 | Analysis | [`create-technical-design`](../skills/create-technical-design/README.md) |
+| Stage 04 | Ready for Development | **No skill yet — documented gap** |
+| Stage 05 | In Development | [`implement-jira-ticket`](../skills/implement-jira-ticket/README.md) with its seven conditionally selected specialists, then [`create-development-pr`](../skills/create-development-pr/README.md) |
+| Stage 06 | Pending QA | No skill yet |
+| Stage 07 | In QA | No skill yet |
+| Stage 08 | QA Approved | No skill yet |
+| Stage 09 | Closed | No skill yet |
+| Stage 10 | Release UAT | No skill yet |
+| Stage 11 | Release Approved | No skill yet |
+| Stage 12 | Production Release | [`create-brd`](../skills/create-brd/README.md) also serves the Stage 12 feedback loop back into Business & Product |
+
+Some skills carry a longer descriptive stage label in their metadata — for example `Stage 03 — Engineering Analysis` for the official `Stage 03 — Analysis`. The stage **number** is authoritative; the descriptive suffix only names the work.
+
+## Skill mapping
+
+The skills are independently installable. They align to consecutive lifecycle stages, with one orchestrator, seven conditionally selected specialists, and one Pull Request skill covering Stage 05; `answer-codebase-questions` is available across the lifecycle. A downstream skill may consume an approved upstream output without requiring the upstream skill itself to be installed.
 
 | Stage | Primary role | Skill | Review status |
 | --- | --- | --- | --- |
 | Stage 01/12 — Business & Product | Business Systems Analyst | [`create-brd`](../skills/create-brd/README.md) | Draft — Pending Human Review |
 | Stage 02 — Product Backlog Creation | Product Manager | [`create-product-backlog`](../skills/create-product-backlog/README.md) | Draft - Pending Product Manager Review |
 | Stage 03 — Engineering Analysis | Technical Architect / Senior Developer | [`create-technical-design`](../skills/create-technical-design/README.md) | Ready for Architect Review |
-| Stage 04 — In Development | Developer / Senior Developer (orchestration) | [`implement-jira-ticket`](../skills/implement-jira-ticket/README.md) | Ready for PR preparation |
-| Stage 04 — In Development | Technical Architect | [`review-implementation-architecture`](../skills/review-implementation-architecture/README.md) | Conformance assessed — Architect review outstanding |
-| Stage 04 — In Development | DBA / Database Engineer | [`implement-database-change`](../skills/implement-database-change/README.md) | Migration implemented — DBA review outstanding |
-| Stage 04 — In Development | Backend Developer | [`implement-backend-change`](../skills/implement-backend-change/README.md) | Backend implemented |
-| Stage 04 — In Development | Frontend Developer | [`implement-frontend-change`](../skills/implement-frontend-change/README.md) | Frontend implemented |
-| Stage 04 — In Development | Android / Kotlin Developer | [`implement-android-change`](../skills/implement-android-change/README.md) | Android implemented |
-| Stage 04 — In Development | UX / UI Specialist | [`validate-ux-implementation`](../skills/validate-ux-implementation/README.md) | UX conformance assessed — UX review outstanding |
-| Stage 04 — In Development | SDET / Developer testing | [`write-unit-tests`](../skills/write-unit-tests/README.md) | Unit tests executed |
-| Stage 04 — In Development | Developer / Senior Developer | [`create-development-pr`](../skills/create-development-pr/README.md) | Awaiting code review |
+| Stage 04 — Ready for Development | Product Manager / Scrum Master / Tech Lead | *No skill yet — see [Stage 04](#stage-04--ready-for-development)* | Definition of Ready verified by humans |
+| Stage 05 — In Development | Developer / Senior Developer (orchestration) | [`implement-jira-ticket`](../skills/implement-jira-ticket/README.md) | Ready for PR preparation |
+| Stage 05 — In Development | Technical Architect | [`review-implementation-architecture`](../skills/review-implementation-architecture/README.md) | Conformance assessed — Architect review outstanding |
+| Stage 05 — In Development | DBA / Database Engineer | [`implement-database-change`](../skills/implement-database-change/README.md) | Migration implemented — DBA review outstanding |
+| Stage 05 — In Development | Backend Developer | [`implement-backend-change`](../skills/implement-backend-change/README.md) | Backend implemented |
+| Stage 05 — In Development | Frontend Developer | [`implement-frontend-change`](../skills/implement-frontend-change/README.md) | Frontend implemented |
+| Stage 05 — In Development | Android / Kotlin Developer | [`implement-android-change`](../skills/implement-android-change/README.md) | Android implemented |
+| Stage 05 — In Development | UX / UI Specialist | [`validate-ux-implementation`](../skills/validate-ux-implementation/README.md) | UX conformance assessed — UX review outstanding |
+| Stage 05 — In Development | SDET / Developer testing | [`write-unit-tests`](../skills/write-unit-tests/README.md) | Unit tests executed |
+| Stage 05 — In Development | Developer / Senior Developer | [`create-development-pr`](../skills/create-development-pr/README.md) | Awaiting code review |
 | Cross-lifecycle — Codebase knowledge | Software Engineer | [`answer-codebase-questions`](../skills/answer-codebase-questions/README.md) | Evidence-backed codebase answer |
 
 ## Stage 01/12 — BRD
@@ -92,12 +116,58 @@ The Technical Architect has reviewed the design, resolved or accepted material r
 
 `create-technical-design` finishes with **Ready for Architect Review** and **No implementation should begin until the design is reviewed.** It is read-only, produces no implementation code, never modifies or publishes to Jira or Confluence, and never claims that the exit criterion has been met.
 
-## Stage 04 — In Development
+## Stage 04 — Ready for Development
+
+The readiness holding state between Analysis and In Development. A ticket has completed analysis, design, and test-case preparation, and is waiting to be pulled into a sprint.
+
+```text
+Stage 03 — Analysis
+        ↓
+Stage 04 — Ready for Development
+        ↓
+Stage 05 — In Development
+```
+
+### Typical responsibilities
+
+- verify Definition of Ready artifacts
+- ensure FRD, HLD, LLD, and QA test cases are linked
+- confirm dependencies
+- estimate story points
+- prioritize within the release
+- assign or pull into a sprint
+
+### Inputs
+
+- Design-complete ticket
+- Test cases
+- Release plan
+- Sprint capacity
+
+### Outputs
+
+- Sprint-ready ticket
+
+### Exit criterion
+
+The ticket is pulled into a sprint with an assignee set.
+
+### Skill coverage
+
+**No skill covers Stage 04 today.** This is a documented gap, not an omission from this mapping: the readiness checks above are performed by humans — Product Manager, Scrum Master, or Tech Lead — during backlog refinement and sprint planning.
+
+A future `check-definition-of-ready` skill could verify linked artifacts and dependency readiness read-only, but none exists in this repository and none is implied by the Stage 05 skills. `implement-jira-ticket` assumes the ticket already reached Stage 05; it does not perform the Stage 04 readiness check and never claims a ticket is sprint-ready.
+
+## Stage 05 — In Development
 
 `implement-jira-ticket` is the single entry point. It orchestrates the engineering personas the ticket actually requires and hands off to `create-development-pr`:
 
 ```text
-Stage 04 — In Development
+Stage 03 — Analysis
+        ↓
+Stage 04 — Ready for Development
+        ↓
+Stage 05 — In Development
 
 implement-jira-ticket
         |
@@ -117,6 +187,8 @@ implement-jira-ticket
                  |
                  v
         CI green + approval + squash merge
+        ↓
+Stage 06 — Pending QA
 ```
 
 The specialists are **conditionally selected, not an unconditional sequence**. The route comes from the Jira ticket, the approved Stage 03 technical design where one exists, and mandatory inspection of the actual source code.
@@ -150,13 +222,13 @@ Execution follows the dependency chain: architecture review before implementatio
 
 ### Mandatory source-code inspection
 
-Every Stage 04 skill inspects the actual checked-out code before changing or assessing it. Jira, Confluence, DeepWiki, Graphify, the approved design, and previous knowledge establish intent; the repository establishes what the system currently does and where the change belongs. A ticket is never implemented from documentation alone, and an inaccessible repository stops the work with a blocked report rather than producing a documentation-driven change.
+Every Stage 05 skill inspects the actual checked-out code before changing or assessing it. Jira, Confluence, DeepWiki, Graphify, the approved design, and previous knowledge establish intent; the repository establishes what the system currently does and where the change belongs. A ticket is never implemented from documentation alone, and an inaccessible repository stops the work with a blocked report rather than producing a documentation-driven change.
 
 Where the approved Stage 03 design cannot be implemented safely as written, the work stops and the discrepancy is surfaced for design review instead of a silent deviation.
 
 ### Inputs
 
-- Sprint-ready Jira ticket with acceptance criteria
+- Sprint-ready Jira ticket with acceptance criteria, pulled into a sprint at Stage 04
 - Approved Stage 03 technical design where available
 - Functional specification or BRD where available
 - Wireframes and approved UX where applicable
@@ -177,22 +249,22 @@ Where the approved Stage 03 design cannot be implemented safely as written, the 
 
 ### Exit criterion
 
-The Pull Request is approved with code-review sign-off, CI is green, and the change is squash-merged to the appropriate release branch.
+The Pull Request is approved with code-review sign-off, CI is green, and the change is squash-merged to the appropriate release branch. The ticket then moves to Stage 06 — Pending QA, which no skill in this repository covers.
 
 `implement-jira-ticket` finishes with either **Implementation complete and locally verified. Ready for PR preparation.** or **Implementation incomplete. Resolve the items above before PR preparation.**
 
 `create-development-pr` finishes with either **Development PR created. Awaiting code review.** or **Development PR not created. Resolve the items above before retrying.**
 
-Together the Stage 04 skills contribute to the phase but do not satisfy the full phase exit criteria by themselves. The actual phase exit still requires:
+Together the Stage 05 skills contribute to the phase but do not satisfy the full phase exit criteria by themselves. The actual phase exit still requires:
 
 - PR approval;
 - code-review sign-off;
 - green CI;
 - squash merge to the appropriate release branch.
 
-Those responsibilities belong to human review and the repository's merge workflow rather than to any skill. Every Stage 04 skill is independently installable, and none requires another at runtime. When a selected persona's specialist skill is not installed, `implement-jira-ticket` applies that persona's contract inline and reports that it did so; the persona is never skipped.
+Those responsibilities belong to human review and the repository's merge workflow rather than to any skill. Every Stage 05 skill is independently installable, and none requires another at runtime. When a selected persona's specialist skill is not installed, `implement-jira-ticket` applies that persona's contract inline and reports that it did so; the persona is never skipped.
 
-`implement-jira-ticket` is the Stage 04 orchestrator and the entry point. It reads the ticket, researches the knowledge sources, inspects the actual source code, classifies the impacted repositories and personas, invokes only the relevant specialists in dependency order, coordinates the contracts between them, verifies the result, and reports the evidence. Jira and Confluence remain read-only, and it never creates a branch, commit, push, or Pull Request, never transitions a Jira issue, and never claims that the exit criterion has been met. Any actual database schema change is implemented in `AMRIT-DB`, never in an application repository.
+`implement-jira-ticket` is the Stage 05 orchestrator and the entry point. It reads the ticket, researches the knowledge sources, inspects the actual source code, classifies the impacted repositories and personas, invokes only the relevant specialists in dependency order, coordinates the contracts between them, verifies the result, and reports the evidence. Jira and Confluence remain read-only, and it never creates a branch, commit, push, or Pull Request, never transitions a Jira issue, and never claims that the exit criterion has been met. Any actual database schema change is implemented in `AMRIT-DB`, never in an application repository.
 
 The specialists own their layers. `implement-backend-change`, `implement-frontend-change`, `implement-android-change`, and `implement-database-change` edit code, each inspecting the code it owns before changing it. `write-unit-tests` writes and runs code-level unit tests — developer testing, kept separate from `draft-test-cases` and Stage 07 QA execution. `review-implementation-architecture` and `validate-ux-implementation` are read-only assessments that report deviations and gaps for human decision. No specialist performs Git or Pull Request work, and none claims architecture, DBA, UX, code-review, QA, CI, or release approval; absent approvals are reported as absent.
 

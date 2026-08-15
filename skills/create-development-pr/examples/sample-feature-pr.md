@@ -84,7 +84,7 @@ No schema changes.
 
 CI: pending — 3 checks queued at PR creation.
 
-### Remaining Stage 04 Requirements
+### Remaining Stage 05 Requirements
 
 - Code review by Senior Developer
 - Required approval(s)

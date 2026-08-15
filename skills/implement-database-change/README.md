@@ -1,6 +1,6 @@
 # implement-database-change
 
-`implement-database-change` is the **DBA / Database Engineer** specialist for Stage 04 — In Development. It implements the schema portion of one approved AMRIT Jira ticket in the `AMRIT-DB` repository.
+`implement-database-change` is the **DBA / Database Engineer** specialist for Stage 05 — In Development. It implements the schema portion of one approved AMRIT Jira ticket in the `AMRIT-DB` repository.
 
 **This skill changes source files in `AMRIT-DB`.**
 

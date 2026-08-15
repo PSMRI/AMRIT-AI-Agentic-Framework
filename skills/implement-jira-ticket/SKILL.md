@@ -1,8 +1,8 @@
 ---
 name: implement-jira-ticket
-description: "Implement an approved AMRIT Jira Story, Task, or Bug by acting as the Stage 04 engineering orchestrator: read the Jira issue and acceptance criteria, retrieve linked BRD, functional, and approved technical-design context from Confluence, research the affected repositories through DeepWiki and the framework's other knowledge sources, inspect the actual checked-out source code before any change, classify the impacted repositories, modules, and engineering personas, then invoke only the relevant specialist skills — implement-database-change, implement-backend-change, implement-frontend-change, implement-android-change, review-implementation-architecture, validate-ux-implementation, and write-unit-tests — in dependency order, verify the result, and report the evidence. Do not create branches, commit, push, open Pull Requests, transition Jira issues, or claim architecture, DBA, code-review, QA, CI, or release approval."
+description: "Implement an approved AMRIT Jira Story, Task, or Bug by acting as the Stage 05 engineering orchestrator: read the Jira issue and acceptance criteria, retrieve linked BRD, functional, and approved technical-design context from Confluence, research the affected repositories through DeepWiki and the framework's other knowledge sources, inspect the actual checked-out source code before any change, classify the impacted repositories, modules, and engineering personas, then invoke only the relevant specialist skills — implement-database-change, implement-backend-change, implement-frontend-change, implement-android-change, review-implementation-architecture, validate-ux-implementation, and write-unit-tests — in dependency order, verify the result, and report the evidence. Do not create branches, commit, push, open Pull Requests, transition Jira issues, or claim architecture, DBA, code-review, QA, CI, or release approval."
 metadata:
-  stage: Stage 04 — In Development
+  stage: Stage 05 — In Development
   category: Software Development
   primary_role: Developer / Senior Developer (engineering orchestration)
   skill_type: Meta-skill / orchestrator
@@ -214,7 +214,7 @@ Rules:
 
 - Never run every specialist by default. An unselected persona must be justified by evidence, and the report states which personas were considered and excluded.
 - `write-unit-tests` runs whenever production behaviour changed.
-- `review-implementation-architecture` does not re-open an approved Stage 03 design. During Stage 04 it checks conformance.
+- `review-implementation-architecture` does not re-open an approved Stage 03 design. During Stage 05 it checks conformance.
 - `validate-ux-implementation` validates the implementation against approved UX. It does not invent product design when approved UX already exists.
 - A persona with no available specialist skill still applies: see the fallback in [references/persona-routing-guidelines.md](references/persona-routing-guidelines.md).
 
@@ -255,7 +255,7 @@ Application repositories and `AMRIT-DB` are separate Git repositories. This skil
 
 ## Respect the approved technical design
 
-Stage 04 implements the Stage 03 design; it does not replace it. Specialists must not casually redesign the system.
+Stage 05 implements the Stage 03 design; it does not replace it. Specialists must not casually redesign the system.
 
 If source inspection shows the approved design cannot be implemented safely as written, stop and surface the discrepancy instead of silently deviating:
 

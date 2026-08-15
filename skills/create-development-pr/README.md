@@ -1,6 +1,6 @@
 # create-development-pr
 
-`create-development-pr` supports the Pull Request portion of Stage 04 — In Development. It takes one implemented and locally verified AMRIT Jira ticket and turns the working implementation into a properly structured development Pull Request against the correct `release-X.Y.Z` branch.
+`create-development-pr` supports the Pull Request portion of Stage 05 — In Development. It takes one implemented and locally verified AMRIT Jira ticket and turns the working implementation into a properly structured development Pull Request against the correct `release-X.Y.Z` branch.
 
 **This skill performs Git and GitHub write operations.** It creates branches, commits, pushes, and opens Pull Requests. It does not perform substantive implementation.
 
@@ -10,7 +10,7 @@ Package an existing implementation into the correct Git and GitHub workflow: ver
 
 ## Relationship to `implement-jira-ticket`
 
-The two skills split Stage 04 cleanly:
+The two skills split Stage 05 cleanly:
 
 | | `implement-jira-ticket` | `create-development-pr` |
 | --- | --- | --- |
@@ -20,7 +20,7 @@ The two skills split Stage 04 cleanly:
 | Writes to Jira | No | No |
 | Approves or merges | No | No |
 
-`implement-jira-ticket` → orchestrates the Stage 04 engineering personas that change source code and unit tests. It routes to the specialist skills the ticket actually needs — `review-implementation-architecture`, `implement-database-change`, `implement-backend-change`, `implement-frontend-change`, `implement-android-change`, `validate-ux-implementation`, and `write-unit-tests` — none of which perform Git or Pull Request work either.
+`implement-jira-ticket` → orchestrates the Stage 05 engineering personas that change source code and unit tests. It routes to the specialist skills the ticket actually needs — `review-implementation-architecture`, `implement-database-change`, `implement-backend-change`, `implement-frontend-change`, `implement-android-change`, `validate-ux-implementation`, and `write-unit-tests` — none of which perform Git or Pull Request work either.
 
 `create-development-pr` → packages an already implemented change into the correct Git/GitHub workflow.
 
@@ -160,15 +160,15 @@ When a ticket legitimately spans an application repository and `AMRIT-DB`, those
 
 After creation, GitHub checks or statuses are inspected when the capability supports it, and only observed state is reported — for example `CI: pending`, `CI: 5/5 checks passed`, `CI: 1 check failed — <name>`, or `CI: status unavailable`.
 
-Creating the PR is the skill's primary responsibility, so it does not wait indefinitely for CI. CI success is never fabricated, and green CI is listed among the remaining Stage 04 requirements while it is still pending.
+Creating the PR is the skill's primary responsibility, so it does not wait indefinitely for CI. CI success is never fabricated, and green CI is listed among the remaining Stage 05 requirements while it is still pending.
 
 ## Review and merge boundary
 
 Senior Developer code review, reviewer approval, addressing substantive review feedback, the final squash merge, and release-branch merge confirmation are all outside this skill.
 
-The skill never approves its own Pull Request, merges it, squash-merges it, requests a fake or self approval, bypasses branch protection or required reviews, claims code-review sign-off, or claims the Stage 04 exit criterion is satisfied merely because a PR exists.
+The skill never approves its own Pull Request, merges it, squash-merges it, requests a fake or self approval, bypasses branch protection or required reviews, claims code-review sign-off, or claims the Stage 05 exit criterion is satisfied merely because a PR exists.
 
-The Stage 04 exit criteria remain: PR approved, code-review sign-off obtained, CI checks green, and the PR squash-merged into the appropriate release branch.
+The Stage 05 exit criteria remain: PR approved, code-review sign-off obtained, CI checks green, and the PR squash-merged into the appropriate release branch.
 
 ## Handling ambiguity
 

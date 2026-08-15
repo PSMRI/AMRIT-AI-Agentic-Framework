@@ -64,7 +64,7 @@ The available project skills are:
 - `/create-development-pr`
 - `/answer-codebase-questions`
 
-For ordinary Stage 04 work, `/implement-jira-ticket` is the only command
+For ordinary Stage 05 work, `/implement-jira-ticket` is the only command
 needed: it classifies the impacted personas and routes to the specialists
 above. The specialists remain independently invocable for focused work.
 
@@ -139,7 +139,7 @@ Each generated ZIP is published as an individual asset on a GitHub Release:
 Every release carries all currently packaged skills, so newly added skills
 appear as additional assets on the next release without any manual step.
 
-For Stage 04, install `implement-jira-ticket` together with the specialist
+For Stage 05, install `implement-jira-ticket` together with the specialist
 packages relevant to the repositories in use. The orchestrator works alone —
 it applies a missing persona's contract inline and reports that it did so — but
 each installed specialist carries its own guidance and code-inspection
@@ -301,7 +301,7 @@ local token values and complete any client trust prompt as described in
   where available and are not required. It writes only to source files, never to
   Jira or Confluence. Access to the actual checked-out source code is mandatory:
   the skill stops rather than implementing a ticket from documentation alone.
-- The Stage 04 specialists — `review-implementation-architecture`,
+- The Stage 05 specialists — `review-implementation-architecture`,
   `implement-database-change`, `implement-backend-change`,
   `implement-frontend-change`, `implement-android-change`,
   `validate-ux-implementation`, and `write-unit-tests` — require Jira and

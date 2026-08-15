@@ -2,7 +2,7 @@
 name: implement-backend-change
 description: "Implement the backend portion of an approved AMRIT Jira Story, Task, or Bug in a Spring Boot API repository: inspect the actual checked-out backend source and its existing conventions before editing, then change services, controllers, endpoints, domain logic, integrations, server-side validation, persistence integration, error handling, and backend configuration in line with the approved technical design. Use as the Backend Developer specialist selected by implement-jira-ticket, or directly for a backend-only change. Keep schema DDL and migrations in AMRIT-DB, never create branches, commits, or Pull Requests, and never claim review, DBA, or CI approval."
 metadata:
-  stage: Stage 04 — In Development
+  stage: Stage 05 — In Development
   category: Software Development
   primary_role: Backend Developer
   persona: Backend Developer

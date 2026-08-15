@@ -1,6 +1,6 @@
 # implement-frontend-change
 
-`implement-frontend-change` is the **Frontend Developer** specialist for Stage 04 — In Development. It implements the web UI portion of one approved AMRIT Jira ticket in an Angular UI repository.
+`implement-frontend-change` is the **Frontend Developer** specialist for Stage 05 — In Development. It implements the web UI portion of one approved AMRIT Jira ticket in an Angular UI repository.
 
 **This skill changes source files.**
 
@@ -10,7 +10,7 @@ Turn the frontend scope of an approved ticket into a minimal, convention-respect
 
 ## Relationship to `implement-jira-ticket`
 
-`implement-jira-ticket` is the normal Stage 04 entry point. It routes to this skill only when the ticket actually changes the web UI.
+`implement-jira-ticket` is the normal Stage 05 entry point. It routes to this skill only when the ticket actually changes the web UI.
 
 ```text
 implement-jira-ticket
@@ -37,7 +37,7 @@ If the repository is not accessible, it stops rather than implementing from docu
 
 The skill consumes the backend contract that actually exists in the code or the API definition. It never invents an endpoint, field, or response shape: a mismatch between the ticket's assumption and the real contract is reported and stops the dependent work.
 
-Where approved wireframes and design-system rules exist, the implementation follows them. New product design is not invented in Stage 04; gaps are reported. `validate-ux-implementation` performs the separate conformance check.
+Where approved wireframes and design-system rules exist, the implementation follows them. New product design is not invented in Stage 05; gaps are reported. `validate-ux-implementation` performs the separate conformance check.
 
 ## Git, Jira, and approval boundaries
 

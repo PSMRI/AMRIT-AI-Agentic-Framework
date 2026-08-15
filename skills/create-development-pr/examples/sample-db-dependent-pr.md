@@ -199,7 +199,7 @@ Related PR: https://github.com/example-org/amrit-db/pull/74 (fictional)
 
 `Demo-Referral-API` — CI: pending, 4 checks queued at PR creation.
 
-### Remaining Stage 04 Requirements
+### Remaining Stage 05 Requirements
 
 - Code review by Senior Developer on both Pull Requests
 - Required approval(s) on both Pull Requests

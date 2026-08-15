@@ -2,7 +2,7 @@
 name: validate-ux-implementation
 description: "Validate that an implemented AMRIT user interface matches the approved UX: read the approved wireframes, workflows, and design-system rules, inspect the actual implemented UI source, and assess screen and field coverage, workflow consistency, design-system adherence, accessibility, interaction consistency, and error, empty, and loading states, reporting gaps for correction. Use as the UX/UI specialist selected by implement-jira-ticket when a user-visible change exists, or directly to validate an implemented screen. Read-only: do not implement, restyle, redesign approved UX, or claim UX, QA, or design approval."
 metadata:
-  stage: Stage 04 — In Development
+  stage: Stage 05 — In Development
   category: Software Development
   primary_role: UX / UI Specialist
   persona: UX / UI Specialist

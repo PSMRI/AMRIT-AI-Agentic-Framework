@@ -2,7 +2,7 @@
 name: implement-android-change
 description: "Implement the Android portion of an approved AMRIT Jira Story, Task, or Bug in a Kotlin mobile repository such as FLW-Mobile-App or HWC-Mobile-App: inspect the actual checked-out Android source, its architecture, offline and sync behaviour, and its API integration layer before editing, then change screens, mobile flows, Kotlin implementation, local persistence, API integration, and platform-constrained behaviour in line with the approved design and the backend contract. Use as the Android Developer specialist selected by implement-jira-ticket, or directly for an Android-only change. Never create branches, commits, or Pull Requests, and never claim review, QA, or CI approval."
 metadata:
-  stage: Stage 04 — In Development
+  stage: Stage 05 — In Development
   category: Software Development
   primary_role: Android / Kotlin Developer
   persona: Android / Kotlin Developer

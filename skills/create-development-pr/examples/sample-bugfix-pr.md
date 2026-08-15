@@ -109,7 +109,7 @@ No schema changes. Idempotency relies on the existing unique constraint on
 
 CI: 4/4 checks passed.
 
-### Remaining Stage 04 Requirements
+### Remaining Stage 05 Requirements
 
 - Code review by Senior Developer
 - Required approval(s)

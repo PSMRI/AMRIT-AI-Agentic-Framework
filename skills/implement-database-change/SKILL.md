@@ -2,7 +2,7 @@
 name: implement-database-change
 description: "Implement the database portion of an approved AMRIT Jira Story, Task, or Bug in the AMRIT-DB repository: inspect the existing schema, migration mechanism, and naming conventions in the actual checked-out source before proposing anything, classify the change explicitly, then add the required migration with its tables, columns, types, constraints, indexes, and data-compatibility considerations, keeping schema ownership in AMRIT-DB and never in an application repository. Use as the DBA specialist selected by implement-jira-ticket, or directly for a schema change. Never create branches, commits, or Pull Requests, never run destructive database operations, and never claim DBA, architecture, or CI approval."
 metadata:
-  stage: Stage 04 — In Development
+  stage: Stage 05 — In Development
   category: Software Development
   primary_role: DBA / Database Engineer
   persona: DBA / Database Engineer

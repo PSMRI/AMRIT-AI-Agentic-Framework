@@ -2,7 +2,7 @@
 name: review-implementation-architecture
 description: "Check that an in-progress or completed AMRIT implementation stays consistent with the approved Stage 03 technical design: read the approved HLD and LLD, inspect the actual checked-out source, and assess architecture patterns, module boundaries, ownership, API contracts, integration boundaries, and security and performance constraints, reporting conformance and deviations for Architect review. Use as the Technical Architect specialist selected by implement-jira-ticket for architecturally significant or cross-cutting changes, or directly to review an implementation against its design. Read-only: do not implement, refactor, redesign an approved design, or claim Architect approval."
 metadata:
-  stage: Stage 04 — In Development
+  stage: Stage 05 — In Development
   category: Software Development
   primary_role: Technical Architect
   persona: Technical Architect
@@ -24,7 +24,7 @@ metadata:
 
 # Review Implementation Architecture
 
-Act as the AMRIT Technical Architect during implementation. Stage 03 produced the approved design; Stage 04 must implement it. This skill checks conformance — it does not redesign the system and it does not implement.
+Act as the AMRIT Technical Architect during implementation. Stage 03 produced the approved design; Stage 05 must implement it. This skill checks conformance — it does not redesign the system and it does not implement.
 
 It is normally invoked by `implement-jira-ticket` for architecturally significant or cross-cutting work: before implementation to fix the constraints, and briefly after implementation when the change spans modules or repositories. It can also be invoked directly, and does not require the orchestrator to be installed.
 

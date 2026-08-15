@@ -217,4 +217,4 @@ CI: 1 check failed — <name>
 CI: status unavailable
 ```
 
-The Stage 04 exit criterion requires green CI, but this skill does not wait indefinitely for it. Report the observed state and list green CI among the remaining requirements when it is still pending.
+The Stage 05 exit criterion requires green CI, but this skill does not wait indefinitely for it. Report the observed state and list green CI among the remaining requirements when it is still pending.

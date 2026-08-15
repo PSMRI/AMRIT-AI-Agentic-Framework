@@ -1,6 +1,6 @@
 # implement-jira-ticket
 
-`implement-jira-ticket` is the **Stage 04 — In Development entry point** and the engineering orchestrator for that stage. It takes one approved AMRIT Jira ticket, researches the requirement and the affected architecture, inspects the actual source code, decides which engineering personas the change really needs, runs only those specialists, coordinates their dependencies, verifies the result, and reports the evidence.
+`implement-jira-ticket` is the **Stage 05 — In Development entry point** and the engineering orchestrator for that stage. It takes one approved AMRIT Jira ticket, researches the requirement and the affected architecture, inspects the actual source code, decides which engineering personas the change really needs, runs only those specialists, coordinates their dependencies, verifies the result, and reports the evidence.
 
 **This skill changes source files**, directly or through the specialists it invokes. That makes it intentionally different from the read-only `create-technical-design` and `answer-codebase-questions` skills.
 
@@ -22,7 +22,7 @@ Users do not select personas by hand. There is no need to invoke `/implement-bac
 
 If no ticket key is supplied, the skill asks for one before researching.
 
-## Stage 04 architecture
+## Stage 05 architecture
 
 ```text
                        Jira ticket
@@ -111,7 +111,7 @@ If the relevant repository or source code cannot be accessed, the skill stops an
 
 ## Respecting the approved Stage 03 design
 
-Stage 04 implements the approved design; it does not replace it. When source inspection shows the approved design cannot be implemented safely as written — for example when ownership of the data has moved to another service — the skill stops and surfaces the discrepancy for design review instead of deviating silently.
+Stage 05 implements the approved design; it does not replace it. When source inspection shows the approved design cannot be implemented safely as written — for example when ownership of the data has moved to another service — the skill stops and surfaces the discrepancy for design review instead of deviating silently.
 
 ## Repository boundaries
 

@@ -2,7 +2,7 @@
 
 ## Contents
 
-- [Stage 04 posture](#stage-04-posture)
+- [Stage 05 posture](#stage-05-posture)
 - [When this validation is warranted](#when-this-validation-is-warranted)
 - [Establishing the approved UX](#establishing-the-approved-ux)
 - [Assessment basis and honesty](#assessment-basis-and-honesty)
@@ -13,7 +13,7 @@
 - [Routing corrections](#routing-corrections)
 - [Review checklist](#review-checklist)
 
-## Stage 04 posture
+## Stage 05 posture
 
 Where approved UX exists, the implementation conforms to it. This validation checks conformance and reports gaps. It does not restyle, does not implement, and does not replace an approved design with a preferred one.
 

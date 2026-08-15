@@ -2,7 +2,7 @@
 name: create-development-pr
 description: "Prepare and create an AMRIT development Pull Request for an implemented Jira Story, Task, or Bug by reading the Jira issue read-only, inspecting the local repository and the implementation diff, determining the correct release-X.Y.Z target branch, creating or reusing a Jira-aware feature or bugfix branch, verifying the relevant local checks, staging only ticket-related files, committing and pushing the implementation, generating a traceable PR title and description, and creating the GitHub Pull Request against the release branch. Do not implement missing functionality, transition Jira, approve, merge, squash-merge, or claim code-review sign-off or green CI."
 metadata:
-  stage: Stage 04 — In Development
+  stage: Stage 05 — In Development
   category: Software Development
   primary_role: Developer / Senior Developer
   knowledge_sources:
@@ -47,7 +47,7 @@ This skill is normally used after `implement-jira-ticket` completes successfully
 - Never force-push unless the user explicitly requests it and the repository context makes it safe.
 - Never approve the PR, merge it, squash-merge it, request self-approval, bypass branch protection or required reviews, or claim Senior Developer sign-off.
 - Never claim tests passed, lint passed, or CI is green unless that state was actually observed. Never fabricate a PR URL, commit SHA, branch, CI result, or approval state.
-- Never claim the Stage 04 exit criterion is satisfied merely because a PR exists.
+- Never claim the Stage 05 exit criterion is satisfied merely because a PR exists.
 
 If asked to perform a prohibited operation, decline that part and continue with the authorized PR-preparation work.
 
@@ -192,7 +192,7 @@ Creating the PR is this skill's primary responsibility; do not wait indefinitely
 
 Senior Developer code review, reviewer approval, addressing substantive review feedback, the final squash merge, and release-branch merge confirmation all remain outside this skill.
 
-The Stage 04 exit criteria remain: PR approved, code-review sign-off obtained, CI checks green, and the PR squash-merged into the appropriate release branch. Creating the PR does not satisfy them.
+The Stage 05 exit criteria remain: PR approved, code-review sign-off obtained, CI checks green, and the PR squash-merged into the appropriate release branch. Creating the PR does not satisfy them.
 
 ## Handling ambiguity
 
@@ -253,7 +253,7 @@ No schema changes.
 
 <actual observed GitHub status>
 
-### Remaining Stage 04 Requirements
+### Remaining Stage 05 Requirements
 
 - Code review by Senior Developer
 - Required approval(s)

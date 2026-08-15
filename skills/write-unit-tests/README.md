@@ -1,6 +1,6 @@
 # write-unit-tests
 
-`write-unit-tests` is the **SDET / developer-testing** specialist for Stage 04 — In Development. It adds or updates code-level unit tests for an implemented AMRIT change and runs them.
+`write-unit-tests` is the **SDET / developer-testing** specialist for Stage 05 — In Development. It adds or updates code-level unit tests for an implemented AMRIT change and runs them.
 
 **This skill changes source files** — test files, and never production code to make a test pass.
 

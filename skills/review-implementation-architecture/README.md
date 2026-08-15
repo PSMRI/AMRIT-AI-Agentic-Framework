@@ -1,12 +1,12 @@
 # review-implementation-architecture
 
-`review-implementation-architecture` is the **Technical Architect** specialist for Stage 04 — In Development. It checks that an implementation stays consistent with the approved Stage 03 technical design.
+`review-implementation-architecture` is the **Technical Architect** specialist for Stage 05 — In Development. It checks that an implementation stays consistent with the approved Stage 03 technical design.
 
 **This skill is read-only.** It never edits source, configuration, or documentation.
 
 ## Purpose
 
-Stage 03 designs; Stage 04 implements. This skill exists to keep the implementation faithful to the approved design — HLD and LLD alignment, architecture patterns, module boundaries and ownership, API contracts, integration boundaries, database ownership, and security and performance constraints — and to surface deviations for Architect decision.
+Stage 03 designs; Stage 05 implements. This skill exists to keep the implementation faithful to the approved design — HLD and LLD alignment, architecture patterns, module boundaries and ownership, API contracts, integration boundaries, database ownership, and security and performance constraints — and to surface deviations for Architect decision.
 
 ## Relationship to `implement-jira-ticket`
 

@@ -2,7 +2,7 @@
 name: write-unit-tests
 description: "Add or update code-level unit tests for an implemented AMRIT change: inspect the actual production diff and the repository's existing test framework, fixtures, mocks, and naming conventions, identify the behaviour that changed, cover success, validation, error, boundary, and regression cases, mock dependencies the way the repository already does, run the relevant unit suites, and report the real results. Use as the SDET specialist selected by implement-jira-ticket, or directly to cover an implemented change. This is developer testing, not Stage 07 QA execution and not draft-test-cases. Never weaken an existing test, never change production behaviour to make a test pass, and never claim a result that was not observed."
 metadata:
-  stage: Stage 04 — In Development
+  stage: Stage 05 — In Development
   category: Software Development
   primary_role: SDET / Developer testing
   persona: SDET / Developer testing

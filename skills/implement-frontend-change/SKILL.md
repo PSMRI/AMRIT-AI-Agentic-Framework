@@ -2,7 +2,7 @@
 name: implement-frontend-change
 description: "Implement the web frontend portion of an approved AMRIT Jira Story, Task, or Bug in an Angular UI repository: inspect the actual checked-out frontend source, its shared design-system components, and its state-management and API-integration patterns before editing, then change components, templates, forms, client-side validation, state, API integration, accessibility, and frontend error handling in line with the approved design and the backend API contract. Use as the Frontend Developer specialist selected by implement-jira-ticket, or directly for a frontend-only change. Never create branches, commits, or Pull Requests, and never claim review, UX, QA, or CI approval."
 metadata:
-  stage: Stage 04 — In Development
+  stage: Stage 05 — In Development
   category: Software Development
   primary_role: Frontend Developer
   persona: Frontend Developer
