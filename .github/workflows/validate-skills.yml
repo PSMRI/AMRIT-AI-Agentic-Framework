@@ -82,6 +82,69 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
+      - name: Upload review-implementation-architecture package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/review-implementation-architecture.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload implement-database-change package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/implement-database-change.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload implement-backend-change package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/implement-backend-change.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload implement-frontend-change package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/implement-frontend-change.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload implement-android-change package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/implement-android-change.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload validate-ux-implementation package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/validate-ux-implementation.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload write-unit-tests package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/write-unit-tests.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
       - name: Upload create-development-pr package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
