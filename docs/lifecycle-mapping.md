@@ -1,13 +1,20 @@
 # AMRIT SDLC lifecycle mapping
 
-The skills are independently installable. The first five align to consecutive lifecycle stages, with two skills covering Stage 04; `answer-codebase-questions` is available across the lifecycle. A downstream skill may consume an approved upstream output without requiring the upstream skill itself to be installed.
+The skills are independently installable. They align to consecutive lifecycle stages, with one orchestrator, seven conditionally selected specialists, and one Pull Request skill covering Stage 04; `answer-codebase-questions` is available across the lifecycle. A downstream skill may consume an approved upstream output without requiring the upstream skill itself to be installed.
 
 | Stage | Primary role | Skill | Review status |
 | --- | --- | --- | --- |
 | Stage 01/12 — Business & Product | Business Systems Analyst | [`create-brd`](../skills/create-brd/README.md) | Draft — Pending Human Review |
 | Stage 02 — Product Backlog Creation | Product Manager | [`create-product-backlog`](../skills/create-product-backlog/README.md) | Draft - Pending Product Manager Review |
 | Stage 03 — Engineering Analysis | Technical Architect / Senior Developer | [`create-technical-design`](../skills/create-technical-design/README.md) | Ready for Architect Review |
-| Stage 04 — In Development | Developer / Senior Developer | [`implement-jira-ticket`](../skills/implement-jira-ticket/README.md) | Ready for PR preparation |
+| Stage 04 — In Development | Developer / Senior Developer (orchestration) | [`implement-jira-ticket`](../skills/implement-jira-ticket/README.md) | Ready for PR preparation |
+| Stage 04 — In Development | Technical Architect | [`review-implementation-architecture`](../skills/review-implementation-architecture/README.md) | Conformance assessed — Architect review outstanding |
+| Stage 04 — In Development | DBA / Database Engineer | [`implement-database-change`](../skills/implement-database-change/README.md) | Migration implemented — DBA review outstanding |
+| Stage 04 — In Development | Backend Developer | [`implement-backend-change`](../skills/implement-backend-change/README.md) | Backend implemented |
+| Stage 04 — In Development | Frontend Developer | [`implement-frontend-change`](../skills/implement-frontend-change/README.md) | Frontend implemented |
+| Stage 04 — In Development | Android / Kotlin Developer | [`implement-android-change`](../skills/implement-android-change/README.md) | Android implemented |
+| Stage 04 — In Development | UX / UI Specialist | [`validate-ux-implementation`](../skills/validate-ux-implementation/README.md) | UX conformance assessed — UX review outstanding |
+| Stage 04 — In Development | SDET / Developer testing | [`write-unit-tests`](../skills/write-unit-tests/README.md) | Unit tests executed |
 | Stage 04 — In Development | Developer / Senior Developer | [`create-development-pr`](../skills/create-development-pr/README.md) | Awaiting code review |
 | Cross-lifecycle — Codebase knowledge | Software Engineer | [`answer-codebase-questions`](../skills/answer-codebase-questions/README.md) | Evidence-backed codebase answer |
 
@@ -87,36 +94,86 @@ The Technical Architect has reviewed the design, resolved or accepted material r
 
 ## Stage 04 — In Development
 
-Two skills cover this stage in sequence:
+`implement-jira-ticket` is the single entry point. It orchestrates the engineering personas the ticket actually requires and hands off to `create-development-pr`:
 
 ```text
 Stage 04 — In Development
 
 implement-jira-ticket
-    ↓
-create-development-pr
-    ↓
-Senior Developer review
-    ↓
-CI green + approval + squash merge
+        |
+        |-- review-implementation-architecture   (architecturally significant change)
+        |-- implement-database-change            (schema, migrations, indexes)
+        |-- implement-backend-change             (services, APIs, domain logic)
+        |-- implement-frontend-change            (web UI, state, forms)
+        |-- implement-android-change             (Kotlin, mobile flows, offline)
+        |-- validate-ux-implementation           (user-visible change vs approved UX)
+        `-- write-unit-tests                     (code-level tests for what changed)
+                 |
+                 v
+        create-development-pr
+                 |
+                 v
+        Senior Developer review
+                 |
+                 v
+        CI green + approval + squash merge
 ```
+
+The specialists are **conditionally selected, not an unconditional sequence**. The route comes from the Jira ticket, the approved Stage 03 technical design where one exists, and mandatory inspection of the actual source code.
+
+### Persona routing
+
+| Persona | Skill | Selected when |
+| --- | --- | --- |
+| Technical Architect | `review-implementation-architecture` | cross-cutting or cross-repository change, new component or contract, changed ownership or integration boundary, security- or performance-material change, suspected design deviation |
+| DBA / Database Engineer | `implement-database-change` | a schema object, migration, index, constraint, or data-compatibility concern exists |
+| Backend Developer | `implement-backend-change` | services, APIs, controllers, domain logic, integrations, validation, persistence integration, error handling, or backend configuration change |
+| Frontend Developer | `implement-frontend-change` | web UI, components, state, API integration, forms, client validation, accessibility, or frontend error handling change |
+| Android / Kotlin Developer | `implement-android-change` | the Android applications change, including offline behaviour and platform constraints |
+| UX / UI Specialist | `validate-ux-implementation` | a user-visible change exists and approved UX or design-system rules apply |
+| SDET / developer testing | `write-unit-tests` | production behaviour changed — effectively always |
+
+Representative routes:
+
+```text
+Backend-only        implement-backend-change → write-unit-tests → verification
+Backend + database  implement-database-change → implement-backend-change → write-unit-tests
+Full stack          implement-backend-change → implement-frontend-change
+                    → validate-ux-implementation → write-unit-tests
+Android             implement-android-change → write-unit-tests
+Cross-cutting       review-implementation-architecture → implement-database-change
+architectural       → implement-backend-change → implement-frontend-change
+change              → validate-ux-implementation → write-unit-tests
+```
+
+Execution follows the dependency chain: architecture review before implementation, schema before the backend that consumes it, the API contract before the frontend or Android that consumes it, UX validation after the user-visible change exists, unit tests over everything that changed.
+
+### Mandatory source-code inspection
+
+Every Stage 04 skill inspects the actual checked-out code before changing or assessing it. Jira, Confluence, DeepWiki, Graphify, the approved design, and previous knowledge establish intent; the repository establishes what the system currently does and where the change belongs. A ticket is never implemented from documentation alone, and an inaccessible repository stops the work with a blocked report rather than producing a documentation-driven change.
+
+Where the approved Stage 03 design cannot be implemented safely as written, the work stops and the discrepancy is surfaced for design review instead of a silent deviation.
 
 ### Inputs
 
 - Sprint-ready Jira ticket with acceptance criteria
+- Approved Stage 03 technical design where available
 - Functional specification or BRD where available
-- Wireframes where applicable
-- Approved technical-design or architecture context where available
-- The relevant application repository
+- Wireframes and approved UX where applicable
+- The relevant application repositories, actually checked out
 - `AMRIT-DB` when schema changes are required
 
 ### Outputs
 
-- Code and unit tests — `implement-jira-ticket`
-- Required `AMRIT-DB` schema changes — `implement-jira-ticket`
-- Local verification results — both skills
+- Persona classification and orchestration report — `implement-jira-ticket`
+- Architecture conformance assessment — `review-implementation-architecture`
+- `AMRIT-DB` migration and schema contract — `implement-database-change`
+- Backend, frontend, and Android code changes — the implementation specialists
+- UX conformance assessment — `validate-ux-implementation`
+- Code-level unit tests with executed results — `write-unit-tests`
+- Local verification results — `implement-jira-ticket` and `create-development-pr`
 - Pull Request targeting the appropriate `release-X.Y.Z` branch — `create-development-pr`
-- Code review sign-off — Senior Developer / human review
+- Architecture, DBA, UX, and code review sign-off — human review, never claimed by any skill
 
 ### Exit criterion
 
@@ -126,16 +183,18 @@ The Pull Request is approved with code-review sign-off, CI is green, and the cha
 
 `create-development-pr` finishes with either **Development PR created. Awaiting code review.** or **Development PR not created. Resolve the items above before retrying.**
 
-Together the two skills contribute to the phase but do not satisfy the full phase exit criteria by themselves. The actual phase exit still requires:
+Together the Stage 04 skills contribute to the phase but do not satisfy the full phase exit criteria by themselves. The actual phase exit still requires:
 
 - PR approval;
 - code-review sign-off;
 - green CI;
 - squash merge to the appropriate release branch.
 
-Those responsibilities belong to human review and the repository's merge workflow rather than to either skill. Both skills are independently installable, and neither requires the other at runtime.
+Those responsibilities belong to human review and the repository's merge workflow rather than to any skill. Every Stage 04 skill is independently installable, and none requires another at runtime. When a selected persona's specialist skill is not installed, `implement-jira-ticket` applies that persona's contract inline and reports that it did so; the persona is never skipped.
 
-`implement-jira-ticket` is the implementation and source-editing skill. Jira and Confluence remain read-only, and it never creates a branch, commit, push, or Pull Request, never transitions a Jira issue, and never claims that the exit criterion has been met. Any actual database schema change is implemented in `AMRIT-DB`, never in an application repository.
+`implement-jira-ticket` is the Stage 04 orchestrator and the entry point. It reads the ticket, researches the knowledge sources, inspects the actual source code, classifies the impacted repositories and personas, invokes only the relevant specialists in dependency order, coordinates the contracts between them, verifies the result, and reports the evidence. Jira and Confluence remain read-only, and it never creates a branch, commit, push, or Pull Request, never transitions a Jira issue, and never claims that the exit criterion has been met. Any actual database schema change is implemented in `AMRIT-DB`, never in an application repository.
+
+The specialists own their layers. `implement-backend-change`, `implement-frontend-change`, `implement-android-change`, and `implement-database-change` edit code, each inspecting the code it owns before changing it. `write-unit-tests` writes and runs code-level unit tests — developer testing, kept separate from `draft-test-cases` and Stage 07 QA execution. `review-implementation-architecture` and `validate-ux-implementation` are read-only assessments that report deviations and gaps for human decision. No specialist performs Git or Pull Request work, and none claims architecture, DBA, UX, code-review, QA, CI, or release approval; absent approvals are reported as absent.
 
 `create-development-pr` performs the Git and GitHub write operations — branch, commit, push, and Pull Request creation against a validated `release-X.Y.Z` branch — but performs no substantive implementation. Jira remains strictly read-only. It never approves, merges, or squash-merges a Pull Request, never claims code-review sign-off or green CI it did not observe, and stops and returns the work to implementation when the change is materially incomplete or a required `AMRIT-DB` change is missing.
 

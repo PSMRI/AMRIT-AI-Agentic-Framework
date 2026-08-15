@@ -54,8 +54,19 @@ The available project skills are:
 - `/create-product-backlog`
 - `/create-technical-design`
 - `/implement-jira-ticket`
+- `/review-implementation-architecture`
+- `/implement-database-change`
+- `/implement-backend-change`
+- `/implement-frontend-change`
+- `/implement-android-change`
+- `/validate-ux-implementation`
+- `/write-unit-tests`
 - `/create-development-pr`
 - `/answer-codebase-questions`
+
+For ordinary Stage 04 work, `/implement-jira-ticket` is the only command
+needed: it classifies the impacted personas and routes to the specialists
+above. The specialists remain independently invocable for focused work.
 
 ## Project-scoped MCP setup
 
@@ -114,12 +125,25 @@ Each generated ZIP is published as an individual asset on a GitHub Release:
    - `create-product-backlog.zip`
    - `create-technical-design.zip`
    - `implement-jira-ticket.zip`
+   - `review-implementation-architecture.zip`
+   - `implement-database-change.zip`
+   - `implement-backend-change.zip`
+   - `implement-frontend-change.zip`
+   - `implement-android-change.zip`
+   - `validate-ux-implementation.zip`
+   - `write-unit-tests.zip`
    - `create-development-pr.zip`
    - `answer-codebase-questions.zip`
 5. Upload or install that ZIP using the relevant client workflow.
 
 Every release carries all currently packaged skills, so newly added skills
 appear as additional assets on the next release without any manual step.
+
+For Stage 04, install `implement-jira-ticket` together with the specialist
+packages relevant to the repositories in use. The orchestrator works alone —
+it applies a missing persona's contract inline and reports that it did so — but
+each installed specialist carries its own guidance and code-inspection
+discipline.
 
 The ZIPs are separate assets. There is no combined archive, and no additional
 extraction is required. The ZIP downloaded from the release is the actual skill
@@ -272,9 +296,22 @@ local token values and complete any client trust prompt as described in
   architecture and Swagger/OpenAPI evidence. Official DeepWiki MCP repository
   research is optional.
 - `implement-jira-ticket` requires Jira and Confluence reads, DeepWiki
-  repository research, and the host's repository-editing and command-execution
-  capabilities. It writes only to source files, never to Jira or Confluence, and
-  does not require Graphify.
+  repository research, and the host's repository-editing, command-execution, and
+  skill-invocation capabilities. Graphify and OpenProject are used read-only
+  where available and are not required. It writes only to source files, never to
+  Jira or Confluence. Access to the actual checked-out source code is mandatory:
+  the skill stops rather than implementing a ticket from documentation alone.
+- The Stage 04 specialists — `review-implementation-architecture`,
+  `implement-database-change`, `implement-backend-change`,
+  `implement-frontend-change`, `implement-android-change`,
+  `validate-ux-implementation`, and `write-unit-tests` — require Jira and
+  Confluence reads, DeepWiki repository research where available, and access to
+  the repositories they own. The four implementation specialists and
+  `write-unit-tests` also need repository-editing and command-execution
+  capabilities; `review-implementation-architecture` and
+  `validate-ux-implementation` are read-only. `implement-database-change`
+  additionally needs a checked-out `AMRIT-DB`, and creates no application-local
+  substitute migration when it is unavailable.
 - `create-development-pr` requires Jira reads, local Git and repository access
   through the host's command execution, and a GitHub capability for remote
   branch inspection, Pull Request lookup, Pull Request creation, and check
