@@ -74,7 +74,9 @@ Runs after the user-visible change exists.
 
 Owns code-level unit tests for changed behaviour: identifying changed behaviour and required coverage, adding or updating tests, covering success, failure, and boundary cases, mocking dependencies appropriately, running the relevant unit suites, and reporting real results.
 
-Distinct from `draft-test-cases` and from Stage 07 QA execution.
+Distinct from `draft-test-cases` at Stage 03 and from `execute-qa-validation` at Stage 07.
+
+This specialist is shared with the testing meta-skill `test-jira-ticket`, which routes to the same skill when development-level testing is explicitly appropriate. That does not change its selection here.
 
 ## Route examples
 

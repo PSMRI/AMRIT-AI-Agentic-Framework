@@ -155,7 +155,9 @@ If a specialist reports a blocker, stop the dependent work rather than implement
 
 ### 10. Ensure unit tests exist
 
-Code-level unit tests are mandatory for every changed behaviour. `write-unit-tests` owns them. This is developer testing, not Stage 07 QA, and it is distinct from `draft-test-cases`.
+Code-level unit tests are mandatory for every changed behaviour. `write-unit-tests` owns them. This is developer testing, not Stage 07 `execute-qa-validation`, and it is distinct from `draft-test-cases`.
+
+`write-unit-tests` also participates in the testing meta-skill `test-jira-ticket`. That does not change its selection here: this orchestrator continues to select it whenever production behaviour changed, ahead of `create-development-pr`.
 
 ### 11. Verify
 

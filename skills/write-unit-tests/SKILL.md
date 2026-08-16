@@ -16,6 +16,7 @@ metadata:
   primary_input: Implemented production change with the behaviour it altered
   primary_output: Added or updated unit tests with executed results
   parent_skill: implement-jira-ticket
+  also_invoked_by: test-jira-ticket
   next_skill: create-development-pr
 ---
 
@@ -29,14 +30,26 @@ This skill is normally invoked by `implement-jira-ticket` after the implementati
 /write-unit-tests AMRIT-1234
 ```
 
+## Two orchestration paths, one specialist
+
+This skill participates in both AMRIT meta-skills without changing its contract:
+
+```text
+implement-jira-ticket → write-unit-tests     (primary, Stage 05)
+test-jira-ticket      → write-unit-tests     (when development-level testing
+                                              is explicitly appropriate)
+```
+
+The Stage 05 relationship is unchanged: `implement-jira-ticket` selects this skill whenever production behaviour changed, ahead of `create-development-pr`. `test-jira-ticket` reaches the same skill by a different door. The work performed is identical either way.
+
 ## Scope boundary
 
 This is **developer, code-level testing**. It is deliberately separate from:
 
-- `draft-test-cases` — QA test-case authoring;
-- Stage 07 QA execution — functional, regression, integration, and UAT testing performed by QA.
+- `draft-test-cases` — QA test-specification design at Stage 03 — Analysis;
+- `execute-qa-validation` — Stage 07 QA execution against a deployed build.
 
-This skill writes and runs unit tests in the repositories that changed. It does not produce a QA test plan, does not execute a QA cycle, and does not claim QA sign-off.
+This skill writes and runs unit tests in the repositories that changed. It does not produce a QA test specification, does not execute a QA cycle, and does not claim QA sign-off. A green unit suite is not QA validation.
 
 ## Non-negotiable boundaries
 

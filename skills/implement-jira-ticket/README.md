@@ -123,9 +123,38 @@ Every change is classified explicitly as **no database change**, **application m
 
 Any actual schema change is implemented in `AMRIT-DB` by `implement-database-change`, never in an application repository for convenience. If `AMRIT-DB` is unavailable, no local substitute migration is created; the required change is stated, the dependent work stops, and the implementation is reported incomplete.
 
+## Relationship to `test-jira-ticket`
+
+Two meta-skills, two responsibilities, no competition:
+
+```text
+                  AMRIT Jira Ticket
+                         |
+          ┌──────────────┴──────────────┐
+          |                             |
+          v                             v
+ implement-jira-ticket             test-jira-ticket
+   Engineering META                  Testing META
+          |                             |
+   persona routing              lifecycle routing
+          |                             |
+ Backend / Frontend              draft-test-cases
+ Android / DB / etc.             write-unit-tests
+          |                      execute-qa-validation
+          |
+   write-unit-tests
+          |
+ create-development-pr
+```
+
+- `implement-jira-ticket` — **implement this ticket.**
+- [`test-jira-ticket`](../test-jira-ticket/README.md) — **perform the appropriate testing activity for this ticket's lifecycle position.**
+
+`write-unit-tests` belongs to both paths. Its Stage 05 relationship here is unchanged: this orchestrator selects it whenever production behaviour changed, ahead of `create-development-pr`. The testing meta-skill routes to the same specialist when development-level testing is explicitly appropriate; nothing is duplicated.
+
 ## Test and verification behaviour
 
-Unit tests are mandatory for changed behaviour and are owned by `write-unit-tests` — developer, code-level testing, kept conceptually separate from `draft-test-cases` and Stage 07 QA execution.
+Unit tests are mandatory for changed behaviour and are owned by `write-unit-tests` — developer, code-level testing, kept conceptually separate from `draft-test-cases` at Stage 03 and `execute-qa-validation` at Stage 07.
 
 Verification commands are discovered from each changed repository, never assumed, and run narrowest first. A check is reported as PASS only when it actually ran successfully; otherwise it is `FAILED` with the cause or `NOT RUN` with the reason.
 

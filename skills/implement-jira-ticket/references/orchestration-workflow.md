@@ -165,7 +165,7 @@ After each specialist completes, re-check the contract the next one depends on a
 
 Whenever production behaviour changed, `write-unit-tests` runs and covers the changed behaviour: happy path, validation, error behaviour, boundary cases, and regression risk, with dependencies mocked as the repository already does.
 
-This is developer, code-level testing. It is not Stage 07 QA execution and it is not `draft-test-cases`.
+This is developer, code-level testing. It is not `execute-qa-validation` at Stage 07 and it is not `draft-test-cases` at Stage 03.
 
 ## Step 11: Verify
 

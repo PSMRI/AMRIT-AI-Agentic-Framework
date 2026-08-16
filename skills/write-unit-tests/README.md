@@ -22,14 +22,29 @@ implement-jira-ticket
 
 The skill is independently installable and independently invocable against an implemented change. When it is not installed, the orchestrator applies the developer-testing persona inline; unit tests are never skipped.
 
+## Also reused by `test-jira-ticket`
+
+The same specialist serves both AMRIT meta-skills:
+
+```text
+implement-jira-ticket → write-unit-tests     (primary, Stage 05)
+test-jira-ticket      → write-unit-tests     (when development-level testing
+                                              is explicitly appropriate)
+```
+
+[`test-jira-ticket`](../test-jira-ticket/README.md) routes here when a ticket is in development and code-level testing is what its lifecycle position calls for. Nothing about this skill's contract changes, and no unit-testing logic is duplicated into the testing meta-skill. One specialist can participate in more than one orchestration path.
+
 ## Not QA
 
-This is developer, code-level testing. It is deliberately separate from:
+This is developer, code-level testing — one of three distinct testing artifacts:
 
-- `draft-test-cases` — QA test-case authoring;
-- Stage 07 QA execution — functional, regression, integration, and UAT testing.
+| Skill | Stage | Artifact |
+| --- | --- | --- |
+| [`draft-test-cases`](../draft-test-cases/README.md) | Stage 03 — Analysis | Functional QA test **specifications** |
+| `write-unit-tests` | Stage 05 — In Development | Executable **unit-test code** with real results |
+| [`execute-qa-validation`](../execute-qa-validation/README.md) | Stage 07 — In QA | QA **execution results and evidence** |
 
-The skill never produces a QA test plan, never executes a QA cycle, and never claims QA sign-off.
+The skill never produces a QA test specification, never executes a QA cycle, and never claims QA sign-off. A green unit suite is not QA validation.
 
 ## It reads the diff itself
 

@@ -18,7 +18,7 @@
 
 ## Scope of this document
 
-Code-level unit testing of an implemented change. Broader verification — lint, formatting, static analysis, type checking, build, and packaging — is coordinated by `implement-jira-ticket`. QA test-case authoring belongs to `draft-test-cases`, and QA execution belongs to Stage 07. Keep these separate.
+Code-level unit testing of an implemented change. Broader verification — lint, formatting, static analysis, type checking, build, and packaging — is coordinated by `implement-jira-ticket`. QA test-specification design belongs to `draft-test-cases` at Stage 03, and QA execution against a deployed build belongs to `execute-qa-validation` at Stage 07. Keep these three separate: they are different artifacts with different owners.
 
 ## Unit tests are mandatory
 
