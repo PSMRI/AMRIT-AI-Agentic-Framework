@@ -14,6 +14,7 @@ source directories.
 | [`create-brd`](skills/create-brd/README.md) | `/create-brd` | Stage 01/12 — Business & Product | A traceable AMRIT BRD labelled **Draft — Pending Human Review** after mandatory read-only Confluence research. |
 | [`create-product-backlog`](skills/create-product-backlog/README.md) | `/create-product-backlog` | Stage 02 — Product Backlog Creation | A review-ready backlog from an approved BRD/FRD or L2-escalated production defect, labelled **Draft - Pending Product Manager Review**. |
 | [`create-technical-design`](skills/create-technical-design/README.md) | `/create-technical-design` | Stage 03 — Engineering Analysis | One evidence-based technical design package labelled **Ready for Architect Review**. |
+| [`draft-test-cases`](skills/draft-test-cases/README.md) | `/draft-test-cases` | Stage 03 — Analysis | An implementation-independent functional QA test specification traced to the ticket's acceptance criteria; not unit-test code and not execution results. |
 | [`implement-jira-ticket`](skills/implement-jira-ticket/README.md) | `/implement-jira-ticket` | Stage 05 — In Development | The Stage 05 entry point and engineering orchestrator: implemented and locally verified code with unit tests, produced by the specialist personas the ticket actually needs, with any schema change placed in `AMRIT-DB`. |
 | [`review-implementation-architecture`](skills/review-implementation-architecture/README.md) | `/review-implementation-architecture` | Stage 05 — In Development | A read-only architecture conformance assessment of an implementation against the approved Stage 03 design. |
 | [`implement-database-change`](skills/implement-database-change/README.md) | `/implement-database-change` | Stage 05 — In Development | The `AMRIT-DB` migration for a ticket, plus the schema contract the application implements against. |
@@ -21,8 +22,10 @@ source directories.
 | [`implement-frontend-change`](skills/implement-frontend-change/README.md) | `/implement-frontend-change` | Stage 05 — In Development | The web UI change in an Angular repository, consistent with the design system and the real API contract. |
 | [`implement-android-change`](skills/implement-android-change/README.md) | `/implement-android-change` | Stage 05 — In Development | The Kotlin/Android change, consistent with the app architecture, offline behaviour, and platform constraints. |
 | [`validate-ux-implementation`](skills/validate-ux-implementation/README.md) | `/validate-ux-implementation` | Stage 05 — In Development | A read-only UX conformance assessment of an implemented interface against approved wireframes, the design system, and accessibility expectations. |
-| [`write-unit-tests`](skills/write-unit-tests/README.md) | `/write-unit-tests` | Stage 05 — In Development | Code-level unit tests for an implemented change, with executed results; separate from `draft-test-cases` and Stage 07 QA. |
+| [`write-unit-tests`](skills/write-unit-tests/README.md) | `/write-unit-tests` | Stage 05 — In Development | Code-level unit tests for an implemented change, with executed results; separate from `draft-test-cases` and `execute-qa-validation`. |
 | [`create-development-pr`](skills/create-development-pr/README.md) | `/create-development-pr` | Stage 05 — In Development | A GitHub Pull Request for an implemented Jira ticket, from a Jira-named branch against the correct `release-X.Y.Z` branch, labelled **Awaiting code review**. |
+| [`execute-qa-validation`](skills/execute-qa-validation/README.md) | `/execute-qa-validation` | Stage 07 — In QA | Per-test-case QA execution results with evidence against a real deployed build, defect drafts for failures, and an explicit pending set; never a PASS from documentation. |
+| [`test-jira-ticket`](skills/test-jira-ticket/README.md) | `/test-jira-ticket` | Cross-stage — Testing orchestration | The testing entry point: routes a ticket to the testing activity its lifecycle position actually calls for — `draft-test-cases`, `write-unit-tests`, or `execute-qa-validation`. |
 | [`answer-codebase-questions`](skills/answer-codebase-questions/README.md) | `/answer-codebase-questions` | Cross-lifecycle — Codebase knowledge | A concise, evidence-backed AMRIT codebase answer from DeepWiki, Confluence, and Graphify; never Jira. |
 
 `implement-jira-ticket` is the Stage 05 entry point. It inspects the Jira
@@ -35,16 +38,24 @@ skills — `review-implementation-architecture`, `implement-database-change`,
 `create-development-pr`. The specialists are **conditionally selected**, never
 an unconditional sequence.
 
+`test-jira-ticket` is the testing entry point. It reads the ticket, establishes
+its lifecycle position and the artifacts that actually exist, and routes to
+`draft-test-cases` at Stage 03, the existing `write-unit-tests` at Stage 05, or
+`execute-qa-validation` at Stage 07. It is **lifecycle routing, not a pipeline**:
+running all three would design QA test cases from an implementation, invent unit
+tests for code that does not exist, and fabricate QA results with no build.
+
 `create-development-pr` performs Git and GitHub write operations — branch,
 commit, push, and Pull Request creation — but no substantive implementation.
 `create-brd`, `create-product-backlog`, `create-technical-design`,
-`answer-codebase-questions`, `review-implementation-architecture`, and
-`validate-ux-implementation` are read-only.
+`draft-test-cases`, `answer-codebase-questions`,
+`review-implementation-architecture`, and `validate-ux-implementation` are
+read-only.
 
 The skills are independent. A downstream skill can consume an approved
-upstream output without requiring the upstream skill at runtime, and
-`implement-jira-ticket` applies a persona's contract inline when that
-persona's specialist skill is not installed.
+upstream output without requiring the upstream skill at runtime, and each
+meta-skill applies a persona's or activity's contract inline when that
+specialist skill is not installed.
 
 ## Stage 05 — In Development
 
@@ -99,6 +110,97 @@ approved design describe intent; the checked-out repository decides what the
 code does and where the change belongs. When the source is inaccessible, the
 skills stop instead of implementing from documentation.
 
+## Testing across the lifecycle
+
+`test-jira-ticket` is the testing entry point. It routes a ticket to the testing
+activity its lifecycle position actually calls for:
+
+```text
+                         test-jira-ticket
+                            META-SKILL
+                                |
+              lifecycle-aware test orchestration
+                                |
+            ┌───────────────────┼───────────────────┐
+            │                   │                   │
+            ▼                   ▼                   ▼
+     draft-test-cases     write-unit-tests    execute-qa-validation
+       QA test design       code-level         QA execution
+                            unit testing
+            │                   │                   │
+      Stage 03              Stage 05             Stage 07
+       Analysis          In Development           In QA
+```
+
+Ordinary use needs one command:
+
+```bash
+/test-jira-ticket AMRIT-1234
+```
+
+### Three artifacts, never conflated
+
+| Skill | Stage | Question answered | Artifact |
+| --- | --- | --- | --- |
+| `draft-test-cases` | Stage 03 — Analysis | What must QA test to prove this requirement works? | Functional QA test **specifications** |
+| `write-unit-tests` | Stage 05 — In Development | What code-level tests verify the changed code? | Executable **unit-test code** with real results |
+| `execute-qa-validation` | Stage 07 — In QA | Does the deployed build satisfy the agreed requirements and test cases? | QA **execution results and evidence** |
+
+These are three different deliverables with three different owners. Documentation
+in this repository never calls all three "test cases".
+
+### Routing, not a pipeline
+
+Each activity has an evidence gate that a lifecycle stage alone never satisfies:
+
+| Activity | Prerequisite | If absent |
+| --- | --- | --- |
+| `draft-test-cases` | Acceptance criteria or an approved requirement set | Stop and report; never invent a requirement |
+| `write-unit-tests` | An implementation exists and its source is accessible | Do not route; never invent tests for code that does not exist |
+| `execute-qa-validation` | A reachable deployed build | Blocked report with `Executed: 0`; never a PASS from documentation |
+
+QA test design is **implementation-independent**: every expected result comes from
+an approved requirement, never from what code happens to do. At Stage 07 the
+agreed test cases are consumed as written, never regenerated to match the build,
+and a failure produces a defect rather than a code fix.
+
+Stages 04, 06, 08, and 09 carry no testing skill, deliberately. Stage 06 is a
+queue state, Stage 08 is a human accountability gate, and Stage 09 is a
+project-management action. No skill in this repository claims to be the QA
+approver.
+
+### Two meta-skills, no competition
+
+```text
+                  AMRIT Jira Ticket
+                         |
+          ┌──────────────┴──────────────┐
+          |                             |
+          v                             v
+ implement-jira-ticket             test-jira-ticket
+   Engineering META                  Testing META
+          |                             |
+   persona routing              lifecycle routing
+          |                             |
+ Backend / Frontend              draft-test-cases
+ Android / DB / etc.             write-unit-tests
+          |                      execute-qa-validation
+          |
+   write-unit-tests
+          |
+ create-development-pr
+```
+
+`implement-jira-ticket` answers *implement this ticket*. `test-jira-ticket`
+answers *perform the appropriate testing activity for this ticket's lifecycle
+position*.
+
+`write-unit-tests` belongs to both paths as one specialist, never duplicated. Its
+Stage 05 relationship is unchanged — `implement-jira-ticket` selects it whenever
+production behaviour changed, ahead of `create-development-pr` — and the testing
+meta-skill routes to the same skill when development-level testing is explicitly
+appropriate.
+
 ## Project use: discover skills immediately
 
 Developers can clone the repository and use a supported coding agent from its
@@ -123,6 +225,8 @@ Both bridge locations contain every available skill:
     -> skills/create-product-backlog/SKILL.md
 <bridge-root>/create-technical-design/SKILL.md
     -> skills/create-technical-design/SKILL.md
+<bridge-root>/draft-test-cases/SKILL.md
+    -> skills/draft-test-cases/SKILL.md
 <bridge-root>/implement-jira-ticket/SKILL.md
     -> skills/implement-jira-ticket/SKILL.md
 <bridge-root>/review-implementation-architecture/SKILL.md
@@ -141,6 +245,10 @@ Both bridge locations contain every available skill:
     -> skills/write-unit-tests/SKILL.md
 <bridge-root>/create-development-pr/SKILL.md
     -> skills/create-development-pr/SKILL.md
+<bridge-root>/execute-qa-validation/SKILL.md
+    -> skills/execute-qa-validation/SKILL.md
+<bridge-root>/test-jira-ticket/SKILL.md
+    -> skills/test-jira-ticket/SKILL.md
 <bridge-root>/answer-codebase-questions/SKILL.md
     -> skills/answer-codebase-questions/SKILL.md
 ```
@@ -233,6 +341,7 @@ GitHub Releases are the official distribution channel. To install a skill:
    - `create-brd.zip`
    - `create-product-backlog.zip`
    - `create-technical-design.zip`
+   - `draft-test-cases.zip`
    - `implement-jira-ticket.zip`
    - `review-implementation-architecture.zip`
    - `implement-database-change.zip`
@@ -242,6 +351,8 @@ GitHub Releases are the official distribution channel. To install a skill:
    - `validate-ux-implementation.zip`
    - `write-unit-tests.zip`
    - `create-development-pr.zip`
+   - `execute-qa-validation.zip`
+   - `test-jira-ticket.zip`
    - `answer-codebase-questions.zip`
 5. Upload or install that ZIP using the relevant client workflow.
 
@@ -249,6 +360,12 @@ For Stage 05, install `implement-jira-ticket` together with the specialist
 packages relevant to the repositories you work in. The orchestrator still works
 alone — it applies a missing persona's contract inline — but each installed
 specialist keeps its own guidance and code-inspection discipline.
+
+For testing, install `test-jira-ticket` together with `draft-test-cases`,
+`write-unit-tests`, and `execute-qa-validation`. The testing meta-skill also
+works alone, applying a missing activity's contract inline at the same standard,
+and `write-unit-tests` serves both the implementation and testing paths from one
+installation.
 
 Every release contains all currently packaged skills as individual assets, so
 the asset list above grows automatically as skills are added. The packages are
@@ -268,15 +385,18 @@ skills/                         Canonical source; edit skills here
 ├── create-brd/
 ├── create-product-backlog/
 ├── create-technical-design/
-├── implement-jira-ticket/              Stage 05 orchestrator
+├── draft-test-cases/                   Stage 03 testing specialist
+├── implement-jira-ticket/              Stage 05 engineering orchestrator
 ├── review-implementation-architecture/ Stage 05 specialist
 ├── implement-database-change/          Stage 05 specialist
 ├── implement-backend-change/           Stage 05 specialist
 ├── implement-frontend-change/          Stage 05 specialist
 ├── implement-android-change/           Stage 05 specialist
 ├── validate-ux-implementation/         Stage 05 specialist
-├── write-unit-tests/                   Stage 05 specialist
+├── write-unit-tests/                   Stage 05 specialist; also a testing specialist
 ├── create-development-pr/
+├── execute-qa-validation/              Stage 07 testing specialist
+├── test-jira-ticket/                   Cross-stage testing orchestrator
 └── answer-codebase-questions/
 
 .claude/skills/                 Claude project bridges
@@ -422,6 +542,25 @@ working copy.
   above; it comes from the host, such as a connected GitHub capability or an
   authenticated GitHub CLI. Without it the skill performs safe local preparation
   only and reports that PR creation could not be completed.
+- `test-jira-ticket` requires read-only Jira and Confluence capabilities, host
+  filesystem and repository access to establish whether an implementation exists,
+  host command execution, and the host's skill-invocation capability. DeepWiki,
+  Graphify, and OpenProject are used read-only where available and none is
+  required. Access to a deployed QA build is required only when QA execution is
+  the selected activity.
+- `draft-test-cases` requires read-only Jira and Confluence capabilities. A
+  configured test-management source and DeepWiki are used read-only where
+  available and neither is required. It executes nothing and writes no files in
+  application repositories.
+- `execute-qa-validation` requires read-only Jira and Confluence, access to a
+  deployed QA build, and the host's command-execution and filesystem
+  capabilities. Browser, device, API, and log or observability capabilities are
+  used where the environment genuinely provides them; none is assumed. Selenium,
+  Playwright, Appium, Postman/Newman, BrowserStack, and Firebase are **not**
+  provided by the project-scoped MCP files above and are used only when verified
+  present in the environment. A Jira write capability is used only for a defect
+  the user explicitly authorized. Without a reachable build the skill reports
+  `QA status: NOT EXECUTED` and produces no verdict.
 - `answer-codebase-questions` uses read-only DeepWiki first, then Confluence
   when needed, with Graphify as the final fallback. It never uses Jira.
 
@@ -442,6 +581,15 @@ never stages unrelated user work or secrets, never pushes to a protected branch,
 and never approves, merges, or squash-merges a Pull Request or claims
 code-review sign-off or green CI it did not observe. Every Stage 05 skill is
 independently installable; none requires another at runtime.
+
+The testing skills hold their own boundaries. `draft-test-cases` is read-only and
+never derives an expected result from an implementation. `execute-qa-validation`
+executes tests but never modifies production code, configuration, or a migration
+to make one pass, never rewrites an agreed test case to match the build, never
+produces a PASS from documentation or a green unit suite, never fabricates a
+result or a defect key, and never claims to be the human QA approver. QA approval
+at Stage 08 remains a human decision, and manual-required or infrastructure-
+blocked scenarios are always reported as pending rather than assumed.
 
 See the [lifecycle mapping](docs/lifecycle-mapping.md) for inputs, outputs, and
 review gates.

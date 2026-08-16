@@ -53,6 +53,7 @@ The available project skills are:
 - `/create-brd`
 - `/create-product-backlog`
 - `/create-technical-design`
+- `/draft-test-cases`
 - `/implement-jira-ticket`
 - `/review-implementation-architecture`
 - `/implement-database-change`
@@ -62,11 +63,19 @@ The available project skills are:
 - `/validate-ux-implementation`
 - `/write-unit-tests`
 - `/create-development-pr`
+- `/execute-qa-validation`
+- `/test-jira-ticket`
 - `/answer-codebase-questions`
 
 For ordinary Stage 05 work, `/implement-jira-ticket` is the only command
 needed: it classifies the impacted personas and routes to the specialists
 above. The specialists remain independently invocable for focused work.
+
+For ordinary testing work, `/test-jira-ticket` is the only command needed: it
+establishes the ticket's lifecycle position and the artifacts that actually
+exist, then routes to `/draft-test-cases` at Stage 03, `/write-unit-tests` at
+Stage 05, or `/execute-qa-validation` at Stage 07. It routes; it does not run
+all three. The testing specialists also remain independently invocable.
 
 ## Project-scoped MCP setup
 
@@ -124,6 +133,7 @@ Each generated ZIP is published as an individual asset on a GitHub Release:
    - `create-brd.zip`
    - `create-product-backlog.zip`
    - `create-technical-design.zip`
+   - `draft-test-cases.zip`
    - `implement-jira-ticket.zip`
    - `review-implementation-architecture.zip`
    - `implement-database-change.zip`
@@ -133,6 +143,8 @@ Each generated ZIP is published as an individual asset on a GitHub Release:
    - `validate-ux-implementation.zip`
    - `write-unit-tests.zip`
    - `create-development-pr.zip`
+   - `execute-qa-validation.zip`
+   - `test-jira-ticket.zip`
    - `answer-codebase-questions.zip`
 5. Upload or install that ZIP using the relevant client workflow.
 
@@ -144,6 +156,13 @@ packages relevant to the repositories in use. The orchestrator works alone —
 it applies a missing persona's contract inline and reports that it did so — but
 each installed specialist carries its own guidance and code-inspection
 discipline.
+
+For testing, install `test-jira-ticket` together with `draft-test-cases`,
+`write-unit-tests`, and `execute-qa-validation`. The testing meta-skill also
+works alone, applying a missing activity's contract inline at the same standard
+and reporting that it did so. `write-unit-tests` serves both the implementation
+and testing paths from a single installation; it does not need to be installed
+twice.
 
 The ZIPs are separate assets. There is no combined archive, and no additional
 extraction is required. The ZIP downloaded from the release is the actual skill
@@ -321,6 +340,25 @@ local token values and complete any client trust prompt as described in
   GitHub capability or an authenticated GitHub CLI in the local environment.
   Without it the skill performs safe local preparation only, fabricates no PR
   URL, and reports that PR creation could not be completed.
+- `test-jira-ticket` requires Jira and Confluence reads, host filesystem and
+  repository access to establish whether an implementation exists, host command
+  execution, and the host's skill-invocation capability. DeepWiki, Graphify, and
+  OpenProject are used read-only where available and none is required. A
+  deployed QA build is required only when QA execution is the selected activity.
+  It routes by lifecycle position rather than running every testing specialist.
+- `draft-test-cases` requires Jira and Confluence reads. A configured
+  test-management source and DeepWiki are optional and read-only. It executes no
+  application, writes no test code, and modifies no repository file.
+- `execute-qa-validation` requires Jira and Confluence reads, access to a
+  deployed QA build, and the host's command-execution and filesystem
+  capabilities. Browser, device, API, and log or observability capabilities are
+  used only where the environment genuinely provides them. Selenium, Playwright,
+  Appium, Postman/Newman, BrowserStack, and Firebase are **not** provided by the
+  project-scoped MCP files and are used only after being verified present; their
+  absence is reported and produces `NOT EXECUTED — infrastructure` verdicts, not
+  workarounds. A Jira write capability is used only for a defect the user
+  explicitly authorized; the default is draft-only. Without a reachable build the
+  skill reports `QA status: NOT EXECUTED` and produces no verdict.
 - `answer-codebase-questions` uses read-only DeepWiki first, then Confluence
   when needed, with Graphify as the final fallback. It never uses Jira.
 
