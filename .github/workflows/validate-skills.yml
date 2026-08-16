@@ -73,6 +73,15 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
+      - name: Upload draft-test-cases package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/draft-test-cases.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
       - name: Upload implement-jira-ticket package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
@@ -150,6 +159,24 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           path: dist/create-development-pr.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload execute-qa-validation package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/execute-qa-validation.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload test-jira-ticket package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/test-jira-ticket.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
