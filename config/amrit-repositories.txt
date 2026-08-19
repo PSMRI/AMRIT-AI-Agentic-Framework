@@ -24,6 +24,14 @@
 #     python scripts/clone-amrit-repos.py Common-API HWC-API HWC-UI
 #
 # Adding a repository is a one-line change; no script edit is required.
+#
+# To clone a repository that is not catalogued here, pass its URL instead of
+# editing this file:
+#
+#     python scripts/clone-amrit-repos.py --url https://github.com/PSMRI/Some-New-Repo.git
+#
+# That is local workspace state only. The script never edits this manifest;
+# a maintainer adds a line here when a repository becomes official.
 
 # --- UI repositories (Angular) ------------------------------------------
 PSMRI/Inventory-UI|https://github.com/PSMRI/Inventory-UI.git

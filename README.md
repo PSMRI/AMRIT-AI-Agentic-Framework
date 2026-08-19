@@ -404,6 +404,59 @@ Report the workspace state at any time:
 ./scripts/clone-amrit-repos.sh --list
 ```
 
+### Cloning a repository that is not in the manifest
+
+`config/amrit-repositories.txt` is the curated catalog of known AMRIT
+repositories, and a selector that is not in it still fails. For a repository
+that is not catalogued yet, supply its clone URL directly:
+
+```bash
+python scripts/clone-amrit-repos.py   --url https://github.com/PSMRI/Some-New-Repo.git
+```
+
+which clones to:
+
+```text
+repos/PSMRI/Some-New-Repo
+```
+
+The organization and repository are derived from the URL, so another
+organization lands in its own directory:
+
+```bash
+python scripts/clone-amrit-repos.py --url https://github.com/SomeOrg/Some-Repo.git
+# → repos/SomeOrg/Some-Repo
+```
+
+What this does and does not do:
+
+- it does **not** modify `config/amrit-repositories.txt`, and does not even
+  read it — the catalog changes only when a maintainer edits it by hand;
+- the clone is local workspace state only;
+- `repos/` stays ignored by the framework repository;
+- the cloned repository is an independent Git repository with its own
+  `origin`, so you commit, branch, and push from inside it exactly as with a
+  catalogued repository;
+- every safety rule is the same: an existing Git repository is skipped
+  untouched, an existing non-Git path fails without being overwritten, and
+  `--dry-run` reports the destination while creating nothing.
+
+Manifest selectors and `--url` are separate modes. Passing both, passing
+`--url` with `--list`, or passing `--url` twice fails immediately with a clear
+message and clones nothing. Run the script once per ad-hoc repository.
+
+An `--path` override is available when the destination should differ from the
+URL-derived one. It is relative to `repos/` and must be exactly
+`<organization>/<repository>`:
+
+```bash
+python scripts/clone-amrit-repos.py   --url https://github.com/PSMRI/Some-New-Repo.git   --path PSMRI/Some-New-Repo
+```
+
+Ordinary GitHub URLs never need it. URLs carrying inline credentials, such as
+`https://user:token@github.com/...`, are rejected without the secret appearing
+in any message.
+
 ### The script is safe to re-run
 
 | Situation | What happens |

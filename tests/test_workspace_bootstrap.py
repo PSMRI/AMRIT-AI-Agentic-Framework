@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import contextlib
 import importlib.util
+import io
 import subprocess
 import sys
 import tempfile
@@ -376,6 +378,430 @@ class CommittedManifestTests(unittest.TestCase):
             with self.subTest(repository=entry.path):
                 self.assertNotIn("@", entry.url)
                 self.assertNotIn("token", entry.url.lower())
+
+
+class CloneUrlParsingTests(unittest.TestCase):
+    def test_parses_a_github_https_url_with_a_git_suffix(self) -> None:
+        self.assertEqual(
+            clone.parse_clone_url("https://github.com/PSMRI/Some-New-Repo.git"),
+            ("PSMRI", "Some-New-Repo"),
+        )
+
+    def test_parses_a_github_https_url_without_a_git_suffix(self) -> None:
+        self.assertEqual(
+            clone.parse_clone_url("https://github.com/PSMRI/Some-New-Repo"),
+            ("PSMRI", "Some-New-Repo"),
+        )
+
+    def test_parses_a_url_for_another_organization(self) -> None:
+        self.assertEqual(
+            clone.parse_clone_url("https://github.com/SomeOrg/Some-Repo.git"),
+            ("SomeOrg", "Some-Repo"),
+        )
+
+    def test_parses_ssh_scp_syntax(self) -> None:
+        self.assertEqual(
+            clone.parse_clone_url("git@github.com:PSMRI/Some-New-Repo.git"),
+            ("PSMRI", "Some-New-Repo"),
+        )
+
+    def test_tolerates_a_trailing_slash(self) -> None:
+        self.assertEqual(
+            clone.parse_clone_url("https://github.com/PSMRI/Some-New-Repo/"),
+            ("PSMRI", "Some-New-Repo"),
+        )
+
+    def test_rejects_an_empty_url(self) -> None:
+        with self.assertRaises(clone.AdHocRepositoryError):
+            clone.parse_clone_url("   ")
+
+    def test_rejects_a_url_without_a_scheme(self) -> None:
+        with self.assertRaises(clone.AdHocRepositoryError):
+            clone.parse_clone_url("not-a-url")
+
+    def test_rejects_a_url_with_only_one_path_segment(self) -> None:
+        with self.assertRaises(clone.AdHocRepositoryError):
+            clone.parse_clone_url("https://github.com/OnlyOneSegment.git")
+
+    def test_rejects_a_url_with_no_path_at_all(self) -> None:
+        with self.assertRaises(clone.AdHocRepositoryError):
+            clone.parse_clone_url("https://github.com")
+
+    def test_rejects_traversal_segments_anywhere_in_the_path(self) -> None:
+        for url in (
+            "https://github.com/PSMRI/../../etc/passwd",
+            "https://github.com/PSMRI/..",
+            "https://github.com/./Some-Repo",
+        ):
+            with self.subTest(url=url):
+                with self.assertRaises(clone.AdHocRepositoryError):
+                    clone.parse_clone_url(url)
+
+    def test_rejects_percent_encoded_segments(self) -> None:
+        with self.assertRaises(clone.AdHocRepositoryError):
+            clone.parse_clone_url("https://github.com/PSMRI/%2e%2e")
+
+    def test_rejects_backslash_separators(self) -> None:
+        with self.assertRaises(clone.AdHocRepositoryError):
+            clone.parse_clone_url("https://github.com/PSMRI\\Some-Repo")
+
+    def test_rejects_whitespace_in_the_url(self) -> None:
+        with self.assertRaises(clone.AdHocRepositoryError):
+            clone.parse_clone_url("https://github.com/PSMRI/Some Repo.git")
+
+    def test_rejects_an_unsupported_scheme(self) -> None:
+        with self.assertRaises(clone.AdHocRepositoryError):
+            clone.parse_clone_url("ftp://github.com/PSMRI/Some-Repo.git")
+
+    def test_rejects_a_url_with_an_inline_username_and_password(self) -> None:
+        with self.assertRaises(clone.AdHocRepositoryError) as raised:
+            clone.parse_clone_url("https://user:s3cret@github.com/PSMRI/Repo.git")
+        self.assertNotIn("s3cret", str(raised.exception))
+
+    def test_rejects_a_url_with_an_inline_token(self) -> None:
+        with self.assertRaises(clone.AdHocRepositoryError) as raised:
+            clone.parse_clone_url("https://ghp_tokenvalue@github.com/PSMRI/Repo.git")
+        self.assertNotIn("ghp_tokenvalue", str(raised.exception))
+
+    def test_rejects_ssh_syntax_carrying_a_password(self) -> None:
+        with self.assertRaises(clone.AdHocRepositoryError) as raised:
+            clone.parse_clone_url("git:s3cret@github.com:PSMRI/Repo.git")
+        self.assertNotIn("s3cret", str(raised.exception))
+
+
+class ExplicitWorkspacePathTests(unittest.TestCase):
+    def test_accepts_an_organization_and_repository(self) -> None:
+        self.assertEqual(
+            clone.split_workspace_path("PSMRI/Some-New-Repo"),
+            ("PSMRI", "Some-New-Repo"),
+        )
+
+    def test_rejects_traversal(self) -> None:
+        for candidate in ("../outside", "PSMRI/../repo", "../../PSMRI/repo"):
+            with self.subTest(path=candidate):
+                with self.assertRaises(clone.AdHocRepositoryError):
+                    clone.split_workspace_path(candidate)
+
+    def test_rejects_an_absolute_path(self) -> None:
+        with self.assertRaises(clone.AdHocRepositoryError):
+            clone.split_workspace_path("/repo")
+
+    def test_rejects_a_path_without_an_organization(self) -> None:
+        with self.assertRaises(clone.AdHocRepositoryError):
+            clone.split_workspace_path("repo-only-without-org")
+
+    def test_rejects_a_backslash_separator(self) -> None:
+        with self.assertRaises(clone.AdHocRepositoryError):
+            clone.split_workspace_path("PSMRI\\repo")
+
+    def test_rejects_an_empty_path(self) -> None:
+        with self.assertRaises(clone.AdHocRepositoryError):
+            clone.split_workspace_path("   ")
+
+
+class AdHocCloneTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory()
+        self.root = Path(self.temporary.name)
+        self.sources = self.root / "sources"
+        self.sources.mkdir()
+        self.workspace = self.root / "repos"
+
+    def tearDown(self) -> None:
+        self.temporary.cleanup()
+
+    def adhoc(self, url: str, *extra: str) -> int:
+        return clone.main(
+            ["--workspace", str(self.workspace), "--url", url, *extra]
+        )
+
+    def create_adhoc_source(self) -> tuple[Path, str]:
+        """A local repository whose URL derives to PSMRI/Some-New-Repo."""
+
+        source = create_source_repository(self.sources / "PSMRI", "Some-New-Repo")
+        return source, source.as_uri()
+
+    def test_clones_to_the_destination_derived_from_the_url(self) -> None:
+        _, url = self.create_adhoc_source()
+
+        status = self.adhoc(url)
+
+        destination = self.workspace / "PSMRI" / "Some-New-Repo"
+        self.assertEqual(status, 0)
+        self.assertTrue(clone.is_git_repository(destination))
+        self.assertTrue((destination / "README.md").is_file())
+
+    def test_the_ad_hoc_clone_keeps_its_own_origin(self) -> None:
+        _, url = self.create_adhoc_source()
+        self.assertEqual(self.adhoc(url), 0)
+
+        destination = self.workspace / "PSMRI" / "Some-New-Repo"
+        remote = git(["remote", "get-url", "origin"], cwd=destination).stdout.strip()
+        self.assertEqual(remote, url)
+
+    def test_the_ad_hoc_clone_has_full_history(self) -> None:
+        _, url = self.create_adhoc_source()
+        self.assertEqual(self.adhoc(url), 0)
+
+        destination = self.workspace / "PSMRI" / "Some-New-Repo"
+        shallow = git(
+            ["rev-parse", "--is-shallow-repository"], cwd=destination
+        ).stdout.strip()
+        self.assertEqual(shallow, "false")
+
+    def test_an_explicit_path_overrides_the_derived_destination(self) -> None:
+        _, url = self.create_adhoc_source()
+
+        status = self.adhoc(url, "--path", "Custom-Org/Renamed-Repo")
+
+        self.assertEqual(status, 0)
+        self.assertTrue(
+            clone.is_git_repository(self.workspace / "Custom-Org" / "Renamed-Repo")
+        )
+        self.assertFalse((self.workspace / "PSMRI").exists())
+
+    def test_an_existing_git_repository_is_skipped_and_left_untouched(self) -> None:
+        _, url = self.create_adhoc_source()
+        self.assertEqual(self.adhoc(url), 0)
+
+        destination = self.workspace / "PSMRI" / "Some-New-Repo"
+        git(["checkout", "-b", "feature/local-work"], cwd=destination)
+        (destination / "wip.txt").write_text("local work", encoding="utf-8")
+        head_before = git(["rev-parse", "HEAD"], cwd=destination).stdout.strip()
+
+        self.assertEqual(self.adhoc(url), 0)
+
+        branch = git(["rev-parse", "--abbrev-ref", "HEAD"], cwd=destination)
+        self.assertEqual(branch.stdout.strip(), "feature/local-work")
+        self.assertEqual(
+            (destination / "wip.txt").read_text(encoding="utf-8"), "local work"
+        )
+        self.assertEqual(
+            git(["rev-parse", "HEAD"], cwd=destination).stdout.strip(), head_before
+        )
+
+    def test_an_existing_non_git_path_fails_without_being_touched(self) -> None:
+        _, url = self.create_adhoc_source()
+        destination = self.workspace / "PSMRI" / "Some-New-Repo"
+        destination.mkdir(parents=True)
+        (destination / "keep.txt").write_text("keep me", encoding="utf-8")
+
+        status = self.adhoc(url)
+
+        self.assertEqual(status, 1)
+        self.assertEqual(
+            (destination / "keep.txt").read_text(encoding="utf-8"), "keep me"
+        )
+        self.assertFalse((destination / ".git").exists())
+
+    def test_a_clone_failure_reports_and_exits_non_zero(self) -> None:
+        absent = (self.sources / "PSMRI" / "Absent-Repo").as_uri()
+
+        status = self.adhoc(absent)
+
+        self.assertEqual(status, 1)
+        self.assertFalse((self.workspace / "PSMRI" / "Absent-Repo").exists())
+
+    def test_dry_run_creates_nothing(self) -> None:
+        _, url = self.create_adhoc_source()
+
+        status = self.adhoc(url, "--dry-run")
+
+        self.assertEqual(status, 0)
+        self.assertFalse(self.workspace.exists())
+
+    def test_dry_run_reports_a_skip_for_an_existing_repository(self) -> None:
+        _, url = self.create_adhoc_source()
+        self.assertEqual(self.adhoc(url), 0)
+
+        with contextlib.redirect_stdout(io.StringIO()) as captured:
+            status = self.adhoc(url, "--dry-run")
+
+        self.assertEqual(status, 0)
+        self.assertIn("would skip", captured.getvalue())
+
+    def test_dry_run_reports_a_failure_for_an_existing_non_git_path(self) -> None:
+        _, url = self.create_adhoc_source()
+        (self.workspace / "PSMRI" / "Some-New-Repo").mkdir(parents=True)
+
+        with contextlib.redirect_stdout(io.StringIO()) as captured:
+            status = self.adhoc(url, "--dry-run")
+
+        self.assertEqual(status, 1)
+        self.assertIn("would fail", captured.getvalue())
+
+    def test_an_invalid_url_fails_before_anything_is_created(self) -> None:
+        status = self.adhoc("not-a-url")
+
+        self.assertEqual(status, 1)
+        self.assertFalse(self.workspace.exists())
+
+    def test_a_credential_bearing_url_fails_without_printing_the_secret(self) -> None:
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer), contextlib.redirect_stderr(buffer):
+            status = self.adhoc("https://user:s3cretvalue@github.com/PSMRI/Repo.git")
+
+        self.assertEqual(status, 1)
+        self.assertNotIn("s3cretvalue", buffer.getvalue())
+        self.assertFalse(self.workspace.exists())
+
+    def test_an_invalid_explicit_path_fails_before_anything_is_created(self) -> None:
+        _, url = self.create_adhoc_source()
+
+        status = self.adhoc(url, "--path", "../outside")
+
+        self.assertEqual(status, 1)
+        self.assertFalse(self.workspace.exists())
+
+    def test_the_destination_always_stays_inside_the_workspace(self) -> None:
+        _, url = self.create_adhoc_source()
+        self.assertEqual(self.adhoc(url), 0)
+
+        destination = (self.workspace / "PSMRI" / "Some-New-Repo").resolve()
+        self.assertEqual(destination.parent.parent, self.workspace.resolve())
+
+    def test_ad_hoc_cloning_works_in_a_workspace_path_containing_spaces(self) -> None:
+        _, url = self.create_adhoc_source()
+        workspace = self.root / "a workspace with spaces" / "repos"
+
+        status = clone.main(
+            ["--workspace", str(workspace), "--url", url]
+        )
+
+        self.assertEqual(status, 0)
+        self.assertTrue(
+            clone.is_git_repository(workspace / "PSMRI" / "Some-New-Repo")
+        )
+
+
+class AdHocModeExclusivityTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory()
+        self.root = Path(self.temporary.name)
+        self.workspace = self.root / "repos"
+        self.manifest = self.root / "manifest.txt"
+        self.manifest.write_text(
+            "PSMRI/Common-API|https://example.invalid/Common-API.git\n",
+            encoding="utf-8",
+        )
+
+    def tearDown(self) -> None:
+        self.temporary.cleanup()
+
+    def run_cli(self, *arguments: str) -> int:
+        return clone.main(
+            [
+                "--manifest",
+                str(self.manifest),
+                "--workspace",
+                str(self.workspace),
+                *arguments,
+            ]
+        )
+
+    def test_a_selector_and_a_url_together_fail_before_cloning(self) -> None:
+        status = self.run_cli(
+            "Common-API", "--url", "https://github.com/PSMRI/Other.git"
+        )
+        self.assertEqual(status, 1)
+        self.assertFalse(self.workspace.exists())
+
+    def test_list_and_url_together_fail(self) -> None:
+        status = self.run_cli("--list", "--url", "https://github.com/PSMRI/Other.git")
+        self.assertEqual(status, 1)
+        self.assertFalse(self.workspace.exists())
+
+    def test_two_urls_fail(self) -> None:
+        status = self.run_cli(
+            "--url",
+            "https://github.com/PSMRI/One.git",
+            "--url",
+            "https://github.com/PSMRI/Two.git",
+        )
+        self.assertEqual(status, 1)
+        self.assertFalse(self.workspace.exists())
+
+    def test_path_without_url_fails(self) -> None:
+        status = self.run_cli("--path", "PSMRI/Some-Repo")
+        self.assertEqual(status, 1)
+        self.assertFalse(self.workspace.exists())
+
+    def test_ad_hoc_mode_succeeds_even_when_the_manifest_is_absent(self) -> None:
+        source_root = self.root / "sources"
+        source_root.mkdir()
+        source = create_source_repository(source_root / "PSMRI", "Some-New-Repo")
+
+        status = clone.main(
+            [
+                "--manifest",
+                str(self.root / "does-not-exist.txt"),
+                "--workspace",
+                str(self.workspace),
+                "--url",
+                source.as_uri(),
+            ]
+        )
+
+        self.assertEqual(status, 0)
+        self.assertTrue(
+            clone.is_git_repository(self.workspace / "PSMRI" / "Some-New-Repo")
+        )
+
+
+class ManifestIsNeverAutoEditedTests(unittest.TestCase):
+    """An ad-hoc clone is local workspace state, never a catalog change."""
+
+    def test_ad_hoc_cloning_leaves_the_committed_manifest_byte_identical(self) -> None:
+        before = MANIFEST_PATH.read_bytes()
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = create_source_repository(root / "PSMRI", "Some-New-Repo")
+            status = clone.main(
+                [
+                    "--workspace",
+                    str(root / "repos"),
+                    "--url",
+                    source.as_uri(),
+                ]
+            )
+            self.assertEqual(status, 0)
+
+        self.assertEqual(MANIFEST_PATH.read_bytes(), before)
+
+    def test_an_ad_hoc_repository_does_not_appear_in_list_output(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            manifest = root / "manifest.txt"
+            manifest.write_text(
+                "PSMRI/Common-API|https://example.invalid/Common-API.git\n",
+                encoding="utf-8",
+            )
+            workspace = root / "repos"
+            source = create_source_repository(root / "PSMRI", "Some-New-Repo")
+
+            self.assertEqual(
+                clone.main(
+                    ["--workspace", str(workspace), "--url", source.as_uri()]
+                ),
+                0,
+            )
+
+            with contextlib.redirect_stdout(io.StringIO()) as captured:
+                clone.main(
+                    [
+                        "--manifest",
+                        str(manifest),
+                        "--workspace",
+                        str(workspace),
+                        "--list",
+                    ]
+                )
+
+            output = captured.getvalue()
+            self.assertIn("PSMRI/Common-API", output)
+            self.assertNotIn("Some-New-Repo", output)
+            self.assertIn("Configured repositories: 1", output)
 
 
 class WorkspaceIgnoreTests(unittest.TestCase):

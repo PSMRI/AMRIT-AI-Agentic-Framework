@@ -217,6 +217,106 @@ Clones are ordinary and complete. The script uses no `--depth`, no `--bare`,
 and no `--single-branch`: every clone is immediately usable for normal
 development.
 
+### Ad-hoc cloning of a repository outside the manifest
+
+The manifest stays the curated catalog of known AMRIT repositories, and an
+unknown selector still fails rather than guessing a URL. When a developer needs
+a repository that is not catalogued yet, pass its clone URL explicitly:
+
+```bash
+./scripts/clone-amrit-repos.sh --url https://github.com/PSMRI/Some-New-Repo.git
+python scripts/clone-amrit-repos.py --url https://github.com/SomeOrg/Some-Repo.git
+```
+
+The destination is derived from the URL:
+
+| Clone URL | Destination |
+| --- | --- |
+| `https://github.com/PSMRI/Some-New-Repo.git` | `repos/PSMRI/Some-New-Repo` |
+| `https://github.com/PSMRI/Some-New-Repo` | `repos/PSMRI/Some-New-Repo` |
+| `https://github.com/SomeOrg/Some-Repo.git` | `repos/SomeOrg/Some-Repo` |
+| `git@github.com:PSMRI/Some-New-Repo.git` | `repos/PSMRI/Some-New-Repo` |
+
+Ad-hoc cloning is a thin entry point onto the same machinery, not a second
+implementation: the URL becomes an ordinary repository entry and then travels
+through exactly the same clone, skip, failure, dry-run, and reporting code as a
+manifest-backed repository. So the behaviour table in
+[Behaviour, and why it is safe to re-run](#behaviour-and-why-it-is-safe-to-re-run)
+applies unchanged — missing destination clones, an existing Git repository is
+skipped untouched with no pull, an existing non-Git path fails while being
+preserved, and a clone failure exits non-zero.
+
+The clone is **local workspace state only**:
+
+- `config/amrit-repositories.txt` is not modified, and in ad-hoc mode it is not
+  even read. The script never mutates the catalog. If maintainers decide the
+  repository belongs there, they add the line by hand.
+- `repos/` remains ignored by the framework repository.
+- The result is an independent Git repository with its own `origin`, its own
+  branches, and its own history, so `git commit` and `git push` from inside it
+  behave exactly as for a catalogued repository.
+- `--list` continues to report manifest state only, so an ad-hoc repository
+  does not appear there. Inspect it from within `repos/<org>/<repo>` instead.
+
+Dry-run works the same way and creates nothing:
+
+```bash
+python scripts/clone-amrit-repos.py   --url https://github.com/PSMRI/Some-New-Repo.git --dry-run
+```
+
+It prints the destination and the clone URL and reports that it would clone; it
+reports "would skip" when a Git repository is already there, and "would fail"
+for a non-Git path.
+
+#### `--path`, an advanced override
+
+`--path` overrides the URL-derived destination. It is relative to `repos/` and
+must be exactly `<organization>/<repository>`:
+
+```bash
+python scripts/clone-amrit-repos.py   --url https://github.com/PSMRI/Some-New-Repo.git   --path PSMRI/Some-New-Repo
+```
+
+Ordinary GitHub URLs never need it. It rejects `../outside`,
+`PSMRI/../repo`, `/repo`, `repo-only-without-org`, backslash separators, and
+anything else that is not a plain two-segment relative path.
+
+#### Modes are mutually exclusive
+
+Manifest selectors and `--url` are separate modes, and the script fails before
+cloning anything if they are mixed:
+
+```bash
+python scripts/clone-amrit-repos.py Common-API --url https://github.com/PSMRI/X.git
+# error: repository selectors and --url are separate modes; pass either
+#        manifest selectors or one --url, not both
+```
+
+`--url` with `--list`, `--url` given twice, and `--path` without `--url` all
+fail the same way. One ad-hoc repository per invocation; run the script again
+for the next one.
+
+#### URL validation and credentials
+
+A URL is accepted only when it clearly identifies both an organization and a
+repository. Rejected, with a clear message and nothing created: URLs with no
+scheme, an unsupported scheme, fewer than two path segments, `.` or `..`
+segments anywhere in the path, percent-encoded segments, backslash separators,
+whitespace, or a segment that is not a usable directory name.
+
+Inline credentials are refused before anything else is parsed:
+
+```text
+https://user:token@github.com/org/repo.git   → rejected
+https://ghp_xxxx@github.com/org/repo.git     → rejected
+```
+
+The credential check runs first precisely so that no later error message can
+quote a secret; no token, password, or user value is ever printed or stored.
+`git@github.com:PSMRI/Some-Repo.git` is a normal SSH URL, not a credential, and
+is accepted. Configure Git authentication in your own environment instead of
+embedding it in a URL.
+
 ### Behaviour, and why it is safe to re-run
 
 | Situation | Result | Exit contribution |
