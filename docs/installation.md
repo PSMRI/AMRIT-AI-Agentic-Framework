@@ -65,6 +65,7 @@ The available project skills are:
 - `/create-development-pr`
 - `/execute-qa-validation`
 - `/test-jira-ticket`
+- `/prepare-release-notes`
 - `/answer-codebase-questions`
 
 For ordinary Stage 05 work, `/implement-jira-ticket` is the only command
@@ -146,6 +147,7 @@ Each generated ZIP is published as an individual asset on a GitHub Release:
    - `execute-qa-validation.zip`
    - `test-jira-ticket.zip`
    - `perform-root-cause-analysis.zip`
+   - `prepare-release-notes.zip`
    - `answer-codebase-questions.zip`
 5. Upload or install that ZIP using the relevant client workflow.
 
@@ -360,6 +362,15 @@ local token values and complete any client trust prompt as described in
   workarounds. A Jira write capability is used only for a defect the user
   explicitly authorized; the default is draft-only. Without a reachable build the
   skill reports `QA status: NOT EXECUTED` and produces no verdict.
+- `prepare-release-notes` requires Jira and Confluence reads, and a Confluence
+  write capability only for authorized publication. Jira is read-only at all
+  times. No repository access, command execution, DeepWiki, or Graphify
+  capability is required: release membership comes from the Jira Fix Version,
+  never from source code or Git history. Without a resolvable Jira version it
+  reports `RELEASE NOTES BLOCKED — target release could not be resolved from
+  Jira`; without access to the current Confluence release-note hierarchy it
+  reports `RELEASE NOTES BLOCKED — current Confluence template could not be
+  inspected`. Neither case reuses a previous release's contents or format.
 - `answer-codebase-questions` uses read-only DeepWiki first, then Confluence
   when needed, with Graphify as the final fallback. It never uses Jira.
 
