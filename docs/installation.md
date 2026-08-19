@@ -145,6 +145,7 @@ Each generated ZIP is published as an individual asset on a GitHub Release:
    - `create-development-pr.zip`
    - `execute-qa-validation.zip`
    - `test-jira-ticket.zip`
+   - `perform-root-cause-analysis.zip`
    - `answer-codebase-questions.zip`
 5. Upload or install that ZIP using the relevant client workflow.
 
