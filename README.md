@@ -341,6 +341,141 @@ own user-level connector or configuration setup. Keep Claude Desktop-only
 fields such as `coworkUserFilesPath` and `preferences` out of `.mcp.json`,
 `.cursor/mcp.json`, and `.agents/mcp_config.json`.
 
+## Developer workspace for AMRIT application repositories
+
+The framework repository owns skills, framework documentation, orchestration,
+and configuration. It does not own AMRIT application code. Application code
+lives in your own working copies of the AMRIT repositories, cloned into a local
+workspace directory that the framework repository ignores:
+
+```text
+AMRIT-AI-Agentic-Framework/
+├── skills/
+├── .claude/
+├── .agents/
+├── docs/
+├── scripts/
+├── config/
+│   └── amrit-repositories.txt   Repository manifest
+├── repos/                       Local only; ignored by this repository
+│   └── PSMRI/
+│       ├── Common-API/          Independent Git repository
+│       ├── HWC-UI/              Independent Git repository
+│       └── ...
+├── .gitignore
+└── README.md
+```
+
+### Bootstrap
+
+```bash
+git clone https://github.com/PSMRI/AMRIT-AI-Agentic-Framework.git
+cd AMRIT-AI-Agentic-Framework
+
+./scripts/install.sh
+./scripts/clone-amrit-repos.sh
+```
+
+On Windows, or in any shell without Bash, call the same tools through Python:
+
+```bash
+python scripts/install.py
+python scripts/clone-amrit-repos.py
+```
+
+`install.sh` checks framework prerequisites only — Python, Git, the repository
+layout, the repository manifest, and that `repos/` is ignored — and reports MCP
+placeholder status without ever printing a token value. It never clones. Use
+`./scripts/install.sh --clone-repos` to run the check and then delegate to the
+clone script.
+
+The clone script reads [`config/amrit-repositories.txt`](config/amrit-repositories.txt),
+creates `repos/<organization>/<repository>` as needed, and clones each
+configured repository with a normal, complete `git clone`. Clone only what you
+need by naming repositories:
+
+```bash
+./scripts/clone-amrit-repos.sh Common-API HWC-API HWC-UI
+```
+
+Report the workspace state at any time:
+
+```bash
+./scripts/clone-amrit-repos.sh --list
+```
+
+### The script is safe to re-run
+
+| Situation | What happens |
+| --- | --- |
+| Repository missing | The organization directory is created if needed and the repository is cloned |
+| Repository already cloned | Reported as already present and left exactly as it is — never re-cloned, reset, cleaned, checked out, or pulled |
+| Path exists but is not a Git repository | Reported as a clear failure; the directory is preserved and never overwritten or deleted |
+| Clone fails | The failing repository is named, the remaining repositories are still processed, and the run exits non-zero with a summary |
+
+Existing repositories are deliberately **not** pulled. Local commits, feature
+branches, uncommitted work, and diverged branches are yours to manage. Update a
+repository from inside it when you choose to:
+
+```bash
+cd repos/PSMRI/Common-API
+git pull
+```
+
+### Each cloned repository stays independent
+
+Every repository under `repos/` keeps its own `.git` directory, its own
+`origin`, and its own branches. These are not Git submodules, and the framework
+repository never records their commits. Work in them exactly as you would in a
+standalone clone:
+
+```bash
+cd repos/PSMRI/Common-API
+
+git switch -c feature/my-change
+# make changes
+git add .
+git commit -m "feat: my change"
+git push -u origin feature/my-change
+```
+
+That push targets the **application repository's own `origin`** — for example
+`PSMRI/Common-API` — not the AMRIT AI Agentic Framework repository. The
+framework repository can never accidentally own application code changes.
+
+Because `/repos/` is ignored by the outer repository, running `git status` from
+the framework root will **not** show anything you changed beneath `repos/`.
+That is expected and is the point of the design. To see application changes,
+run `git status` from inside the application repository.
+
+### How skills use the workspace
+
+Skills are guidance and orchestration; they do not own application
+repositories. A skill inspects or edits a repository under `repos/` only when
+you explicitly target that repository. No skill operates on every cloned
+repository automatically, and a skill that needs a repository which is not
+cloned reports it as inaccessible rather than guessing.
+
+The repositories listed in the manifest come from the AMRIT repository catalog
+maintained in
+[`skills/create-technical-design/references/repository-catalog.md`](skills/create-technical-design/references/repository-catalog.md)
+and
+[`skills/implement-jira-ticket/references/amrit-repository-map.md`](skills/implement-jira-ticket/references/amrit-repository-map.md),
+whose source of truth is the central `PSMRI/AMRIT` README.
+
+### Authentication
+
+Clone URLs use HTTPS, matching the style used throughout this repository. No
+token, password, or credential is stored in the manifest or in any script.
+Configure Git authentication yourself before cloning private repositories —
+a Git credential helper, the GitHub CLI, or an equivalent. To use SSH instead,
+change the URLs in the manifest to `git@github.com:PSMRI/<repository>.git` in
+your local working copy.
+
+Full reference, including the manifest format, script exit codes, and the
+complete safety contract, is in
+[docs/installation.md](docs/installation.md#developer-workspace-and-application-repositories).
+
 ## Install skill packages from GitHub Releases
 
 GitHub Releases are the official distribution channel. To install a skill:
@@ -417,17 +552,27 @@ skills/                         Canonical source; edit skills here
 
 .claude/skills/                 Claude project bridges
 .agents/skills/                 Cursor and Antigravity project bridges
+config/amrit-repositories.txt   AMRIT application repository manifest
+scripts/install.sh              Prerequisite check; POSIX entry point
+scripts/install.py              Prerequisite check; implementation
+scripts/clone-amrit-repos.sh    Workspace cloning; POSIX entry point
+scripts/clone-amrit-repos.py    Workspace cloning; implementation
+scripts/amrit-python.sh         Shared root and interpreter discovery
 scripts/package-skills.py       Deterministic ZIP packaging into dist/
 scripts/validate-skills.py      Packaging and project-discovery checks
 scripts/next-release-version.py Next vX.Y.Z tag from .release-version and tags
 .release-version                Manually controlled X.Y release line
+repos/                          Local developer workspace; ignored by Git
+└── PSMRI/<repository>/         Independent application Git repositories
 .github/workflows/
 ├── validate-skills.yml         PR/main validation and CI build artifacts
 └── release-skills.yml          Official GitHub Release publication from main
 ```
 
 Generated `dist/` content and all ZIP files are ignored by Git; release assets
-are build outputs, never repository sources. Official, stable distribution is
+are build outputs, never repository sources. The `repos/` workspace is ignored
+for a different reason: the repositories beneath it are independent clones that
+this repository must never track. Neither is a Git submodule. Official, stable distribution is
 GitHub Releases. GitHub Actions artifacts are retained only for CI and build
 debugging.
 
