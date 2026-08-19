@@ -27,7 +27,13 @@ cd AMRIT-AI-Agentic-Framework
 claude
 ```
 
-There is no project installation step. Claude Code discovers:
+No dependency installation is required for skill discovery. Run
+`./scripts/install.sh` to confirm the local prerequisites, and
+`./scripts/clone-amrit-repos.sh` to clone the AMRIT application repositories
+into the ignored `repos/` workspace; see
+[Developer workspace and application repositories](#developer-workspace-and-application-repositories).
+
+Claude Code discovers:
 
 ```text
 .claude/skills/<skill-name>/SKILL.md
@@ -77,6 +83,236 @@ establishes the ticket's lifecycle position and the artifacts that actually
 exist, then routes to `/draft-test-cases` at Stage 03, `/write-unit-tests` at
 Stage 05, or `/execute-qa-validation` at Stage 07. It routes; it does not run
 all three. The testing specialists also remain independently invocable.
+
+## Developer workspace and application repositories
+
+This repository owns agent skills, framework documentation, orchestration, and
+configuration. It does not own AMRIT application code. Developers clone the
+AMRIT application repositories into a local workspace directory inside the
+framework clone, and that directory is ignored by the framework repository.
+
+```text
+AMRIT-AI-Agentic-Framework/
+├── config/amrit-repositories.txt   Repository manifest
+├── scripts/install.sh              Framework prerequisite check
+├── scripts/clone-amrit-repos.sh    Workspace cloning
+└── repos/                          Local only; ignored by this repository
+    └── PSMRI/
+        ├── Common-API/             Independent Git repository
+        └── HWC-UI/                 Independent Git repository
+```
+
+### Bootstrap sequence
+
+```bash
+git clone https://github.com/PSMRI/AMRIT-AI-Agentic-Framework.git
+cd AMRIT-AI-Agentic-Framework
+
+./scripts/install.sh
+./scripts/clone-amrit-repos.sh
+```
+
+The two `.sh` entry points are thin wrappers. Each resolves the repository root
+from its own location, selects a Python 3.9+ interpreter, and delegates to the
+Python implementation beside it. Run either implementation directly where Bash
+is unavailable:
+
+```bash
+python scripts/install.py
+python scripts/clone-amrit-repos.py
+```
+
+Both work when the framework path contains spaces, and neither requires being
+launched from the repository root.
+
+### What `install.sh` does
+
+Framework setup only. It checks:
+
+- Python 3.9 or newer;
+- Git present and runnable;
+- the repository layout (`skills/`, `.claude/skills/`, `.agents/skills/`,
+  `scripts/`);
+- that `config/amrit-repositories.txt` exists and parses;
+- that `repos/` is ignored by this repository, using `git check-ignore`.
+
+It also reports how many `<put your token here>` placeholders remain in each
+project MCP file. It never prints a token value, and it never reads, writes, or
+clones an application repository.
+
+It installs no dependencies, because the framework needs none: the tooling uses
+only the Python standard library and Git.
+
+Two optional flags:
+
+```bash
+./scripts/install.sh --validate      # also run scripts/validate-skills.py
+./scripts/install.sh --clone-repos   # then delegate to clone-amrit-repos.sh
+```
+
+`--clone-repos` delegates; it contains no cloning logic of its own. Installation
+and cloning stay separate concerns.
+
+### The repository manifest
+
+[`config/amrit-repositories.txt`](../config/amrit-repositories.txt) is the
+single place repositories are configured. One repository per line:
+
+```text
+<organization>/<repository>|<clone-url>
+```
+
+The first field is the destination path beneath `repos/`, so:
+
+```text
+PSMRI/Common-API|https://github.com/PSMRI/Common-API.git
+```
+
+clones to `repos/PSMRI/Common-API`. Organization grouping is part of the path,
+which keeps ownership explicit and prevents name collisions. Blank lines and
+lines starting with `#` are ignored. Adding a repository is a one-line change;
+no script edit is required.
+
+The manifest is rejected, with the offending line number named, when a line has
+the wrong number of `|` separators, an empty path or URL, a path that is not
+exactly `<organization>/<repository>`, a path containing `.` or `..`, or a
+duplicate destination path.
+
+Repository names and their exact capitalization come from the AMRIT repository
+catalog in
+[`skills/create-technical-design/references/repository-catalog.md`](../skills/create-technical-design/references/repository-catalog.md)
+and
+[`skills/implement-jira-ticket/references/amrit-repository-map.md`](../skills/implement-jira-ticket/references/amrit-repository-map.md),
+whose source of truth is the central `PSMRI/AMRIT` README. Review the manifest
+whenever that catalog adds, renames, or retires a repository.
+
+### What `clone-amrit-repos.sh` does
+
+Clone everything configured, or name the repositories you actually need:
+
+```bash
+./scripts/clone-amrit-repos.sh
+./scripts/clone-amrit-repos.sh Common-API HWC-API HWC-UI
+./scripts/clone-amrit-repos.sh PSMRI/AMRIT-DB
+```
+
+Selectors accept a bare repository name or an `<organization>/<repository>`
+path, and are case-insensitive. An unknown selector fails before anything is
+cloned.
+
+Inspect the workspace without changing it:
+
+```bash
+./scripts/clone-amrit-repos.sh --list      # configured / cloned / missing / invalid
+./scripts/clone-amrit-repos.sh --dry-run   # what a real run would do
+```
+
+Override the defaults when needed:
+
+```bash
+./scripts/clone-amrit-repos.sh --manifest /path/to/manifest.txt --workspace /path/to/repos
+```
+
+Clones are ordinary and complete. The script uses no `--depth`, no `--bare`,
+and no `--single-branch`: every clone is immediately usable for normal
+development.
+
+### Behaviour, and why it is safe to re-run
+
+| Situation | Result | Exit contribution |
+| --- | --- | --- |
+| Repository missing | Parent organization directory created if needed, then `git clone` | Success |
+| Repository already cloned | Reported as already present, with its current branch, and left exactly as it is | Success |
+| Path exists but is not a Git repository | Clear error; the directory is preserved, never overwritten or deleted | Failure |
+| Clone fails (network, access, authentication) | The repository is named as failed; remaining repositories are still processed | Failure |
+
+Every run ends with a summary of cloned, already-present, and failed
+repositories. Any failure makes the script exit non-zero, and the failed
+repositories are listed again by name. A partial run is recoverable: re-running
+clones only what is still missing and leaves everything else alone.
+
+An existing repository is **never** re-cloned, reset, cleaned, force-checked-out,
+switched to another branch, or pulled. Destructive commands such as
+`git reset --hard`, `git clean -fd`, `git checkout .`, and `git restore .` are
+never issued. Your uncommitted work, local commits, feature branches, and
+diverged branches survive every run. Update a repository yourself when you want
+to:
+
+```bash
+cd repos/PSMRI/Common-API
+git pull
+```
+
+### Independent nested Git repositories
+
+Each directory under `repos/` is a normal, standalone Git repository with its
+own `.git`, its own `origin`, and its own branches. These are **not** Git
+submodules: the framework repository has no `.gitmodules`, records no
+application commit, and tracks nothing beneath `repos/`.
+
+```bash
+cd repos/PSMRI/Common-API
+
+git status
+git switch -c feature/my-change
+# make changes
+git add .
+git commit -m "feat: my change"
+git push -u origin feature/my-change
+```
+
+That push goes to the application repository's own `origin` — `PSMRI/Common-API`
+in this example — and never to the AMRIT AI Agentic Framework repository.
+
+The ignore rule in `.gitignore` is root-anchored:
+
+```gitignore
+/repos/
+```
+
+Anchoring matters. It ignores only the workspace at the framework root, so a
+directory named `repos` inside some unrelated nested project is unaffected. It
+also affects only the outer repository: `git status`, `git add`, `git commit`,
+`git pull`, `git fetch`, `git push`, `git checkout`, and `git switch` all behave
+normally inside a cloned application repository, because that repository's own
+`.git` governs them.
+
+One consequence is expected and intentional: `git status` run from the framework
+root will not show anything you changed beneath `repos/`. Run it from inside the
+application repository instead. Verify the rule at any time:
+
+```bash
+git check-ignore -v repos/PSMRI/Common-API/pom.xml
+```
+
+### Skills and the workspace
+
+Skills provide guidance, routing, and orchestration; they do not own
+application repositories. A skill inspects or edits a repository under `repos/`
+only when the user explicitly targets that repository. No skill operates on
+every cloned repository by default, and a skill whose work needs a repository
+that is not cloned reports it as inaccessible rather than assuming its
+contents. Skills that require checked-out source — including
+`implement-jira-ticket` and its Stage 05 specialists, `write-unit-tests`, and
+`create-development-pr` — are satisfied by these workspace clones.
+`implement-database-change` needs `PSMRI/AMRIT-DB` cloned, which the manifest
+configures.
+
+### Authentication
+
+Manifest URLs are HTTPS, matching the clone style used everywhere else in this
+repository's documentation. No token, password, personal access token, or other
+credential appears in the manifest or in any script, and none is ever written by
+them.
+
+Configure Git authentication in your own environment before cloning private
+repositories — a Git credential helper, an authenticated GitHub CLI, or an
+equivalent mechanism. A clone that fails for authentication reasons is reported
+as a named failure with no credential value in the output.
+
+To use SSH, change the URLs in your local copy of the manifest to
+`git@github.com:PSMRI/<repository>.git` and configure your SSH key. Do not
+commit a URL containing embedded credentials.
 
 ## Project-scoped MCP setup
 
@@ -198,6 +434,15 @@ Run from the repository root:
 python -m unittest discover -s tests -v
 python scripts/validate-skills.py
 python scripts/package-skills.py --all
+```
+
+Check the local prerequisites and the workspace wiring:
+
+```bash
+python scripts/install.py
+bash -n scripts/install.sh
+bash -n scripts/clone-amrit-repos.sh
+python scripts/clone-amrit-repos.py --list
 ```
 
 Package only one skill:
