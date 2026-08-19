@@ -73,6 +73,123 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
+      - name: Upload draft-test-cases package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/draft-test-cases.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload implement-jira-ticket package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/implement-jira-ticket.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload review-implementation-architecture package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/review-implementation-architecture.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload implement-database-change package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/implement-database-change.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload implement-backend-change package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/implement-backend-change.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload implement-frontend-change package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/implement-frontend-change.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload implement-android-change package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/implement-android-change.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload validate-ux-implementation package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/validate-ux-implementation.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload write-unit-tests package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/write-unit-tests.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload create-development-pr package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/create-development-pr.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload execute-qa-validation package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/execute-qa-validation.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload test-jira-ticket package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/test-jira-ticket.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload perform-root-cause-analysis package
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/perform-root-cause-analysis.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 90
+
       - name: Upload answer-codebase-questions package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7

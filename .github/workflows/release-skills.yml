@@ -1,0 +1,196 @@
+name: Release Skills
+
+# Every successful push to main publishes one official GitHub Release whose
+# assets are the individual skill ZIP files. The MAJOR.MINOR release line is
+# maintained by hand in .release-version; the patch number is derived from the
+# existing vMAJOR.MINOR.PATCH Git tags, which are the only source of truth for
+# it. No version bump is ever committed back to the repository.
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+# Serialise release publication so two merges cannot read the same latest tag
+# and choose the same patch number. A newer merge waits instead of cancelling
+# an in-progress release for an earlier merge.
+concurrency:
+  group: skill-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Publish skill release
+    runs-on: ubuntu-latest
+
+    steps:
+      # Full history so every existing release tag is available locally, and an
+      # explicit ref so the release always targets the commit that triggered
+      # this run even if a later merge landed while this run was queued.
+      - name: Check out the triggering commit with full tag history
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.sha }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Validate canonical skills and project bridges
+        run: python scripts/validate-skills.py
+
+      - name: Package every skill
+        run: python scripts/package-skills.py --all
+
+      - name: Validate the generated release assets
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ ! -d dist ]; then
+            echo "::error::Packaging produced no dist/ directory"
+            exit 1
+          fi
+
+          asset_count=0
+          for package in dist/*.zip; do
+            [ -f "$package" ] || continue
+            skill_name="$(basename "$package" .zip)"
+            if [ ! -d "skills/${skill_name}" ]; then
+              echo "::error::Release asset has no canonical skill source: $package"
+              exit 1
+            fi
+            asset_count=$((asset_count + 1))
+          done
+
+          if [ "$asset_count" -eq 0 ]; then
+            echo "::error::No skill packages were found under dist/"
+            exit 1
+          fi
+
+          for skill_directory in skills/*; do
+            [ -d "$skill_directory" ] || continue
+            skill_name="$(basename "$skill_directory")"
+            if [ ! -f "dist/${skill_name}.zip" ]; then
+              echo "::error::Missing expected release asset: dist/${skill_name}.zip"
+              exit 1
+            fi
+          done
+
+          unexpected="$(find dist -mindepth 1 -not -name '*.zip' -print)"
+          if [ -n "$unexpected" ]; then
+            echo "::error::dist/ contains files that are not skill packages"
+            echo "$unexpected"
+            exit 1
+          fi
+
+          tracked="$(git ls-files -- '*.zip')"
+          if [ -n "$tracked" ]; then
+            echo "::error::Generated ZIP files must stay untracked, but Git tracks: $tracked"
+            exit 1
+          fi
+
+          echo "Prepared ${asset_count} release asset(s):"
+          ls -1 dist/*.zip
+
+      - name: Calculate the next release version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --tags --force --prune origin
+          release_tag="$(python scripts/next-release-version.py)"
+          echo "tag=${release_tag}" >> "$GITHUB_OUTPUT"
+          echo "Release line $(cat .release-version) resolves to ${release_tag}"
+
+      # Never move, overwrite, or delete an existing tag or release. A
+      # collision means something unexpected happened and needs investigation.
+      - name: Confirm the calculated release does not already exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git rev-parse -q --verify "refs/tags/${RELEASE_TAG}" >/dev/null; then
+            echo "::error::Tag ${RELEASE_TAG} already exists. Not overwriting it; investigate before retrying."
+            exit 1
+          fi
+
+          if [ -n "$(git ls-remote --tags origin "refs/tags/${RELEASE_TAG}")" ]; then
+            echo "::error::Tag ${RELEASE_TAG} already exists on origin. Not overwriting it; investigate before retrying."
+            exit 1
+          fi
+
+          if gh release view "${RELEASE_TAG}" >/dev/null 2>&1; then
+            echo "::error::A GitHub Release for ${RELEASE_TAG} already exists, possibly as a leftover draft. Not replacing it; investigate before retrying."
+            exit 1
+          fi
+
+          echo "${RELEASE_TAG} is available."
+
+      # Create as a draft first so the tag and the published release only ever
+      # appear once every skill ZIP is attached.
+      - name: Create the draft release with every skill package
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release create "${RELEASE_TAG}" \
+            --target "${GITHUB_SHA}" \
+            --title "AMRIT SDLC Skills ${RELEASE_TAG}" \
+            --generate-notes \
+            --draft \
+            dist/*.zip
+
+      - name: Confirm every skill package is attached
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          expected="$(for package in dist/*.zip; do basename "$package"; done | sort)"
+          attached="$(gh release view "${RELEASE_TAG}" --json assets --jq '.assets[].name' | sort)"
+
+          if [ "$expected" != "$attached" ]; then
+            echo "::error::Draft release ${RELEASE_TAG} does not carry exactly the generated skill packages."
+            echo "Expected:"
+            echo "$expected"
+            echo "Attached:"
+            echo "$attached"
+            exit 1
+          fi
+
+          echo "All expected assets are attached to draft ${RELEASE_TAG}:"
+          echo "$attached"
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release edit "${RELEASE_TAG}" --draft=false --latest
+          echo "Published ${RELEASE_TAG} from ${GITHUB_SHA}"
+
+      - name: Report an incomplete release
+        if: failure()
+        env:
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        shell: bash
+        run: |
+          echo "::error::Release publication failed for ${GITHUB_SHA}. No release was published${RELEASE_TAG:+ for ${RELEASE_TAG}}. If a draft release remains, review and remove it deliberately before re-running; the workflow never overwrites an existing tag or release."
