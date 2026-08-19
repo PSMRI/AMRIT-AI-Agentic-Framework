@@ -26,6 +26,7 @@ source directories.
 | [`create-development-pr`](skills/create-development-pr/README.md) | `/create-development-pr` | Stage 05 — In Development | A GitHub Pull Request for an implemented Jira ticket, from a Jira-named branch against the correct `release-X.Y.Z` branch, labelled **Awaiting code review**. |
 | [`execute-qa-validation`](skills/execute-qa-validation/README.md) | `/execute-qa-validation` | Stage 07 — In QA | Per-test-case QA execution results with evidence against a real deployed build, defect drafts for failures, and an explicit pending set; never a PASS from documentation. |
 | [`test-jira-ticket`](skills/test-jira-ticket/README.md) | `/test-jira-ticket` | Cross-stage — Testing orchestration | The testing entry point: routes a ticket to the testing activity its lifecycle position actually calls for — `draft-test-cases`, `write-unit-tests`, or `execute-qa-validation`. |
+| [`perform-root-cause-analysis`](skills/perform-root-cause-analysis/README.md) | `/perform-root-cause-analysis` | Cross-lifecycle — Support & Quality | An evidence-backed RCA for a production defect or support incident, grounded in mandatory current source-code inspection, with CAPA recommendations; Confluence publication only after explicit authorization. |
 | [`answer-codebase-questions`](skills/answer-codebase-questions/README.md) | `/answer-codebase-questions` | Cross-lifecycle — Codebase knowledge | A concise, evidence-backed AMRIT codebase answer from DeepWiki, Confluence, and Graphify; never Jira. |
 
 `implement-jira-ticket` is the Stage 05 entry point. It inspects the Jira
@@ -49,8 +50,10 @@ tests for code that does not exist, and fabricate QA results with no build.
 commit, push, and Pull Request creation — but no substantive implementation.
 `create-brd`, `create-product-backlog`, `create-technical-design`,
 `draft-test-cases`, `answer-codebase-questions`,
-`review-implementation-architecture`, and `validate-ux-implementation` are
-read-only.
+`review-implementation-architecture`, `validate-ux-implementation`, and
+`perform-root-cause-analysis` are read-only during investigation.
+`perform-root-cause-analysis` writes only to Confluence, and only after the
+user has both confirmed the RCA and explicitly requested publication.
 
 The skills are independent. A downstream skill can consume an approved
 upstream output without requiring the upstream skill at runtime, and each
@@ -249,6 +252,8 @@ Both bridge locations contain every available skill:
     -> skills/execute-qa-validation/SKILL.md
 <bridge-root>/test-jira-ticket/SKILL.md
     -> skills/test-jira-ticket/SKILL.md
+<bridge-root>/perform-root-cause-analysis/SKILL.md
+    -> skills/perform-root-cause-analysis/SKILL.md
 <bridge-root>/answer-codebase-questions/SKILL.md
     -> skills/answer-codebase-questions/SKILL.md
 ```
@@ -353,6 +358,7 @@ GitHub Releases are the official distribution channel. To install a skill:
    - `create-development-pr.zip`
    - `execute-qa-validation.zip`
    - `test-jira-ticket.zip`
+   - `perform-root-cause-analysis.zip`
    - `answer-codebase-questions.zip`
 5. Upload or install that ZIP using the relevant client workflow.
 
@@ -397,6 +403,7 @@ skills/                         Canonical source; edit skills here
 ├── create-development-pr/
 ├── execute-qa-validation/              Stage 07 testing specialist
 ├── test-jira-ticket/                   Cross-stage testing orchestrator
+├── perform-root-cause-analysis/        Cross-lifecycle support & quality
 └── answer-codebase-questions/
 
 .claude/skills/                 Claude project bridges
@@ -561,6 +568,13 @@ working copy.
   present in the environment. A Jira write capability is used only for a defect
   the user explicitly authorized. Without a reachable build the skill reports
   `QA status: NOT EXECUTED` and produces no verdict.
+- `perform-root-cause-analysis` requires read-only Jira and Confluence
+  capabilities, host filesystem and repository access for mandatory source-code
+  inspection, and Confluence write access only for authorized publication.
+  DeepWiki and Graphify are used read-only where available; neither is required.
+  Jira is never written to. Source-code inspection is mandatory: the skill
+  reports an evidence gap rather than fabricating a technical root cause when
+  relevant code is inaccessible.
 - `answer-codebase-questions` uses read-only DeepWiki first, then Confluence
   when needed, with Graphify as the final fallback. It never uses Jira.
 
