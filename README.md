@@ -26,6 +26,7 @@ source directories.
 | [`create-development-pr`](skills/create-development-pr/README.md) | `/create-development-pr` | Stage 05 — In Development | A GitHub Pull Request for an implemented Jira ticket, from a Jira-named branch against the correct `release-X.Y.Z` branch, labelled **Awaiting code review**. |
 | [`execute-qa-validation`](skills/execute-qa-validation/README.md) | `/execute-qa-validation` | Stage 07 — In QA | Per-test-case QA execution results with evidence against a real deployed build, defect drafts for failures, and an explicit pending set; never a PASS from documentation. |
 | [`test-jira-ticket`](skills/test-jira-ticket/README.md) | `/test-jira-ticket` | Cross-stage — Testing orchestration | The testing entry point: routes a ticket to the testing activity its lifecycle position actually calls for — `draft-test-cases`, `write-unit-tests`, or `execute-qa-validation`. |
+| [`prepare-release-notes`](skills/prepare-release-notes/README.md) | `/prepare-release-notes` | Stage 12 — Release Documentation | An evidence-backed AMRIT release note whose format comes from the latest applicable Confluence release notes and whose release scope, bugs, enhancements, ticket details and statuses come from Jira; Confluence publication only after explicit authorization. |
 | [`perform-root-cause-analysis`](skills/perform-root-cause-analysis/README.md) | `/perform-root-cause-analysis` | Cross-lifecycle — Support & Quality | An evidence-backed RCA for a production defect or support incident, grounded in mandatory current source-code inspection, with CAPA recommendations; Confluence publication only after explicit authorization. |
 | [`answer-codebase-questions`](skills/answer-codebase-questions/README.md) | `/answer-codebase-questions` | Cross-lifecycle — Codebase knowledge | A concise, evidence-backed AMRIT codebase answer from DeepWiki, Confluence, and Graphify; never Jira. |
 
@@ -50,10 +51,14 @@ tests for code that does not exist, and fabricate QA results with no build.
 commit, push, and Pull Request creation — but no substantive implementation.
 `create-brd`, `create-product-backlog`, `create-technical-design`,
 `draft-test-cases`, `answer-codebase-questions`,
-`review-implementation-architecture`, `validate-ux-implementation`, and
-`perform-root-cause-analysis` are read-only during investigation.
-`perform-root-cause-analysis` writes only to Confluence, and only after the
-user has both confirmed the RCA and explicitly requested publication.
+`review-implementation-architecture`, `validate-ux-implementation`,
+`perform-root-cause-analysis`, and `prepare-release-notes` are read-only
+during investigation. `perform-root-cause-analysis` writes only to
+Confluence, and only after the user has both confirmed the RCA and
+explicitly requested publication. `prepare-release-notes` holds the same
+contract for a release note: Jira is read-only at all times, and Confluence
+is written only after the user has both confirmed the draft and explicitly
+requested publication.
 
 The skills are independent. A downstream skill can consume an approved
 upstream output without requiring the upstream skill at runtime, and each
@@ -254,6 +259,8 @@ Both bridge locations contain every available skill:
     -> skills/test-jira-ticket/SKILL.md
 <bridge-root>/perform-root-cause-analysis/SKILL.md
     -> skills/perform-root-cause-analysis/SKILL.md
+<bridge-root>/prepare-release-notes/SKILL.md
+    -> skills/prepare-release-notes/SKILL.md
 <bridge-root>/answer-codebase-questions/SKILL.md
     -> skills/answer-codebase-questions/SKILL.md
 ```
@@ -359,6 +366,7 @@ GitHub Releases are the official distribution channel. To install a skill:
    - `execute-qa-validation.zip`
    - `test-jira-ticket.zip`
    - `perform-root-cause-analysis.zip`
+   - `prepare-release-notes.zip`
    - `answer-codebase-questions.zip`
 5. Upload or install that ZIP using the relevant client workflow.
 
@@ -404,6 +412,7 @@ skills/                         Canonical source; edit skills here
 ├── execute-qa-validation/              Stage 07 testing specialist
 ├── test-jira-ticket/                   Cross-stage testing orchestrator
 ├── perform-root-cause-analysis/        Cross-lifecycle support & quality
+├── prepare-release-notes/              Stage 12 release documentation
 └── answer-codebase-questions/
 
 .claude/skills/                 Claude project bridges
@@ -575,6 +584,14 @@ working copy.
   Jira is never written to. Source-code inspection is mandatory: the skill
   reports an evidence gap rather than fabricating a technical root cause when
   relevant code is inaccessible.
+- `prepare-release-notes` requires read-only Jira and Confluence
+  capabilities, and Confluence write access only for authorized publication.
+  Jira is never written to. No repository access, command execution,
+  DeepWiki, or Graphify capability is required: release membership comes from
+  the Jira Fix Version, never from source code or Git history. Without a
+  resolvable Jira version, or without access to the current Confluence
+  release-note hierarchy, the skill reports the block rather than reusing a
+  previous release's contents or format.
 - `answer-codebase-questions` uses read-only DeepWiki first, then Confluence
   when needed, with Graphify as the final fallback. It never uses Jira.
 
@@ -604,6 +621,17 @@ produces a PASS from documentation or a green unit suite, never fabricates a
 result or a defect key, and never claims to be the human QA approver. QA approval
 at Stage 08 remains a human decision, and manual-required or infrastructure-
 blocked scenarios are always reported as pending rather than assumed.
+
+`prepare-release-notes` documents a release; it never performs one. It derives
+the release-note format from the latest applicable Confluence release notes and
+every release value from Jira, so a historical page can show where a field
+belongs but never supplies its value. It never copies a bug list, ticket,
+status, release date, limitation, configuration, person, or email address
+forward from a previous release, reporting an unestablished field as missing
+instead. Release membership comes from the Jira Fix Version and never from Git
+history, Pull Requests, or source code. Jira is read-only at all times, and the
+skill never tags a release, deploys, or claims publication success without
+reading the published page back.
 
 See the [lifecycle mapping](docs/lifecycle-mapping.md) for inputs, outputs, and
 review gates.
