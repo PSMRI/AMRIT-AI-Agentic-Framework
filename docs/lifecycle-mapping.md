@@ -43,6 +43,7 @@ The skills are independently installable. They align to consecutive lifecycle st
 | Stage 05 — In Development | Developer / Senior Developer | [`create-development-pr`](../skills/create-development-pr/README.md) | Awaiting code review |
 | Stage 07 — In QA | QA Tester / QA Automation Engineer | [`execute-qa-validation`](../skills/execute-qa-validation/README.md) | Execution evidence produced — QA approval outstanding |
 | Cross-stage — Testing orchestration | Testing orchestrator | [`test-jira-ticket`](../skills/test-jira-ticket/README.md) | Testing activity performed for the ticket's lifecycle position |
+| Cross-lifecycle — Support & Quality | Senior Developer / Technical Lead / Support Engineer | [`perform-root-cause-analysis`](../skills/perform-root-cause-analysis/README.md) | Evidence-backed RCA with CAPA recommendations, pending human confirmation |
 | Cross-lifecycle — Codebase knowledge | Software Engineer | [`answer-codebase-questions`](../skills/answer-codebase-questions/README.md) | Evidence-backed codebase answer |
 
 ## The two meta-skills
@@ -513,7 +514,7 @@ Automated and manual coverage is always reported separately, and pending cases a
 
 `execute-qa-validation` never modifies production code, configuration, or a migration to make a test pass. A QA failure returns the work to the implementation flow through the defect and rework path. Jira is read-only by default: defects are drafted, and are created only when the user explicitly authorizes that specific defect. No defect key is ever fabricated.
 
-Failures are structured — preserved `TC` and `AC` identifiers, separated expected and actual behaviour, deterministic reproduction steps, build identity, evidence references, and reproducibility — so they would serve as clean inputs to a future `root-cause-analysis` skill. That skill does not exist in this repository and is not implied by these skills.
+Failures are structured — preserved `TC` and `AC` identifiers, separated expected and actual behaviour, deterministic reproduction steps, build identity, evidence references, and reproducibility — so they serve as clean inputs to [`perform-root-cause-analysis`](../skills/perform-root-cause-analysis/README.md) when a failure requires root-cause investigation.
 
 `execute-qa-validation` finishes with exactly one of **QA VALIDATION COMPLETE — all agreed test cases executed and passed. QA approval remains a human decision.**, **QA VALIDATION INCOMPLETE — <n> failed, <n> pending human or device execution.**, or **QA EXECUTION BLOCKED — <reason>. QA status: NOT EXECUTED.**
 
@@ -588,6 +589,70 @@ Stage 07 → execute-qa-validation
 It is **not a pipeline**. Running all three by default would design QA test cases from an implementation, invent unit tests for code that does not exist, and fabricate QA results with no build. Activities are selected from evidence, and every exclusion is stated with its reason.
 
 Stage 04, 06, 08, and 09 carry no testing activity. An activity is never invented because the lifecycle has a stage.
+
+## Cross-lifecycle — Support & Quality
+
+`perform-root-cause-analysis` investigates production defects, support incidents, reopened defects, and QA failures to establish an evidence-backed root cause and propose corrective and preventive actions (CAPA).
+
+```text
+create-product-backlog
+        ↓
+production or support defect requires investigation
+        ↓
+perform-root-cause-analysis
+        ↓
+confirmed corrective action requires code change
+        ↓
+implement-jira-ticket
+        ↓
+create-development-pr
+```
+
+Also:
+
+```text
+execute-qa-validation
+        ↓
+QA failure requires root-cause investigation
+        ↓
+perform-root-cause-analysis
+```
+
+### Inputs
+
+- Jira defect or bug ticket, support incident ticket, or reopened defect
+- QA failure evidence from `execute-qa-validation`
+- User-supplied logs, screenshots, stack traces, and runtime evidence
+- The relevant application repositories, actually checked out
+
+### Outputs
+
+- Evidence-backed RCA with causal chain from symptom through root cause
+- Hypothesis evaluation with supporting and contradicting evidence
+- CAPA recommendations: proposed corrective and preventive actions
+- Evidence gaps and open questions
+- Confluence publication of the confirmed RCA, only after explicit authorization
+
+### Investigation order
+
+`perform-root-cause-analysis` uses an incident-first investigation order, intentionally different from the `answer-codebase-questions` research sequence:
+
+1. **Jira / support incident evidence** — the full issue, linked history, and incident details. Read-only.
+2. **User-supplied runtime evidence** — logs, screenshots, stack traces, monitoring data.
+3. **Current source code — MANDATORY** — trace the actual execution path in checked-out repositories.
+4. **Confluence** — intended behaviour, requirements, previous RCA documents, and the organizational RCA format.
+5. **Graphify** — cross-repository relationships when direct inspection leaves them unclear.
+6. **DeepWiki** — architecture context only when additionally useful.
+
+Current source-code inspection is mandatory and cannot be replaced by documentation. If relevant source code is inaccessible, the skill reports the evidence gap rather than fabricating a technical root cause.
+
+### Exit criterion
+
+The user has reviewed the RCA, confirmed or revised its findings, and — when publication is requested — the confirmed RCA has been published to the AMRIT RCA/CAPA Confluence area with read-back verification.
+
+`perform-root-cause-analysis` finishes with one of **RCA Status: Draft — Pending Human Confirmation**, **RCA Status: Confirmed — Published to Confluence**, or **RCA BLOCKED — relevant current source code could not be inspected**.
+
+The skill is read-only against Jira and all knowledge sources during investigation. It writes only to Confluence, and only after the user has both confirmed the RCA and explicitly requested publication. It never implements corrective actions, transitions Jira tickets, alters production systems, or claims any approval.
 
 ## Cross-lifecycle — Codebase knowledge
 
