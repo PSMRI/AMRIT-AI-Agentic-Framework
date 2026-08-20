@@ -19,6 +19,12 @@ FRONTMATTER_KEY_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_-]*$")
 CANONICAL_LINK_PATTERN = re.compile(
     r"\]\(([^)\r\n]*/skills/[^)\r\n]+/SKILL\.md)\)"
 )
+MAX_NAME_CHARACTERS = 64
+MAX_DESCRIPTION_CHARACTERS = 1024
+CANONICAL_SCALAR_PATTERN = re.compile(
+    r"^(name|description):[ \t]*(?P<value>\S.*?)[ \t]*$",
+    re.MULTILINE,
+)
 
 
 def get_repo_root() -> Path:
@@ -59,6 +65,72 @@ def validate_manifests(skills: list[Path]) -> list[str]:
         manifest = skill / "SKILL.md"
         if not manifest.is_file():
             errors.append(f"{skill}: missing SKILL.md")
+    return errors
+
+
+def read_canonical_frontmatter(manifest: Path) -> tuple[dict[str, str], list[str]]:
+    """Read the top-level 'name' and 'description' scalars from a canonical SKILL.md."""
+    try:
+        text = manifest.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as error:
+        return {}, [f"{manifest}: could not read manifest: {error}"]
+
+    lines = text.splitlines()
+    if not lines or lines[0].strip() != "---":
+        return {}, [f"{manifest}: missing opening YAML frontmatter delimiter"]
+    try:
+        closing_index = next(
+            index
+            for index, line in enumerate(lines[1:], start=1)
+            if line.strip() == "---"
+        )
+    except StopIteration:
+        return {}, [f"{manifest}: missing closing YAML frontmatter delimiter"]
+
+    fields: dict[str, str] = {}
+    frontmatter = "\n".join(lines[1:closing_index])
+    for match in CANONICAL_SCALAR_PATTERN.finditer(frontmatter):
+        key = match.group(1)
+        value = match.group("value")
+        if value[:1] in {"'", '"'}:
+            if len(value) < 2 or value[-1] != value[0]:
+                return {}, [
+                    f"{manifest}: '{key}' must be a single-line quoted or plain scalar"
+                ]
+            value = value[1:-1]
+        fields[key] = value
+    return fields, []
+
+
+def validate_canonical_frontmatter(skills: list[Path]) -> list[str]:
+    """Enforce the frontmatter limits that skill hosts reject a skill package for."""
+    errors: list[str] = []
+    limits = (
+        ("name", MAX_NAME_CHARACTERS),
+        ("description", MAX_DESCRIPTION_CHARACTERS),
+    )
+    for skill in skills:
+        manifest = skill / "SKILL.md"
+        if not manifest.is_file():
+            continue
+
+        fields, field_errors = read_canonical_frontmatter(manifest)
+        errors.extend(field_errors)
+        for key, limit in limits:
+            value = fields.get(key)
+            if value is None:
+                errors.append(f"{manifest}: YAML frontmatter is missing '{key}'")
+                continue
+            if len(value) > limit:
+                errors.append(
+                    f"{manifest}: frontmatter '{key}' is {len(value)} characters; "
+                    f"skill hosts reject more than {limit}"
+                )
+        name = fields.get("name")
+        if name is not None and name != skill.name:
+            errors.append(
+                f"{manifest}: frontmatter name must match directory name '{skill.name}'"
+            )
     return errors
 
 
@@ -259,6 +331,7 @@ def validate_repository(repo_root: Path) -> tuple[list[str], list[str]]:
     repo_root = repo_root.resolve()
     skills, errors = discover_skills(repo_root)
     errors.extend(validate_manifests(skills))
+    errors.extend(validate_canonical_frontmatter(skills))
     errors.extend(validate_project_mappings(repo_root, skills))
     errors.extend(validate_packaging(repo_root, skills))
     errors.extend(validate_tracked_zips(repo_root))
