@@ -1,4 +1,3 @@
-
 ---
 name: create-technical-design
 description: "Research the existing AMRIT system and turn one or more approved Jira Stories, with supporting BRD, FRD, workflow, architecture, Confluence, repository, and OpenAPI evidence, into one review-ready technical design package for Engineering Analysis. Use when a Technical Architect or Senior Developer needs impact analysis, HLD, LLD, API and database decisions, security and performance review, diagrams, implementation risks, and QA-oriented testability notes before implementation. Optionally use official DeepWiki MCP repository intelligence when the host provides it, while continuing safely without it. Operate read-only: never generate implementation code, modify Jira or Confluence, publish a design, or bypass Architect review."
