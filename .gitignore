@@ -23,3 +23,9 @@ __pycache__/
 dist/
 *.zip
 .claude/settings.local.json
+
+# Local developer workspace of cloned AMRIT application repositories.
+# Root-anchored so unrelated nested directories named "repos" are unaffected.
+# Each repository beneath it is an independent Git repository with its own
+# remote and branches; the framework repository never tracks them.
+/repos/

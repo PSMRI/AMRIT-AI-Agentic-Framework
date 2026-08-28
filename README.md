@@ -26,6 +26,7 @@ source directories.
 | [`create-development-pr`](skills/create-development-pr/README.md) | `/create-development-pr` | Stage 05 — In Development | A GitHub Pull Request for an implemented Jira ticket, from a Jira-named branch against the correct `release-X.Y.Z` branch, labelled **Awaiting code review**. |
 | [`execute-qa-validation`](skills/execute-qa-validation/README.md) | `/execute-qa-validation` | Stage 07 — In QA | Per-test-case QA execution results with evidence against a real deployed build, defect drafts for failures, and an explicit pending set; never a PASS from documentation. |
 | [`test-jira-ticket`](skills/test-jira-ticket/README.md) | `/test-jira-ticket` | Cross-stage — Testing orchestration | The testing entry point: routes a ticket to the testing activity its lifecycle position actually calls for — `draft-test-cases`, `write-unit-tests`, or `execute-qa-validation`. |
+| [`prepare-release-notes`](skills/prepare-release-notes/README.md) | `/prepare-release-notes` | Stage 12 — Release Documentation | An evidence-backed AMRIT release note whose format comes from the latest applicable Confluence release notes and whose release scope, bugs, enhancements, ticket details and statuses come from Jira; Confluence publication only after explicit authorization. |
 | [`perform-root-cause-analysis`](skills/perform-root-cause-analysis/README.md) | `/perform-root-cause-analysis` | Cross-lifecycle — Support & Quality | An evidence-backed RCA for a production defect or support incident, grounded in mandatory current source-code inspection, with CAPA recommendations; Confluence publication only after explicit authorization. |
 | [`answer-codebase-questions`](skills/answer-codebase-questions/README.md) | `/answer-codebase-questions` | Cross-lifecycle — Codebase knowledge | A concise, evidence-backed AMRIT codebase answer from DeepWiki, Confluence, and Graphify; never Jira. |
 
@@ -50,10 +51,14 @@ tests for code that does not exist, and fabricate QA results with no build.
 commit, push, and Pull Request creation — but no substantive implementation.
 `create-brd`, `create-product-backlog`, `create-technical-design`,
 `draft-test-cases`, `answer-codebase-questions`,
-`review-implementation-architecture`, `validate-ux-implementation`, and
-`perform-root-cause-analysis` are read-only during investigation.
-`perform-root-cause-analysis` writes only to Confluence, and only after the
-user has both confirmed the RCA and explicitly requested publication.
+`review-implementation-architecture`, `validate-ux-implementation`,
+`perform-root-cause-analysis`, and `prepare-release-notes` are read-only
+during investigation. `perform-root-cause-analysis` writes only to
+Confluence, and only after the user has both confirmed the RCA and
+explicitly requested publication. `prepare-release-notes` holds the same
+contract for a release note: Jira is read-only at all times, and Confluence
+is written only after the user has both confirmed the draft and explicitly
+requested publication.
 
 The skills are independent. A downstream skill can consume an approved
 upstream output without requiring the upstream skill at runtime, and each
@@ -254,6 +259,8 @@ Both bridge locations contain every available skill:
     -> skills/test-jira-ticket/SKILL.md
 <bridge-root>/perform-root-cause-analysis/SKILL.md
     -> skills/perform-root-cause-analysis/SKILL.md
+<bridge-root>/prepare-release-notes/SKILL.md
+    -> skills/prepare-release-notes/SKILL.md
 <bridge-root>/answer-codebase-questions/SKILL.md
     -> skills/answer-codebase-questions/SKILL.md
 ```
@@ -334,6 +341,194 @@ own user-level connector or configuration setup. Keep Claude Desktop-only
 fields such as `coworkUserFilesPath` and `preferences` out of `.mcp.json`,
 `.cursor/mcp.json`, and `.agents/mcp_config.json`.
 
+## Developer workspace for AMRIT application repositories
+
+The framework repository owns skills, framework documentation, orchestration,
+and configuration. It does not own AMRIT application code. Application code
+lives in your own working copies of the AMRIT repositories, cloned into a local
+workspace directory that the framework repository ignores:
+
+```text
+AMRIT-AI-Agentic-Framework/
+├── skills/
+├── .claude/
+├── .agents/
+├── docs/
+├── scripts/
+├── config/
+│   └── amrit-repositories.txt   Repository manifest
+├── repos/                       Local only; ignored by this repository
+│   └── PSMRI/
+│       ├── Common-API/          Independent Git repository
+│       ├── HWC-UI/              Independent Git repository
+│       └── ...
+├── .gitignore
+└── README.md
+```
+
+### Bootstrap
+
+```bash
+git clone https://github.com/PSMRI/AMRIT-AI-Agentic-Framework.git
+cd AMRIT-AI-Agentic-Framework
+
+./scripts/install.sh
+./scripts/clone-amrit-repos.sh
+```
+
+On Windows, or in any shell without Bash, call the same tools through Python:
+
+```bash
+python scripts/install.py
+python scripts/clone-amrit-repos.py
+```
+
+`install.sh` checks framework prerequisites only — Python, Git, the repository
+layout, the repository manifest, and that `repos/` is ignored — and reports MCP
+placeholder status without ever printing a token value. It never clones. Use
+`./scripts/install.sh --clone-repos` to run the check and then delegate to the
+clone script.
+
+The clone script reads [`config/amrit-repositories.txt`](config/amrit-repositories.txt),
+creates `repos/<organization>/<repository>` as needed, and clones each
+configured repository with a normal, complete `git clone`. Clone only what you
+need by naming repositories:
+
+```bash
+./scripts/clone-amrit-repos.sh Common-API HWC-API HWC-UI
+```
+
+Report the workspace state at any time:
+
+```bash
+./scripts/clone-amrit-repos.sh --list
+```
+
+### Cloning a repository that is not in the manifest
+
+`config/amrit-repositories.txt` is the curated catalog of known AMRIT
+repositories, and a selector that is not in it still fails. For a repository
+that is not catalogued yet, supply its clone URL directly:
+
+```bash
+python scripts/clone-amrit-repos.py   --url https://github.com/PSMRI/Some-New-Repo.git
+```
+
+which clones to:
+
+```text
+repos/PSMRI/Some-New-Repo
+```
+
+The organization and repository are derived from the URL, so another
+organization lands in its own directory:
+
+```bash
+python scripts/clone-amrit-repos.py --url https://github.com/SomeOrg/Some-Repo.git
+# → repos/SomeOrg/Some-Repo
+```
+
+What this does and does not do:
+
+- it does **not** modify `config/amrit-repositories.txt`, and does not even
+  read it — the catalog changes only when a maintainer edits it by hand;
+- the clone is local workspace state only;
+- `repos/` stays ignored by the framework repository;
+- the cloned repository is an independent Git repository with its own
+  `origin`, so you commit, branch, and push from inside it exactly as with a
+  catalogued repository;
+- every safety rule is the same: an existing Git repository is skipped
+  untouched, an existing non-Git path fails without being overwritten, and
+  `--dry-run` reports the destination while creating nothing.
+
+Manifest selectors and `--url` are separate modes. Passing both, passing
+`--url` with `--list`, or passing `--url` twice fails immediately with a clear
+message and clones nothing. Run the script once per ad-hoc repository.
+
+An `--path` override is available when the destination should differ from the
+URL-derived one. It is relative to `repos/` and must be exactly
+`<organization>/<repository>`:
+
+```bash
+python scripts/clone-amrit-repos.py   --url https://github.com/PSMRI/Some-New-Repo.git   --path PSMRI/Some-New-Repo
+```
+
+Ordinary GitHub URLs never need it. URLs carrying inline credentials, such as
+`https://user:token@github.com/...`, are rejected without the secret appearing
+in any message.
+
+### The script is safe to re-run
+
+| Situation | What happens |
+| --- | --- |
+| Repository missing | The organization directory is created if needed and the repository is cloned |
+| Repository already cloned | Reported as already present and left exactly as it is — never re-cloned, reset, cleaned, checked out, or pulled |
+| Path exists but is not a Git repository | Reported as a clear failure; the directory is preserved and never overwritten or deleted |
+| Clone fails | The failing repository is named, the remaining repositories are still processed, and the run exits non-zero with a summary |
+
+Existing repositories are deliberately **not** pulled. Local commits, feature
+branches, uncommitted work, and diverged branches are yours to manage. Update a
+repository from inside it when you choose to:
+
+```bash
+cd repos/PSMRI/Common-API
+git pull
+```
+
+### Each cloned repository stays independent
+
+Every repository under `repos/` keeps its own `.git` directory, its own
+`origin`, and its own branches. These are not Git submodules, and the framework
+repository never records their commits. Work in them exactly as you would in a
+standalone clone:
+
+```bash
+cd repos/PSMRI/Common-API
+
+git switch -c feature/my-change
+# make changes
+git add .
+git commit -m "feat: my change"
+git push -u origin feature/my-change
+```
+
+That push targets the **application repository's own `origin`** — for example
+`PSMRI/Common-API` — not the AMRIT AI Agentic Framework repository. The
+framework repository can never accidentally own application code changes.
+
+Because `/repos/` is ignored by the outer repository, running `git status` from
+the framework root will **not** show anything you changed beneath `repos/`.
+That is expected and is the point of the design. To see application changes,
+run `git status` from inside the application repository.
+
+### How skills use the workspace
+
+Skills are guidance and orchestration; they do not own application
+repositories. A skill inspects or edits a repository under `repos/` only when
+you explicitly target that repository. No skill operates on every cloned
+repository automatically, and a skill that needs a repository which is not
+cloned reports it as inaccessible rather than guessing.
+
+The repositories listed in the manifest come from the AMRIT repository catalog
+maintained in
+[`skills/create-technical-design/references/repository-catalog.md`](skills/create-technical-design/references/repository-catalog.md)
+and
+[`skills/implement-jira-ticket/references/amrit-repository-map.md`](skills/implement-jira-ticket/references/amrit-repository-map.md),
+whose source of truth is the central `PSMRI/AMRIT` README.
+
+### Authentication
+
+Clone URLs use HTTPS, matching the style used throughout this repository. No
+token, password, or credential is stored in the manifest or in any script.
+Configure Git authentication yourself before cloning private repositories —
+a Git credential helper, the GitHub CLI, or an equivalent. To use SSH instead,
+change the URLs in the manifest to `git@github.com:PSMRI/<repository>.git` in
+your local working copy.
+
+Full reference, including the manifest format, script exit codes, and the
+complete safety contract, is in
+[docs/installation.md](docs/installation.md#developer-workspace-and-application-repositories).
+
 ## Install skill packages from GitHub Releases
 
 GitHub Releases are the official distribution channel. To install a skill:
@@ -359,6 +554,7 @@ GitHub Releases are the official distribution channel. To install a skill:
    - `execute-qa-validation.zip`
    - `test-jira-ticket.zip`
    - `perform-root-cause-analysis.zip`
+   - `prepare-release-notes.zip`
    - `answer-codebase-questions.zip`
 5. Upload or install that ZIP using the relevant client workflow.
 
@@ -404,21 +600,32 @@ skills/                         Canonical source; edit skills here
 ├── execute-qa-validation/              Stage 07 testing specialist
 ├── test-jira-ticket/                   Cross-stage testing orchestrator
 ├── perform-root-cause-analysis/        Cross-lifecycle support & quality
+├── prepare-release-notes/              Stage 12 release documentation
 └── answer-codebase-questions/
 
 .claude/skills/                 Claude project bridges
 .agents/skills/                 Cursor and Antigravity project bridges
+config/amrit-repositories.txt   AMRIT application repository manifest
+scripts/install.sh              Prerequisite check; POSIX entry point
+scripts/install.py              Prerequisite check; implementation
+scripts/clone-amrit-repos.sh    Workspace cloning; POSIX entry point
+scripts/clone-amrit-repos.py    Workspace cloning; implementation
+scripts/amrit-python.sh         Shared root and interpreter discovery
 scripts/package-skills.py       Deterministic ZIP packaging into dist/
 scripts/validate-skills.py      Packaging and project-discovery checks
 scripts/next-release-version.py Next vX.Y.Z tag from .release-version and tags
 .release-version                Manually controlled X.Y release line
+repos/                          Local developer workspace; ignored by Git
+└── PSMRI/<repository>/         Independent application Git repositories
 .github/workflows/
 ├── validate-skills.yml         PR/main validation and CI build artifacts
 └── release-skills.yml          Official GitHub Release publication from main
 ```
 
 Generated `dist/` content and all ZIP files are ignored by Git; release assets
-are build outputs, never repository sources. Official, stable distribution is
+are build outputs, never repository sources. The `repos/` workspace is ignored
+for a different reason: the repositories beneath it are independent clones that
+this repository must never track. Neither is a Git submodule. Official, stable distribution is
 GitHub Releases. GitHub Actions artifacts are retained only for CI and build
 debugging.
 
@@ -575,6 +782,14 @@ working copy.
   Jira is never written to. Source-code inspection is mandatory: the skill
   reports an evidence gap rather than fabricating a technical root cause when
   relevant code is inaccessible.
+- `prepare-release-notes` requires read-only Jira and Confluence
+  capabilities, and Confluence write access only for authorized publication.
+  Jira is never written to. No repository access, command execution,
+  DeepWiki, or Graphify capability is required: release membership comes from
+  the Jira Fix Version, never from source code or Git history. Without a
+  resolvable Jira version, or without access to the current Confluence
+  release-note hierarchy, the skill reports the block rather than reusing a
+  previous release's contents or format.
 - `answer-codebase-questions` uses read-only DeepWiki first, then Confluence
   when needed, with Graphify as the final fallback. It never uses Jira.
 
@@ -604,6 +819,17 @@ produces a PASS from documentation or a green unit suite, never fabricates a
 result or a defect key, and never claims to be the human QA approver. QA approval
 at Stage 08 remains a human decision, and manual-required or infrastructure-
 blocked scenarios are always reported as pending rather than assumed.
+
+`prepare-release-notes` documents a release; it never performs one. It derives
+the release-note format from the latest applicable Confluence release notes and
+every release value from Jira, so a historical page can show where a field
+belongs but never supplies its value. It never copies a bug list, ticket,
+status, release date, limitation, configuration, person, or email address
+forward from a previous release, reporting an unestablished field as missing
+instead. Release membership comes from the Jira Fix Version and never from Git
+history, Pull Requests, or source code. Jira is read-only at all times, and the
+skill never tags a release, deploys, or claims publication success without
+reading the published page back.
 
 See the [lifecycle mapping](docs/lifecycle-mapping.md) for inputs, outputs, and
 review gates.

@@ -17,7 +17,7 @@ The official lifecycle is the authority for stage numbering. Skills are mapped o
 | Stage 09 | Closed | No skill yet |
 | Stage 10 | Release UAT | No skill yet |
 | Stage 11 | Release Approved | No skill yet |
-| Stage 12 | Production Release | [`create-brd`](../skills/create-brd/README.md) also serves the Stage 12 feedback loop back into Business & Product |
+| Stage 12 | Production Release | [`prepare-release-notes`](../skills/prepare-release-notes/README.md) documents the release; [`create-brd`](../skills/create-brd/README.md) also serves the Stage 12 feedback loop back into Business & Product |
 
 Some skills carry a longer descriptive stage label in their metadata — for example `Stage 03 — Engineering Analysis` for the official `Stage 03 — Analysis`. The stage **number** is authoritative; the descriptive suffix only names the work.
 
@@ -43,6 +43,7 @@ The skills are independently installable. They align to consecutive lifecycle st
 | Stage 05 — In Development | Developer / Senior Developer | [`create-development-pr`](../skills/create-development-pr/README.md) | Awaiting code review |
 | Stage 07 — In QA | QA Tester / QA Automation Engineer | [`execute-qa-validation`](../skills/execute-qa-validation/README.md) | Execution evidence produced — QA approval outstanding |
 | Cross-stage — Testing orchestration | Testing orchestrator | [`test-jira-ticket`](../skills/test-jira-ticket/README.md) | Testing activity performed for the ticket's lifecycle position |
+| Stage 12 — Release Documentation | Release Manager / Product Owner / Technical Lead | [`prepare-release-notes`](../skills/prepare-release-notes/README.md) | Draft — Pending Human Confirmation |
 | Cross-lifecycle — Support & Quality | Senior Developer / Technical Lead / Support Engineer | [`perform-root-cause-analysis`](../skills/perform-root-cause-analysis/README.md) | Evidence-backed RCA with CAPA recommendations, pending human confirmation |
 | Cross-lifecycle — Codebase knowledge | Software Engineer | [`answer-codebase-questions`](../skills/answer-codebase-questions/README.md) | Evidence-backed codebase answer |
 
@@ -589,6 +590,84 @@ Stage 07 → execute-qa-validation
 It is **not a pipeline**. Running all three by default would design QA test cases from an implementation, invent unit tests for code that does not exist, and fabricate QA results with no build. Activities are selected from evidence, and every exclusion is stated with its reason.
 
 Stage 04, 06, 08, and 09 carry no testing activity. An activity is never invented because the lifecycle has a stage.
+
+## Stage 12 — Release Documentation
+
+`prepare-release-notes` documents a release once its contents are complete and assigned a Jira Fix Version. It derives the release-note **format** from the latest applicable Confluence release notes and the release **content** from Jira.
+
+```text
+implement-jira-ticket → create-development-pr
+        ↓
+execute-qa-validation
+        ↓
+release contents completed and assigned a Jira Fix Version
+        ↓
+prepare-release-notes
+```
+
+The stage number is authoritative; `Release Documentation` names the work. The skill documents the release — it does not perform it, and it does not gate it. Stage 10 (Release UAT) and Stage 11 (Release Approved) remain human stages with no skill.
+
+### The two-source rule
+
+```text
+Confluence
+    ↓
+Release-note TEMPLATE / FORMAT
+
+Jira
+    ↓
+Actual RELEASE CONTENT / RELEASE DATA
+```
+
+Historical release notes answer *how should this release note be structured and presented?* Jira answers *what is actually in this release?* A previous release note shows where a field belongs; it never proves the new release carries the same value.
+
+### Inputs
+
+- Target release or version number, and the product or release family
+- The Jira Fix Version the release is tracked under, and its member issues
+- The current Confluence release-note hierarchy, for template discovery
+- User-supplied release metadata that Jira does not hold
+
+### Outputs
+
+- A release-note draft rendered in the current organizational format
+- Release scope, bugs fixed, features, enhancements, and security fixes classified from Jira evidence
+- Ticket tables carrying real Jira keys, summaries, and current statuses
+- An explicit list of required template fields that current evidence does not establish
+- Flagged discrepancies between Jira and existing Confluence pages
+- Confluence publication of the confirmed release note, only after explicit authorization
+
+### Template selection
+
+```text
+Newest applicable Mithun James release note
+        ↓
+Other recent Mithun James release notes
+        ↓
+Older AMRIT release notes only as fallback/reference
+```
+
+Recency means **page** recency, not the highest version number. Releases are documented retrospectively, so a page for a higher version can be older than a page for a lower one; the skill compares actual page metadata. It inspects the recent pages the team named — 3.7, 3.8.0, and 3.8.1 — before choosing, and does not use the older contact-heavy standing template page as the primary schema when newer pages exist.
+
+The skill is product-aware rather than split into separate skills. AMRIT Web and API releases and FLW App releases currently follow structurally different conventions — a single combined ticket table with a separate security section, versus a `Fixed Points` section grouped by priority band — and each family keeps its own.
+
+### What is never carried forward
+
+Bugs, ticket keys, summaries, enhancements, features, security fixes, limitations, known issues, release dates, versions, statuses, line of business, released-by information, Product Owner, Project Manager, Quality Coordinator, email IDs, configuration changes, deployment details, and supporting-document links. A field with no current evidence is reported as missing rather than filled.
+
+Where a newer template has dropped an older contact field, the skill does not reintroduce it. Where a template requires one, it is populated only from current authoritative evidence.
+
+### No source-code inspection
+
+Unlike `perform-root-cause-analysis`, this skill requires no source-code inspection and does not use DeepWiki or Graphify in normal operation. Release membership comes from the Jira Fix Version and is never derived from Git commits, Pull Requests, branch contents, Confluence text, or issue similarity.
+
+### Exit criterion
+
+The user has reviewed the draft, confirmed or revised it, supplied any required metadata Jira does not hold, and — when publication is requested — the confirmed release note has been published to the correct Confluence hierarchy with read-back verification.
+
+`prepare-release-notes` finishes with one of **Release Notes Status: Draft — Pending Human Confirmation**, **Release Notes Status: Confirmed — Published to Confluence**, **RELEASE NOTES BLOCKED — target release could not be resolved from Jira**, or **RELEASE NOTES BLOCKED — current Confluence template could not be inspected**.
+
+Jira is read-only at all times. Confluence is written only after the user has both confirmed the draft and explicitly requested publication. The skill never changes a Fix Version, transitions or closes issues, tags a release, deploys, or executes any release procedure.
 
 ## Cross-lifecycle — Support & Quality
 

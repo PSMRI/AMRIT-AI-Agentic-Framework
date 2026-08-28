@@ -309,5 +309,96 @@ class ValidationTests(unittest.TestCase):
         self.assertIn(".agents", errors[0])
 
 
+class CanonicalFrontmatterTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temporary_directory = tempfile.TemporaryDirectory()
+        self.repo_root = Path(self.temporary_directory.name)
+
+    def tearDown(self) -> None:
+        self.temporary_directory.cleanup()
+
+    def write_manifest(self, name: str, frontmatter: str) -> Path:
+        skill_directory = self.repo_root / "skills" / name
+        skill_directory.mkdir(parents=True)
+        (skill_directory / "SKILL.md").write_text(
+            f"---\n{frontmatter}\n---\n\nInstructions.\n", encoding="utf-8"
+        )
+        return skill_directory
+
+    def test_accepts_a_description_at_the_limit(self) -> None:
+        description = "d" * validation.MAX_DESCRIPTION_CHARACTERS
+        skill = self.write_manifest(
+            "limit-skill", f'name: limit-skill\ndescription: "{description}"'
+        )
+
+        self.assertEqual(validation.validate_canonical_frontmatter([skill]), [])
+
+    def test_rejects_a_description_over_the_limit(self) -> None:
+        description = "d" * (validation.MAX_DESCRIPTION_CHARACTERS + 1)
+        skill = self.write_manifest(
+            "long-skill", f'name: long-skill\ndescription: "{description}"'
+        )
+
+        errors = validation.validate_canonical_frontmatter([skill])
+
+        self.assertEqual(len(errors), 1)
+        self.assertIn("'description'", errors[0])
+        self.assertIn(str(validation.MAX_DESCRIPTION_CHARACTERS), errors[0])
+
+    def test_rejects_a_name_over_the_limit(self) -> None:
+        name = "n" * (validation.MAX_NAME_CHARACTERS + 1)
+        skill = self.write_manifest(name, f"name: {name}\ndescription: Test skill.")
+
+        errors = validation.validate_canonical_frontmatter([skill])
+
+        self.assertEqual(len(errors), 1)
+        self.assertIn("'name'", errors[0])
+
+    def test_reads_nested_metadata_without_confusing_it_for_the_description(
+        self,
+    ) -> None:
+        skill = self.write_manifest(
+            "nested-skill",
+            "name: nested-skill\n"
+            'description: "Real description."\n'
+            "metadata:\n"
+            "  stage: Stage 03\n"
+            "  description: an indented key that must be ignored\n",
+        )
+
+        fields, errors = validation.read_canonical_frontmatter(skill / "SKILL.md")
+
+        self.assertEqual(errors, [])
+        self.assertEqual(fields["description"], "Real description.")
+
+    def test_rejects_frontmatter_that_does_not_start_on_the_first_line(self) -> None:
+        skill_directory = self.repo_root / "skills" / "offset-skill"
+        skill_directory.mkdir(parents=True)
+        (skill_directory / "SKILL.md").write_text(
+            "\n---\nname: offset-skill\ndescription: Test skill.\n---\n\nBody.\n",
+            encoding="utf-8",
+        )
+
+        errors = validation.validate_canonical_frontmatter([skill_directory])
+
+        self.assertTrue(any("opening YAML frontmatter" in error for error in errors))
+
+    def test_rejects_a_name_that_does_not_match_the_directory(self) -> None:
+        skill = self.write_manifest(
+            "actual-skill", "name: other-skill\ndescription: Test skill."
+        )
+
+        errors = validation.validate_canonical_frontmatter([skill])
+
+        self.assertEqual(len(errors), 1)
+        self.assertIn("must match directory name", errors[0])
+
+    def test_every_shipped_skill_stays_within_the_frontmatter_limits(self) -> None:
+        skills, errors = validation.discover_skills(REPOSITORY_ROOT)
+
+        self.assertEqual(errors, [])
+        self.assertEqual(validation.validate_canonical_frontmatter(skills), [])
+
+
 if __name__ == "__main__":
     unittest.main()

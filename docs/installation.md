@@ -27,7 +27,13 @@ cd AMRIT-AI-Agentic-Framework
 claude
 ```
 
-There is no project installation step. Claude Code discovers:
+No dependency installation is required for skill discovery. Run
+`./scripts/install.sh` to confirm the local prerequisites, and
+`./scripts/clone-amrit-repos.sh` to clone the AMRIT application repositories
+into the ignored `repos/` workspace; see
+[Developer workspace and application repositories](#developer-workspace-and-application-repositories).
+
+Claude Code discovers:
 
 ```text
 .claude/skills/<skill-name>/SKILL.md
@@ -65,6 +71,7 @@ The available project skills are:
 - `/create-development-pr`
 - `/execute-qa-validation`
 - `/test-jira-ticket`
+- `/prepare-release-notes`
 - `/answer-codebase-questions`
 
 For ordinary Stage 05 work, `/implement-jira-ticket` is the only command
@@ -76,6 +83,336 @@ establishes the ticket's lifecycle position and the artifacts that actually
 exist, then routes to `/draft-test-cases` at Stage 03, `/write-unit-tests` at
 Stage 05, or `/execute-qa-validation` at Stage 07. It routes; it does not run
 all three. The testing specialists also remain independently invocable.
+
+## Developer workspace and application repositories
+
+This repository owns agent skills, framework documentation, orchestration, and
+configuration. It does not own AMRIT application code. Developers clone the
+AMRIT application repositories into a local workspace directory inside the
+framework clone, and that directory is ignored by the framework repository.
+
+```text
+AMRIT-AI-Agentic-Framework/
+├── config/amrit-repositories.txt   Repository manifest
+├── scripts/install.sh              Framework prerequisite check
+├── scripts/clone-amrit-repos.sh    Workspace cloning
+└── repos/                          Local only; ignored by this repository
+    └── PSMRI/
+        ├── Common-API/             Independent Git repository
+        └── HWC-UI/                 Independent Git repository
+```
+
+### Bootstrap sequence
+
+```bash
+git clone https://github.com/PSMRI/AMRIT-AI-Agentic-Framework.git
+cd AMRIT-AI-Agentic-Framework
+
+./scripts/install.sh
+./scripts/clone-amrit-repos.sh
+```
+
+The two `.sh` entry points are thin wrappers. Each resolves the repository root
+from its own location, selects a Python 3.9+ interpreter, and delegates to the
+Python implementation beside it. Run either implementation directly where Bash
+is unavailable:
+
+```bash
+python scripts/install.py
+python scripts/clone-amrit-repos.py
+```
+
+Both work when the framework path contains spaces, and neither requires being
+launched from the repository root.
+
+### What `install.sh` does
+
+Framework setup only. It checks:
+
+- Python 3.9 or newer;
+- Git present and runnable;
+- the repository layout (`skills/`, `.claude/skills/`, `.agents/skills/`,
+  `scripts/`);
+- that `config/amrit-repositories.txt` exists and parses;
+- that `repos/` is ignored by this repository, using `git check-ignore`.
+
+It also reports how many `<put your token here>` placeholders remain in each
+project MCP file. It never prints a token value, and it never reads, writes, or
+clones an application repository.
+
+It installs no dependencies, because the framework needs none: the tooling uses
+only the Python standard library and Git.
+
+Two optional flags:
+
+```bash
+./scripts/install.sh --validate      # also run scripts/validate-skills.py
+./scripts/install.sh --clone-repos   # then delegate to clone-amrit-repos.sh
+```
+
+`--clone-repos` delegates; it contains no cloning logic of its own. Installation
+and cloning stay separate concerns.
+
+### The repository manifest
+
+[`config/amrit-repositories.txt`](../config/amrit-repositories.txt) is the
+single place repositories are configured. One repository per line:
+
+```text
+<organization>/<repository>|<clone-url>
+```
+
+The first field is the destination path beneath `repos/`, so:
+
+```text
+PSMRI/Common-API|https://github.com/PSMRI/Common-API.git
+```
+
+clones to `repos/PSMRI/Common-API`. Organization grouping is part of the path,
+which keeps ownership explicit and prevents name collisions. Blank lines and
+lines starting with `#` are ignored. Adding a repository is a one-line change;
+no script edit is required.
+
+The manifest is rejected, with the offending line number named, when a line has
+the wrong number of `|` separators, an empty path or URL, a path that is not
+exactly `<organization>/<repository>`, a path containing `.` or `..`, or a
+duplicate destination path.
+
+Repository names and their exact capitalization come from the AMRIT repository
+catalog in
+[`skills/create-technical-design/references/repository-catalog.md`](../skills/create-technical-design/references/repository-catalog.md)
+and
+[`skills/implement-jira-ticket/references/amrit-repository-map.md`](../skills/implement-jira-ticket/references/amrit-repository-map.md),
+whose source of truth is the central `PSMRI/AMRIT` README. Review the manifest
+whenever that catalog adds, renames, or retires a repository.
+
+### What `clone-amrit-repos.sh` does
+
+Clone everything configured, or name the repositories you actually need:
+
+```bash
+./scripts/clone-amrit-repos.sh
+./scripts/clone-amrit-repos.sh Common-API HWC-API HWC-UI
+./scripts/clone-amrit-repos.sh PSMRI/AMRIT-DB
+```
+
+Selectors accept a bare repository name or an `<organization>/<repository>`
+path, and are case-insensitive. An unknown selector fails before anything is
+cloned.
+
+Inspect the workspace without changing it:
+
+```bash
+./scripts/clone-amrit-repos.sh --list      # configured / cloned / missing / invalid
+./scripts/clone-amrit-repos.sh --dry-run   # what a real run would do
+```
+
+Override the defaults when needed:
+
+```bash
+./scripts/clone-amrit-repos.sh --manifest /path/to/manifest.txt --workspace /path/to/repos
+```
+
+Clones are ordinary and complete. The script uses no `--depth`, no `--bare`,
+and no `--single-branch`: every clone is immediately usable for normal
+development.
+
+### Ad-hoc cloning of a repository outside the manifest
+
+The manifest stays the curated catalog of known AMRIT repositories, and an
+unknown selector still fails rather than guessing a URL. When a developer needs
+a repository that is not catalogued yet, pass its clone URL explicitly:
+
+```bash
+./scripts/clone-amrit-repos.sh --url https://github.com/PSMRI/Some-New-Repo.git
+python scripts/clone-amrit-repos.py --url https://github.com/SomeOrg/Some-Repo.git
+```
+
+The destination is derived from the URL:
+
+| Clone URL | Destination |
+| --- | --- |
+| `https://github.com/PSMRI/Some-New-Repo.git` | `repos/PSMRI/Some-New-Repo` |
+| `https://github.com/PSMRI/Some-New-Repo` | `repos/PSMRI/Some-New-Repo` |
+| `https://github.com/SomeOrg/Some-Repo.git` | `repos/SomeOrg/Some-Repo` |
+| `git@github.com:PSMRI/Some-New-Repo.git` | `repos/PSMRI/Some-New-Repo` |
+
+Ad-hoc cloning is a thin entry point onto the same machinery, not a second
+implementation: the URL becomes an ordinary repository entry and then travels
+through exactly the same clone, skip, failure, dry-run, and reporting code as a
+manifest-backed repository. So the behaviour table in
+[Behaviour, and why it is safe to re-run](#behaviour-and-why-it-is-safe-to-re-run)
+applies unchanged — missing destination clones, an existing Git repository is
+skipped untouched with no pull, an existing non-Git path fails while being
+preserved, and a clone failure exits non-zero.
+
+The clone is **local workspace state only**:
+
+- `config/amrit-repositories.txt` is not modified, and in ad-hoc mode it is not
+  even read. The script never mutates the catalog. If maintainers decide the
+  repository belongs there, they add the line by hand.
+- `repos/` remains ignored by the framework repository.
+- The result is an independent Git repository with its own `origin`, its own
+  branches, and its own history, so `git commit` and `git push` from inside it
+  behave exactly as for a catalogued repository.
+- `--list` continues to report manifest state only, so an ad-hoc repository
+  does not appear there. Inspect it from within `repos/<org>/<repo>` instead.
+
+Dry-run works the same way and creates nothing:
+
+```bash
+python scripts/clone-amrit-repos.py   --url https://github.com/PSMRI/Some-New-Repo.git --dry-run
+```
+
+It prints the destination and the clone URL and reports that it would clone; it
+reports "would skip" when a Git repository is already there, and "would fail"
+for a non-Git path.
+
+#### `--path`, an advanced override
+
+`--path` overrides the URL-derived destination. It is relative to `repos/` and
+must be exactly `<organization>/<repository>`:
+
+```bash
+python scripts/clone-amrit-repos.py   --url https://github.com/PSMRI/Some-New-Repo.git   --path PSMRI/Some-New-Repo
+```
+
+Ordinary GitHub URLs never need it. It rejects `../outside`,
+`PSMRI/../repo`, `/repo`, `repo-only-without-org`, backslash separators, and
+anything else that is not a plain two-segment relative path.
+
+#### Modes are mutually exclusive
+
+Manifest selectors and `--url` are separate modes, and the script fails before
+cloning anything if they are mixed:
+
+```bash
+python scripts/clone-amrit-repos.py Common-API --url https://github.com/PSMRI/X.git
+# error: repository selectors and --url are separate modes; pass either
+#        manifest selectors or one --url, not both
+```
+
+`--url` with `--list`, `--url` given twice, and `--path` without `--url` all
+fail the same way. One ad-hoc repository per invocation; run the script again
+for the next one.
+
+#### URL validation and credentials
+
+A URL is accepted only when it clearly identifies both an organization and a
+repository. Rejected, with a clear message and nothing created: URLs with no
+scheme, an unsupported scheme, fewer than two path segments, `.` or `..`
+segments anywhere in the path, percent-encoded segments, backslash separators,
+whitespace, or a segment that is not a usable directory name.
+
+Inline credentials are refused before anything else is parsed:
+
+```text
+https://user:token@github.com/org/repo.git   → rejected
+https://ghp_xxxx@github.com/org/repo.git     → rejected
+```
+
+The credential check runs first precisely so that no later error message can
+quote a secret; no token, password, or user value is ever printed or stored.
+`git@github.com:PSMRI/Some-Repo.git` is a normal SSH URL, not a credential, and
+is accepted. Configure Git authentication in your own environment instead of
+embedding it in a URL.
+
+### Behaviour, and why it is safe to re-run
+
+| Situation | Result | Exit contribution |
+| --- | --- | --- |
+| Repository missing | Parent organization directory created if needed, then `git clone` | Success |
+| Repository already cloned | Reported as already present, with its current branch, and left exactly as it is | Success |
+| Path exists but is not a Git repository | Clear error; the directory is preserved, never overwritten or deleted | Failure |
+| Clone fails (network, access, authentication) | The repository is named as failed; remaining repositories are still processed | Failure |
+
+Every run ends with a summary of cloned, already-present, and failed
+repositories. Any failure makes the script exit non-zero, and the failed
+repositories are listed again by name. A partial run is recoverable: re-running
+clones only what is still missing and leaves everything else alone.
+
+An existing repository is **never** re-cloned, reset, cleaned, force-checked-out,
+switched to another branch, or pulled. Destructive commands such as
+`git reset --hard`, `git clean -fd`, `git checkout .`, and `git restore .` are
+never issued. Your uncommitted work, local commits, feature branches, and
+diverged branches survive every run. Update a repository yourself when you want
+to:
+
+```bash
+cd repos/PSMRI/Common-API
+git pull
+```
+
+### Independent nested Git repositories
+
+Each directory under `repos/` is a normal, standalone Git repository with its
+own `.git`, its own `origin`, and its own branches. These are **not** Git
+submodules: the framework repository has no `.gitmodules`, records no
+application commit, and tracks nothing beneath `repos/`.
+
+```bash
+cd repos/PSMRI/Common-API
+
+git status
+git switch -c feature/my-change
+# make changes
+git add .
+git commit -m "feat: my change"
+git push -u origin feature/my-change
+```
+
+That push goes to the application repository's own `origin` — `PSMRI/Common-API`
+in this example — and never to the AMRIT AI Agentic Framework repository.
+
+The ignore rule in `.gitignore` is root-anchored:
+
+```gitignore
+/repos/
+```
+
+Anchoring matters. It ignores only the workspace at the framework root, so a
+directory named `repos` inside some unrelated nested project is unaffected. It
+also affects only the outer repository: `git status`, `git add`, `git commit`,
+`git pull`, `git fetch`, `git push`, `git checkout`, and `git switch` all behave
+normally inside a cloned application repository, because that repository's own
+`.git` governs them.
+
+One consequence is expected and intentional: `git status` run from the framework
+root will not show anything you changed beneath `repos/`. Run it from inside the
+application repository instead. Verify the rule at any time:
+
+```bash
+git check-ignore -v repos/PSMRI/Common-API/pom.xml
+```
+
+### Skills and the workspace
+
+Skills provide guidance, routing, and orchestration; they do not own
+application repositories. A skill inspects or edits a repository under `repos/`
+only when the user explicitly targets that repository. No skill operates on
+every cloned repository by default, and a skill whose work needs a repository
+that is not cloned reports it as inaccessible rather than assuming its
+contents. Skills that require checked-out source — including
+`implement-jira-ticket` and its Stage 05 specialists, `write-unit-tests`, and
+`create-development-pr` — are satisfied by these workspace clones.
+`implement-database-change` needs `PSMRI/AMRIT-DB` cloned, which the manifest
+configures.
+
+### Authentication
+
+Manifest URLs are HTTPS, matching the clone style used everywhere else in this
+repository's documentation. No token, password, personal access token, or other
+credential appears in the manifest or in any script, and none is ever written by
+them.
+
+Configure Git authentication in your own environment before cloning private
+repositories — a Git credential helper, an authenticated GitHub CLI, or an
+equivalent mechanism. A clone that fails for authentication reasons is reported
+as a named failure with no credential value in the output.
+
+To use SSH, change the URLs in your local copy of the manifest to
+`git@github.com:PSMRI/<repository>.git` and configure your SSH key. Do not
+commit a URL containing embedded credentials.
 
 ## Project-scoped MCP setup
 
@@ -146,6 +483,7 @@ Each generated ZIP is published as an individual asset on a GitHub Release:
    - `execute-qa-validation.zip`
    - `test-jira-ticket.zip`
    - `perform-root-cause-analysis.zip`
+   - `prepare-release-notes.zip`
    - `answer-codebase-questions.zip`
 5. Upload or install that ZIP using the relevant client workflow.
 
@@ -196,6 +534,15 @@ Run from the repository root:
 python -m unittest discover -s tests -v
 python scripts/validate-skills.py
 python scripts/package-skills.py --all
+```
+
+Check the local prerequisites and the workspace wiring:
+
+```bash
+python scripts/install.py
+bash -n scripts/install.sh
+bash -n scripts/clone-amrit-repos.sh
+python scripts/clone-amrit-repos.py --list
 ```
 
 Package only one skill:
@@ -360,6 +707,15 @@ local token values and complete any client trust prompt as described in
   workarounds. A Jira write capability is used only for a defect the user
   explicitly authorized; the default is draft-only. Without a reachable build the
   skill reports `QA status: NOT EXECUTED` and produces no verdict.
+- `prepare-release-notes` requires Jira and Confluence reads, and a Confluence
+  write capability only for authorized publication. Jira is read-only at all
+  times. No repository access, command execution, DeepWiki, or Graphify
+  capability is required: release membership comes from the Jira Fix Version,
+  never from source code or Git history. Without a resolvable Jira version it
+  reports `RELEASE NOTES BLOCKED — target release could not be resolved from
+  Jira`; without access to the current Confluence release-note hierarchy it
+  reports `RELEASE NOTES BLOCKED — current Confluence template could not be
+  inspected`. Neither case reuses a previous release's contents or format.
 - `answer-codebase-questions` uses read-only DeepWiki first, then Confluence
   when needed, with Graphify as the final fallback. It never uses Jira.
 

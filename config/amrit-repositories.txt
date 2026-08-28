@@ -1,0 +1,80 @@
+# AMRIT application repository manifest
+#
+# Consumed by scripts/clone-amrit-repos.py (and scripts/clone-amrit-repos.sh).
+#
+# Format, one repository per line:
+#
+#     <organization>/<repository>|<clone-url>
+#
+# The first field is the local path beneath the ignored workspace directory,
+# so PSMRI/Common-API clones to repos/PSMRI/Common-API. The second field is the
+# authoritative clone URL.
+#
+# Blank lines and lines beginning with # are ignored.
+#
+# Repository names and capitalization come from the AMRIT repository catalog in
+# skills/create-technical-design/references/repository-catalog.md and
+# skills/implement-jira-ticket/references/amrit-repository-map.md, whose source
+# of truth is the central PSMRI/AMRIT README. HTTPS is the clone style used
+# everywhere in this repository's documentation. Never place a token, password,
+# or other credential in a URL here; configure Git authentication instead.
+#
+# To clone only part of the platform, pass repository names on the command line:
+#
+#     python scripts/clone-amrit-repos.py Common-API HWC-API HWC-UI
+#
+# Adding a repository is a one-line change; no script edit is required.
+#
+# To clone a repository that is not catalogued here, pass its URL instead of
+# editing this file:
+#
+#     python scripts/clone-amrit-repos.py --url https://github.com/PSMRI/Some-New-Repo.git
+#
+# That is local workspace state only. The script never edits this manifest;
+# a maintainer adds a line here when a repository becomes official.
+
+# --- UI repositories (Angular) ------------------------------------------
+PSMRI/Inventory-UI|https://github.com/PSMRI/Inventory-UI.git
+PSMRI/Common-UI|https://github.com/PSMRI/Common-UI.git
+PSMRI/MMU-UI|https://github.com/PSMRI/MMU-UI.git
+PSMRI/TM-UI|https://github.com/PSMRI/TM-UI.git
+PSMRI/HWC-UI|https://github.com/PSMRI/HWC-UI.git
+PSMRI/ADMIN-UI|https://github.com/PSMRI/ADMIN-UI.git
+PSMRI/HWC-Scheduler-UI|https://github.com/PSMRI/HWC-Scheduler-UI.git
+PSMRI/HWC-Inventory-UI|https://github.com/PSMRI/HWC-Inventory-UI.git
+PSMRI/Scheduler-UI|https://github.com/PSMRI/Scheduler-UI.git
+PSMRI/ECD-UI|https://github.com/PSMRI/ECD-UI.git
+PSMRI/Helpline1097-UI|https://github.com/PSMRI/Helpline1097-UI.git
+PSMRI/Helpline104-UI|https://github.com/PSMRI/Helpline104-UI.git
+
+# --- API repositories (Spring Boot) -------------------------------------
+PSMRI/FLW-API|https://github.com/PSMRI/FLW-API.git
+PSMRI/Admin-API|https://github.com/PSMRI/Admin-API.git
+PSMRI/Common-API|https://github.com/PSMRI/Common-API.git
+PSMRI/ECD-API|https://github.com/PSMRI/ECD-API.git
+PSMRI/HWC-API|https://github.com/PSMRI/HWC-API.git
+PSMRI/Inventory-API|https://github.com/PSMRI/Inventory-API.git
+PSMRI/MMU-API|https://github.com/PSMRI/MMU-API.git
+PSMRI/Scheduler-API|https://github.com/PSMRI/Scheduler-API.git
+PSMRI/TM-API|https://github.com/PSMRI/TM-API.git
+PSMRI/Helpline1097-API|https://github.com/PSMRI/Helpline1097-API.git
+PSMRI/Helpline104-API|https://github.com/PSMRI/Helpline104-API.git
+PSMRI/BeneficiaryID-Generation-API|https://github.com/PSMRI/BeneficiaryID-Generation-API.git
+PSMRI/FHIR-API|https://github.com/PSMRI/FHIR-API.git
+PSMRI/Identity-API|https://github.com/PSMRI/Identity-API.git
+
+# Identity-1097-API is listed in the AMRIT repository catalog but is not
+# publicly resolvable under the PSMRI organization. Its clone URL is
+# unconfirmed, so it is deliberately not configured here. Add it once the
+# correct repository name or access route is confirmed by a maintainer.
+
+# --- Mobile applications (Kotlin / Android) -----------------------------
+PSMRI/FLW-Mobile-App|https://github.com/PSMRI/FLW-Mobile-App.git
+PSMRI/HWC-Mobile-App|https://github.com/PSMRI/HWC-Mobile-App.git
+
+# --- Infrastructure, schema, and documentation --------------------------
+PSMRI/AMRIT-DB|https://github.com/PSMRI/AMRIT-DB.git
+PSMRI/AMRIT-Docs|https://github.com/PSMRI/AMRIT-Docs.git
+PSMRI/AMRIT-DevOps|https://github.com/PSMRI/AMRIT-DevOps.git
+PSMRI/AMRIT-Website|https://github.com/PSMRI/AMRIT-Website.git
+PSMRI/AMRIT|https://github.com/PSMRI/AMRIT.git
