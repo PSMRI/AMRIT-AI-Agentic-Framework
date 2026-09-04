@@ -13,8 +13,8 @@
 # Blank lines and lines beginning with # are ignored.
 #
 # Repository names and capitalization come from the AMRIT repository catalog in
-# skills/create-technical-design/references/repository-catalog.md and
-# skills/implement-jira-ticket/references/amrit-repository-map.md, whose source
+# skills/amrit-create-technical-design/references/repository-catalog.md and
+# skills/amrit-implement-jira-ticket/references/amrit-repository-map.md, whose source
 # of truth is the central PSMRI/AMRIT README. HTTPS is the clone style used
 # everywhere in this repository's documentation. Never place a token, password,
 # or other credential in a URL here; configure Git authentication instead.

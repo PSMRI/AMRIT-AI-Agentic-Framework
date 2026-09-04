@@ -46,164 +46,164 @@ jobs:
             fi
           done
 
-      - name: Upload create-brd package
+      - name: Upload amrit-create-brd package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/create-brd.zip
+          path: dist/amrit-create-brd.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload create-product-backlog package
+      - name: Upload amrit-create-product-backlog package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/create-product-backlog.zip
+          path: dist/amrit-create-product-backlog.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload create-technical-design package
+      - name: Upload amrit-create-technical-design package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/create-technical-design.zip
+          path: dist/amrit-create-technical-design.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload draft-test-cases package
+      - name: Upload amrit-draft-test-cases package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/draft-test-cases.zip
+          path: dist/amrit-draft-test-cases.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload implement-jira-ticket package
+      - name: Upload amrit-implement-jira-ticket package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/implement-jira-ticket.zip
+          path: dist/amrit-implement-jira-ticket.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload review-implementation-architecture package
+      - name: Upload amrit-review-implementation-architecture package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/review-implementation-architecture.zip
+          path: dist/amrit-review-implementation-architecture.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload implement-database-change package
+      - name: Upload amrit-implement-database-change package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/implement-database-change.zip
+          path: dist/amrit-implement-database-change.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload implement-backend-change package
+      - name: Upload amrit-implement-backend-change package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/implement-backend-change.zip
+          path: dist/amrit-implement-backend-change.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload implement-frontend-change package
+      - name: Upload amrit-implement-frontend-change package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/implement-frontend-change.zip
+          path: dist/amrit-implement-frontend-change.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload implement-android-change package
+      - name: Upload amrit-implement-android-change package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/implement-android-change.zip
+          path: dist/amrit-implement-android-change.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload validate-ux-implementation package
+      - name: Upload amrit-validate-ux-implementation package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/validate-ux-implementation.zip
+          path: dist/amrit-validate-ux-implementation.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload write-unit-tests package
+      - name: Upload amrit-write-unit-tests package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/write-unit-tests.zip
+          path: dist/amrit-write-unit-tests.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload create-development-pr package
+      - name: Upload amrit-create-development-pr package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/create-development-pr.zip
+          path: dist/amrit-create-development-pr.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload execute-qa-validation package
+      - name: Upload amrit-execute-qa-validation package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/execute-qa-validation.zip
+          path: dist/amrit-execute-qa-validation.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload test-jira-ticket package
+      - name: Upload amrit-test-jira-ticket package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/test-jira-ticket.zip
+          path: dist/amrit-test-jira-ticket.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload perform-root-cause-analysis package
+      - name: Upload amrit-perform-root-cause-analysis package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/perform-root-cause-analysis.zip
+          path: dist/amrit-perform-root-cause-analysis.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload prepare-release-notes package
+      - name: Upload amrit-prepare-release-notes package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/prepare-release-notes.zip
+          path: dist/amrit-prepare-release-notes.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload answer-codebase-questions package
+      - name: Upload amrit-answer-codebase-questions package
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          path: dist/answer-codebase-questions.zip
+          path: dist/amrit-answer-codebase-questions.zip
           archive: false
           if-no-files-found: error
           retention-days: 90
