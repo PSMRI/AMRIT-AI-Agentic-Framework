@@ -56,32 +56,32 @@ configuration.
 
 The available project skills are:
 
-- `/create-brd`
-- `/create-product-backlog`
-- `/create-technical-design`
-- `/draft-test-cases`
-- `/implement-jira-ticket`
-- `/review-implementation-architecture`
-- `/implement-database-change`
-- `/implement-backend-change`
-- `/implement-frontend-change`
-- `/implement-android-change`
-- `/validate-ux-implementation`
-- `/write-unit-tests`
-- `/create-development-pr`
-- `/execute-qa-validation`
-- `/test-jira-ticket`
-- `/prepare-release-notes`
-- `/answer-codebase-questions`
+- `/amrit-create-brd`
+- `/amrit-create-product-backlog`
+- `/amrit-create-technical-design`
+- `/amrit-draft-test-cases`
+- `/amrit-implement-jira-ticket`
+- `/amrit-review-implementation-architecture`
+- `/amrit-implement-database-change`
+- `/amrit-implement-backend-change`
+- `/amrit-implement-frontend-change`
+- `/amrit-implement-android-change`
+- `/amrit-validate-ux-implementation`
+- `/amrit-write-unit-tests`
+- `/amrit-create-development-pr`
+- `/amrit-execute-qa-validation`
+- `/amrit-test-jira-ticket`
+- `/amrit-prepare-release-notes`
+- `/amrit-answer-codebase-questions`
 
-For ordinary Stage 05 work, `/implement-jira-ticket` is the only command
+For ordinary Stage 05 work, `/amrit-implement-jira-ticket` is the only command
 needed: it classifies the impacted personas and routes to the specialists
 above. The specialists remain independently invocable for focused work.
 
-For ordinary testing work, `/test-jira-ticket` is the only command needed: it
+For ordinary testing work, `/amrit-test-jira-ticket` is the only command needed: it
 establishes the ticket's lifecycle position and the artifacts that actually
-exist, then routes to `/draft-test-cases` at Stage 03, `/write-unit-tests` at
-Stage 05, or `/execute-qa-validation` at Stage 07. It routes; it does not run
+exist, then routes to `/amrit-draft-test-cases` at Stage 03, `/amrit-write-unit-tests` at
+Stage 05, or `/amrit-execute-qa-validation` at Stage 07. It routes; it does not run
 all three. The testing specialists also remain independently invocable.
 
 ## Developer workspace and application repositories
@@ -180,9 +180,9 @@ duplicate destination path.
 
 Repository names and their exact capitalization come from the AMRIT repository
 catalog in
-[`skills/create-technical-design/references/repository-catalog.md`](../skills/create-technical-design/references/repository-catalog.md)
+[`skills/amrit-create-technical-design/references/repository-catalog.md`](../skills/amrit-create-technical-design/references/repository-catalog.md)
 and
-[`skills/implement-jira-ticket/references/amrit-repository-map.md`](../skills/implement-jira-ticket/references/amrit-repository-map.md),
+[`skills/amrit-implement-jira-ticket/references/amrit-repository-map.md`](../skills/amrit-implement-jira-ticket/references/amrit-repository-map.md),
 whose source of truth is the central `PSMRI/AMRIT` README. Review the manifest
 whenever that catalog adds, renames, or retires a repository.
 
@@ -393,9 +393,9 @@ only when the user explicitly targets that repository. No skill operates on
 every cloned repository by default, and a skill whose work needs a repository
 that is not cloned reports it as inaccessible rather than assuming its
 contents. Skills that require checked-out source — including
-`implement-jira-ticket` and its Stage 05 specialists, `write-unit-tests`, and
-`create-development-pr` — are satisfied by these workspace clones.
-`implement-database-change` needs `PSMRI/AMRIT-DB` cloned, which the manifest
+`amrit-implement-jira-ticket` and its Stage 05 specialists, `amrit-write-unit-tests`, and
+`amrit-create-development-pr` — are satisfied by these workspace clones.
+`amrit-implement-database-change` needs `PSMRI/AMRIT-DB` cloned, which the manifest
 configures.
 
 ### Authentication
@@ -467,39 +467,39 @@ Each generated ZIP is published as an individual asset on a GitHub Release:
    **AMRIT SDLC Skills vX.Y.Z**.
 3. Open its **Assets** section.
 4. Download the required skill ZIP directly:
-   - `create-brd.zip`
-   - `create-product-backlog.zip`
-   - `create-technical-design.zip`
-   - `draft-test-cases.zip`
-   - `implement-jira-ticket.zip`
-   - `review-implementation-architecture.zip`
-   - `implement-database-change.zip`
-   - `implement-backend-change.zip`
-   - `implement-frontend-change.zip`
-   - `implement-android-change.zip`
-   - `validate-ux-implementation.zip`
-   - `write-unit-tests.zip`
-   - `create-development-pr.zip`
-   - `execute-qa-validation.zip`
-   - `test-jira-ticket.zip`
-   - `perform-root-cause-analysis.zip`
-   - `prepare-release-notes.zip`
-   - `answer-codebase-questions.zip`
+   - `amrit-create-brd.zip`
+   - `amrit-create-product-backlog.zip`
+   - `amrit-create-technical-design.zip`
+   - `amrit-draft-test-cases.zip`
+   - `amrit-implement-jira-ticket.zip`
+   - `amrit-review-implementation-architecture.zip`
+   - `amrit-implement-database-change.zip`
+   - `amrit-implement-backend-change.zip`
+   - `amrit-implement-frontend-change.zip`
+   - `amrit-implement-android-change.zip`
+   - `amrit-validate-ux-implementation.zip`
+   - `amrit-write-unit-tests.zip`
+   - `amrit-create-development-pr.zip`
+   - `amrit-execute-qa-validation.zip`
+   - `amrit-test-jira-ticket.zip`
+   - `amrit-perform-root-cause-analysis.zip`
+   - `amrit-prepare-release-notes.zip`
+   - `amrit-answer-codebase-questions.zip`
 5. Upload or install that ZIP using the relevant client workflow.
 
 Every release carries all currently packaged skills, so newly added skills
 appear as additional assets on the next release without any manual step.
 
-For Stage 05, install `implement-jira-ticket` together with the specialist
+For Stage 05, install `amrit-implement-jira-ticket` together with the specialist
 packages relevant to the repositories in use. The orchestrator works alone —
 it applies a missing persona's contract inline and reports that it did so — but
 each installed specialist carries its own guidance and code-inspection
 discipline.
 
-For testing, install `test-jira-ticket` together with `draft-test-cases`,
-`write-unit-tests`, and `execute-qa-validation`. The testing meta-skill also
+For testing, install `amrit-test-jira-ticket` together with `amrit-draft-test-cases`,
+`amrit-write-unit-tests`, and `amrit-execute-qa-validation`. The testing meta-skill also
 works alone, applying a missing activity's contract inline at the same standard
-and reporting that it did so. `write-unit-tests` serves both the implementation
+and reporting that it did so. `amrit-write-unit-tests` serves both the implementation
 and testing paths from a single installation; it does not need to be installed
 twice.
 
@@ -526,6 +526,170 @@ Each package has exactly one top-level skill directory:
 Other source subdirectories such as templates, scripts, or assets are included
 when a skill contains them.
 
+## Update installed skills
+
+`scripts/update-skills.sh` installs and updates the AMRIT skills from the
+latest GitHub Release, so the manual download-and-upload sequence above is
+only needed for a client that cannot read a local skills directory, such as
+Claude Desktop.
+
+It is an explicit command a developer runs. Nothing polls, schedules, or
+updates skills in the background, and the script installs no hook that would.
+
+### Bash usage
+
+```bash
+./scripts/update-skills.sh                  # every AMRIT skill, for Claude
+./scripts/update-skills.sh --check          # report updates, change nothing
+./scripts/update-skills.sh amrit-create-brd # one skill
+./scripts/update-skills.sh create-brd       # the same skill, by shorthand
+./scripts/update-skills.sh --all            # both supported targets
+./scripts/update-skills.sh --help
+```
+
+Initial installation and later updates are the same command: it installs a
+skill that is absent and replaces one that is behind.
+
+```text
+Latest release: v1.4.3
+
+Target: ~/.claude/skills
+  [OK  ] amrit-create-brd
+  [OK  ] amrit-answer-codebase-questions
+
+Installed 18 AMRIT skill(s) successfully.
+```
+
+### Python usage
+
+The `.sh` entry point is a thin wrapper, exactly like `install.sh` and
+`clone-amrit-repos.sh`. It resolves the repository root from its own location,
+selects a Python 3.9+ interpreter, and delegates to the implementation beside
+it. Run the implementation directly where Bash is unavailable:
+
+```bash
+python scripts/update-skills.py
+python scripts/update-skills.py --check
+python scripts/update-skills.py amrit-create-brd
+```
+
+### Windows
+
+The Python implementation supports Windows directly; use it from PowerShell or
+`cmd.exe`, where `update-skills.sh` cannot run:
+
+```powershell
+python scripts\update-skills.py
+python scripts\update-skills.py --check
+```
+
+Installation targets resolve under the user profile, so `--claude` becomes
+`%USERPROFILE%\.claude\skills\`. Paths longer than the 260-character Windows
+limit are handled, so a deeply nested `--target` works without enabling long
+paths system-wide.
+
+### Supported targets
+
+| Option | Directory | Used by |
+| --- | --- | --- |
+| `--claude` (default) | `~/.claude/skills/` | Claude Code |
+| `--agents` | `~/.agents/skills/` | Cursor, Antigravity |
+| `--all` | both of the above | |
+| `--target DIRECTORY` | the given skills directory | another project's `.claude/skills/` |
+
+`--target` cannot be combined with `--claude`, `--agents`, or `--all`.
+
+This repository's own `.claude/skills/` and `.agents/skills/` are **not**
+installation targets, and the script refuses to write into them. They hold the
+Git-tracked project bridges that `scripts/validate-skills.py` verifies. In a
+framework clone the skills are already discovered through those bridges, so
+update them with `git pull`.
+
+### What it does and does not touch
+
+Only directories named `amrit-*` are created, replaced, or removed. Skills
+belonging to other frameworks and skills a developer wrote are left untouched,
+which is what the `amrit-` namespace exists to make safe.
+
+Each skill is updated on its own:
+
+1. the package is downloaded to a temporary directory;
+2. the archive is validated before anything on disk is touched — it must be a
+   readable ZIP whose every entry sits under `amrit-<name>/`, it must contain
+   `amrit-<name>/SKILL.md`, and any absolute path, `..` traversal, or symbolic
+   link is rejected;
+3. it is extracted beside its destination inside the same skills directory;
+4. the existing installation is moved aside, the new copy is renamed into
+   place, and the old copy is deleted only after that succeeds.
+
+If any step fails, the previously installed skill is restored and left exactly
+as it was, and the failure names the skill, the release, and the target. One
+skill failing does not stop the others, and a skill that failed is not recorded
+as installed.
+
+### Checking for updates
+
+```bash
+./scripts/update-skills.sh --check
+```
+
+`--check` reads the release metadata, reports what an update would change, and
+writes nothing — it downloads no packages. It exits 0 when the check itself
+succeeds, whether or not updates are available, so it does not fail a script
+merely because a newer release exists.
+
+```text
+AMRIT skills are already up to date.
+```
+
+`--dry-run` is the equivalent for a real update: it reports what would be
+installed without downloading or writing. `--check` and `--dry-run` cannot be
+combined.
+
+### How the version is determined
+
+Releases of this framework are versioned as a whole, as `vMAJOR.MINOR.PATCH`
+(see [Release versioning](#release-versioning)); there is no per-skill version.
+The updater therefore resolves one release and records its tag:
+
+- the latest release comes from the GitHub REST endpoint
+  `/repos/PSMRI/AMRIT-AI-Agentic-Framework/releases/latest`, which is the
+  release the **Release Skills** workflow marked `--latest`;
+- `--release vX.Y.Z` pins a specific tag instead;
+- the tag each installed skill came from is recorded in
+  `<skills-directory>/.amrit-skills.json`.
+
+That marker file is the whole version mechanism. It is a dotfile at the root of
+the skills directory, not inside any skill, so no client mistakes it for a
+skill. Deleting it is harmless: the next run simply reinstalls. `--force`
+reinstalls even when the recorded tag already matches.
+
+```json
+{
+  "repository": "PSMRI/AMRIT-AI-Agentic-Framework",
+  "release": "v1.4.3",
+  "updated": "2026-09-03T12:00:00+00:00",
+  "skills": {
+    "amrit-create-brd": "v1.4.3"
+  }
+}
+```
+
+### GitHub access and rate limits
+
+The repository is public, so no token is required and none is requested. The
+GitHub API allows 60 unauthenticated requests per hour per IP address. A run
+uses one API request plus one download per updated skill, so a full 18-skill
+update stays well inside that budget, but repeated runs from a shared IP
+address can exhaust it. The script reports a rate-limit refusal explicitly,
+including when the window resets, rather than failing obscurely. Setting
+`GITHUB_TOKEN`, `GH_TOKEN`, or `AMRIT_GITHUB_TOKEN` raises the limit; the value
+is sent only to `api.github.com` and never printed.
+
+Only a published release is ever an update source. The script never falls back
+to raw files from a branch, and it fails clearly when a requested skill has no
+package in the resolved release, listing the skills that release does carry.
+
 ## Local validation and packaging
 
 Run from the repository root:
@@ -542,13 +706,15 @@ Check the local prerequisites and the workspace wiring:
 python scripts/install.py
 bash -n scripts/install.sh
 bash -n scripts/clone-amrit-repos.sh
+bash -n scripts/update-skills.sh
 python scripts/clone-amrit-repos.py --list
+python scripts/update-skills.py --check
 ```
 
 Package only one skill:
 
 ```bash
-python scripts/package-skills.py create-brd
+python scripts/package-skills.py amrit-create-brd
 ```
 
 Preview the release tag the workflow would choose next, from the local tags:
@@ -654,32 +820,32 @@ connections for Claude Code, Cursor, and Antigravity. Users supply only their
 local token values and complete any client trust prompt as described in
 [Project-scoped MCP setup](#project-scoped-mcp-setup).
 
-- `create-brd` requires Atlassian MCP Confluence search and page-read
+- `amrit-create-brd` requires Atlassian MCP Confluence search and page-read
   capabilities.
-- `create-product-backlog` requires Atlassian MCP Confluence and Jira read
+- `amrit-create-product-backlog` requires Atlassian MCP Confluence and Jira read
   capabilities. Jira writes are only for a separately requested, explicitly
   approved publication.
-- `create-technical-design` requires Jira and Confluence reads plus applicable
+- `amrit-create-technical-design` requires Jira and Confluence reads plus applicable
   architecture and Swagger/OpenAPI evidence. Official DeepWiki MCP repository
   research is optional.
-- `implement-jira-ticket` requires Jira and Confluence reads, DeepWiki
+- `amrit-implement-jira-ticket` requires Jira and Confluence reads, DeepWiki
   repository research, and the host's repository-editing, command-execution, and
   skill-invocation capabilities. Graphify and OpenProject are used read-only
   where available and are not required. It writes only to source files, never to
   Jira or Confluence. Access to the actual checked-out source code is mandatory:
   the skill stops rather than implementing a ticket from documentation alone.
-- The Stage 05 specialists — `review-implementation-architecture`,
-  `implement-database-change`, `implement-backend-change`,
-  `implement-frontend-change`, `implement-android-change`,
-  `validate-ux-implementation`, and `write-unit-tests` — require Jira and
+- The Stage 05 specialists — `amrit-review-implementation-architecture`,
+  `amrit-implement-database-change`, `amrit-implement-backend-change`,
+  `amrit-implement-frontend-change`, `amrit-implement-android-change`,
+  `amrit-validate-ux-implementation`, and `amrit-write-unit-tests` — require Jira and
   Confluence reads, DeepWiki repository research where available, and access to
   the repositories they own. The four implementation specialists and
-  `write-unit-tests` also need repository-editing and command-execution
-  capabilities; `review-implementation-architecture` and
-  `validate-ux-implementation` are read-only. `implement-database-change`
+  `amrit-write-unit-tests` also need repository-editing and command-execution
+  capabilities; `amrit-review-implementation-architecture` and
+  `amrit-validate-ux-implementation` are read-only. `amrit-implement-database-change`
   additionally needs a checked-out `AMRIT-DB`, and creates no application-local
   substitute migration when it is unavailable.
-- `create-development-pr` requires Jira reads, local Git and repository access
+- `amrit-create-development-pr` requires Jira reads, local Git and repository access
   through the host's command execution, and a GitHub capability for remote
   branch inspection, Pull Request lookup, Pull Request creation, and check
   status where available. It never writes to Jira and does not require
@@ -688,16 +854,16 @@ local token values and complete any client trust prompt as described in
   GitHub capability or an authenticated GitHub CLI in the local environment.
   Without it the skill performs safe local preparation only, fabricates no PR
   URL, and reports that PR creation could not be completed.
-- `test-jira-ticket` requires Jira and Confluence reads, host filesystem and
+- `amrit-test-jira-ticket` requires Jira and Confluence reads, host filesystem and
   repository access to establish whether an implementation exists, host command
   execution, and the host's skill-invocation capability. DeepWiki, Graphify, and
   OpenProject are used read-only where available and none is required. A
   deployed QA build is required only when QA execution is the selected activity.
   It routes by lifecycle position rather than running every testing specialist.
-- `draft-test-cases` requires Jira and Confluence reads. A configured
+- `amrit-draft-test-cases` requires Jira and Confluence reads. A configured
   test-management source and DeepWiki are optional and read-only. It executes no
   application, writes no test code, and modifies no repository file.
-- `execute-qa-validation` requires Jira and Confluence reads, access to a
+- `amrit-execute-qa-validation` requires Jira and Confluence reads, access to a
   deployed QA build, and the host's command-execution and filesystem
   capabilities. Browser, device, API, and log or observability capabilities are
   used only where the environment genuinely provides them. Selenium, Playwright,
@@ -707,7 +873,7 @@ local token values and complete any client trust prompt as described in
   workarounds. A Jira write capability is used only for a defect the user
   explicitly authorized; the default is draft-only. Without a reachable build the
   skill reports `QA status: NOT EXECUTED` and produces no verdict.
-- `prepare-release-notes` requires Jira and Confluence reads, and a Confluence
+- `amrit-prepare-release-notes` requires Jira and Confluence reads, and a Confluence
   write capability only for authorized publication. Jira is read-only at all
   times. No repository access, command execution, DeepWiki, or Graphify
   capability is required: release membership comes from the Jira Fix Version,
@@ -716,7 +882,7 @@ local token values and complete any client trust prompt as described in
   Jira`; without access to the current Confluence release-note hierarchy it
   reports `RELEASE NOTES BLOCKED — current Confluence template could not be
   inspected`. Neither case reuses a previous release's contents or format.
-- `answer-codebase-questions` uses read-only DeepWiki first, then Confluence
+- `amrit-answer-codebase-questions` uses read-only DeepWiki first, then Confluence
   when needed, with Graphify as the final fallback. It never uses Jira.
 
 Never add credentials, tokens, passwords, private MCP URLs, or

@@ -11,51 +11,51 @@ source directories.
 
 | Skill | Invocation | Lifecycle stage | What it produces |
 | --- | --- | --- | --- |
-| [`create-brd`](skills/create-brd/README.md) | `/create-brd` | Stage 01/12 — Business & Product | A traceable AMRIT BRD labelled **Draft — Pending Human Review** after mandatory read-only Confluence research. |
-| [`create-product-backlog`](skills/create-product-backlog/README.md) | `/create-product-backlog` | Stage 02 — Product Backlog Creation | A review-ready backlog from an approved BRD/FRD or L2-escalated production defect, labelled **Draft - Pending Product Manager Review**. |
-| [`create-technical-design`](skills/create-technical-design/README.md) | `/create-technical-design` | Stage 03 — Engineering Analysis | One evidence-based technical design package labelled **Ready for Architect Review**. |
-| [`draft-test-cases`](skills/draft-test-cases/README.md) | `/draft-test-cases` | Stage 03 — Analysis | An implementation-independent functional QA test specification traced to the ticket's acceptance criteria; not unit-test code and not execution results. |
-| [`implement-jira-ticket`](skills/implement-jira-ticket/README.md) | `/implement-jira-ticket` | Stage 05 — In Development | The Stage 05 entry point and engineering orchestrator: implemented and locally verified code with unit tests, produced by the specialist personas the ticket actually needs, with any schema change placed in `AMRIT-DB`. |
-| [`review-implementation-architecture`](skills/review-implementation-architecture/README.md) | `/review-implementation-architecture` | Stage 05 — In Development | A read-only architecture conformance assessment of an implementation against the approved Stage 03 design. |
-| [`implement-database-change`](skills/implement-database-change/README.md) | `/implement-database-change` | Stage 05 — In Development | The `AMRIT-DB` migration for a ticket, plus the schema contract the application implements against. |
-| [`implement-backend-change`](skills/implement-backend-change/README.md) | `/implement-backend-change` | Stage 05 — In Development | The server-side change in a Spring Boot API repository, plus the API and persistence contracts it establishes. |
-| [`implement-frontend-change`](skills/implement-frontend-change/README.md) | `/implement-frontend-change` | Stage 05 — In Development | The web UI change in an Angular repository, consistent with the design system and the real API contract. |
-| [`implement-android-change`](skills/implement-android-change/README.md) | `/implement-android-change` | Stage 05 — In Development | The Kotlin/Android change, consistent with the app architecture, offline behaviour, and platform constraints. |
-| [`validate-ux-implementation`](skills/validate-ux-implementation/README.md) | `/validate-ux-implementation` | Stage 05 — In Development | A read-only UX conformance assessment of an implemented interface against approved wireframes, the design system, and accessibility expectations. |
-| [`write-unit-tests`](skills/write-unit-tests/README.md) | `/write-unit-tests` | Stage 05 — In Development | Code-level unit tests for an implemented change, with executed results; separate from `draft-test-cases` and `execute-qa-validation`. |
-| [`create-development-pr`](skills/create-development-pr/README.md) | `/create-development-pr` | Stage 05 — In Development | A GitHub Pull Request for an implemented Jira ticket, from a Jira-named branch against the correct `release-X.Y.Z` branch, labelled **Awaiting code review**. |
-| [`execute-qa-validation`](skills/execute-qa-validation/README.md) | `/execute-qa-validation` | Stage 07 — In QA | Per-test-case QA execution results with evidence against a real deployed build, defect drafts for failures, and an explicit pending set; never a PASS from documentation. |
-| [`test-jira-ticket`](skills/test-jira-ticket/README.md) | `/test-jira-ticket` | Cross-stage — Testing orchestration | The testing entry point: routes a ticket to the testing activity its lifecycle position actually calls for — `draft-test-cases`, `write-unit-tests`, or `execute-qa-validation`. |
-| [`prepare-release-notes`](skills/prepare-release-notes/README.md) | `/prepare-release-notes` | Stage 12 — Release Documentation | An evidence-backed AMRIT release note whose format comes from the latest applicable Confluence release notes and whose release scope, bugs, enhancements, ticket details and statuses come from Jira; Confluence publication only after explicit authorization. |
-| [`perform-root-cause-analysis`](skills/perform-root-cause-analysis/README.md) | `/perform-root-cause-analysis` | Cross-lifecycle — Support & Quality | An evidence-backed RCA for a production defect or support incident, grounded in mandatory current source-code inspection, with CAPA recommendations; Confluence publication only after explicit authorization. |
-| [`answer-codebase-questions`](skills/answer-codebase-questions/README.md) | `/answer-codebase-questions` | Cross-lifecycle — Codebase knowledge | A concise, evidence-backed AMRIT codebase answer from DeepWiki, Confluence, and Graphify; never Jira. |
+| [`amrit-create-brd`](skills/amrit-create-brd/README.md) | `/amrit-create-brd` | Stage 01/12 — Business & Product | A traceable AMRIT BRD labelled **Draft — Pending Human Review** after mandatory read-only Confluence research. |
+| [`amrit-create-product-backlog`](skills/amrit-create-product-backlog/README.md) | `/amrit-create-product-backlog` | Stage 02 — Product Backlog Creation | A review-ready backlog from an approved BRD/FRD or L2-escalated production defect, labelled **Draft - Pending Product Manager Review**. |
+| [`amrit-create-technical-design`](skills/amrit-create-technical-design/README.md) | `/amrit-create-technical-design` | Stage 03 — Engineering Analysis | One evidence-based technical design package labelled **Ready for Architect Review**. |
+| [`amrit-draft-test-cases`](skills/amrit-draft-test-cases/README.md) | `/amrit-draft-test-cases` | Stage 03 — Analysis | An implementation-independent functional QA test specification traced to the ticket's acceptance criteria; not unit-test code and not execution results. |
+| [`amrit-implement-jira-ticket`](skills/amrit-implement-jira-ticket/README.md) | `/amrit-implement-jira-ticket` | Stage 05 — In Development | The Stage 05 entry point and engineering orchestrator: implemented and locally verified code with unit tests, produced by the specialist personas the ticket actually needs, with any schema change placed in `AMRIT-DB`. |
+| [`amrit-review-implementation-architecture`](skills/amrit-review-implementation-architecture/README.md) | `/amrit-review-implementation-architecture` | Stage 05 — In Development | A read-only architecture conformance assessment of an implementation against the approved Stage 03 design. |
+| [`amrit-implement-database-change`](skills/amrit-implement-database-change/README.md) | `/amrit-implement-database-change` | Stage 05 — In Development | The `AMRIT-DB` migration for a ticket, plus the schema contract the application implements against. |
+| [`amrit-implement-backend-change`](skills/amrit-implement-backend-change/README.md) | `/amrit-implement-backend-change` | Stage 05 — In Development | The server-side change in a Spring Boot API repository, plus the API and persistence contracts it establishes. |
+| [`amrit-implement-frontend-change`](skills/amrit-implement-frontend-change/README.md) | `/amrit-implement-frontend-change` | Stage 05 — In Development | The web UI change in an Angular repository, consistent with the design system and the real API contract. |
+| [`amrit-implement-android-change`](skills/amrit-implement-android-change/README.md) | `/amrit-implement-android-change` | Stage 05 — In Development | The Kotlin/Android change, consistent with the app architecture, offline behaviour, and platform constraints. |
+| [`amrit-validate-ux-implementation`](skills/amrit-validate-ux-implementation/README.md) | `/amrit-validate-ux-implementation` | Stage 05 — In Development | A read-only UX conformance assessment of an implemented interface against approved wireframes, the design system, and accessibility expectations. |
+| [`amrit-write-unit-tests`](skills/amrit-write-unit-tests/README.md) | `/amrit-write-unit-tests` | Stage 05 — In Development | Code-level unit tests for an implemented change, with executed results; separate from `amrit-draft-test-cases` and `amrit-execute-qa-validation`. |
+| [`amrit-create-development-pr`](skills/amrit-create-development-pr/README.md) | `/amrit-create-development-pr` | Stage 05 — In Development | A GitHub Pull Request for an implemented Jira ticket, from a Jira-named branch against the correct `release-X.Y.Z` branch, labelled **Awaiting code review**. |
+| [`amrit-execute-qa-validation`](skills/amrit-execute-qa-validation/README.md) | `/amrit-execute-qa-validation` | Stage 07 — In QA | Per-test-case QA execution results with evidence against a real deployed build, defect drafts for failures, and an explicit pending set; never a PASS from documentation. |
+| [`amrit-test-jira-ticket`](skills/amrit-test-jira-ticket/README.md) | `/amrit-test-jira-ticket` | Cross-stage — Testing orchestration | The testing entry point: routes a ticket to the testing activity its lifecycle position actually calls for — `amrit-draft-test-cases`, `amrit-write-unit-tests`, or `amrit-execute-qa-validation`. |
+| [`amrit-prepare-release-notes`](skills/amrit-prepare-release-notes/README.md) | `/amrit-prepare-release-notes` | Stage 12 — Release Documentation | An evidence-backed AMRIT release note whose format comes from the latest applicable Confluence release notes and whose release scope, bugs, enhancements, ticket details and statuses come from Jira; Confluence publication only after explicit authorization. |
+| [`amrit-perform-root-cause-analysis`](skills/amrit-perform-root-cause-analysis/README.md) | `/amrit-perform-root-cause-analysis` | Cross-lifecycle — Support & Quality | An evidence-backed RCA for a production defect or support incident, grounded in mandatory current source-code inspection, with CAPA recommendations; Confluence publication only after explicit authorization. |
+| [`amrit-answer-codebase-questions`](skills/amrit-answer-codebase-questions/README.md) | `/amrit-answer-codebase-questions` | Cross-lifecycle — Codebase knowledge | A concise, evidence-backed AMRIT codebase answer from DeepWiki, Confluence, and Graphify; never Jira. |
 
-`implement-jira-ticket` is the Stage 05 entry point. It inspects the Jira
+`amrit-implement-jira-ticket` is the Stage 05 entry point. It inspects the Jira
 ticket, the knowledge sources, and the actual source code, classifies which
 engineering personas the change requires, and invokes only those specialist
-skills — `review-implementation-architecture`, `implement-database-change`,
-`implement-backend-change`, `implement-frontend-change`,
-`implement-android-change`, `validate-ux-implementation`, and
-`write-unit-tests` — in dependency order before handing off to
-`create-development-pr`. The specialists are **conditionally selected**, never
+skills — `amrit-review-implementation-architecture`, `amrit-implement-database-change`,
+`amrit-implement-backend-change`, `amrit-implement-frontend-change`,
+`amrit-implement-android-change`, `amrit-validate-ux-implementation`, and
+`amrit-write-unit-tests` — in dependency order before handing off to
+`amrit-create-development-pr`. The specialists are **conditionally selected**, never
 an unconditional sequence.
 
-`test-jira-ticket` is the testing entry point. It reads the ticket, establishes
+`amrit-test-jira-ticket` is the testing entry point. It reads the ticket, establishes
 its lifecycle position and the artifacts that actually exist, and routes to
-`draft-test-cases` at Stage 03, the existing `write-unit-tests` at Stage 05, or
-`execute-qa-validation` at Stage 07. It is **lifecycle routing, not a pipeline**:
+`amrit-draft-test-cases` at Stage 03, the existing `amrit-write-unit-tests` at Stage 05, or
+`amrit-execute-qa-validation` at Stage 07. It is **lifecycle routing, not a pipeline**:
 running all three would design QA test cases from an implementation, invent unit
 tests for code that does not exist, and fabricate QA results with no build.
 
-`create-development-pr` performs Git and GitHub write operations — branch,
+`amrit-create-development-pr` performs Git and GitHub write operations — branch,
 commit, push, and Pull Request creation — but no substantive implementation.
-`create-brd`, `create-product-backlog`, `create-technical-design`,
-`draft-test-cases`, `answer-codebase-questions`,
-`review-implementation-architecture`, `validate-ux-implementation`,
-`perform-root-cause-analysis`, and `prepare-release-notes` are read-only
-during investigation. `perform-root-cause-analysis` writes only to
+`amrit-create-brd`, `amrit-create-product-backlog`, `amrit-create-technical-design`,
+`amrit-draft-test-cases`, `amrit-answer-codebase-questions`,
+`amrit-review-implementation-architecture`, `amrit-validate-ux-implementation`,
+`amrit-perform-root-cause-analysis`, and `amrit-prepare-release-notes` are read-only
+during investigation. `amrit-perform-root-cause-analysis` writes only to
 Confluence, and only after the user has both confirmed the RCA and
-explicitly requested publication. `prepare-release-notes` holds the same
+explicitly requested publication. `amrit-prepare-release-notes` holds the same
 contract for a release note: Jira is read-only at all times, and Confluence
 is written only after the user has both confirmed the draft and explicitly
 requested publication.
@@ -67,9 +67,9 @@ specialist skill is not installed.
 
 ## Stage 05 — In Development
 
-Stage 05 is entered through one skill. `implement-jira-ticket` orchestrates the
+Stage 05 is entered through one skill. `amrit-implement-jira-ticket` orchestrates the
 engineering personas the ticket actually requires and hands off to
-`create-development-pr`:
+`amrit-create-development-pr`:
 
 ```text
 Stage 03 — Analysis
@@ -78,18 +78,18 @@ Stage 04 — Ready for Development      (no skill; human Definition of Ready)
         ↓
 Stage 05 — In Development
 
-implement-jira-ticket
+amrit-implement-jira-ticket
         |
-        |-- review-implementation-architecture   (architecturally significant change)
-        |-- implement-database-change            (schema, migrations, indexes)
-        |-- implement-backend-change             (services, APIs, domain logic)
-        |-- implement-frontend-change            (web UI, state, forms)
-        |-- implement-android-change             (Kotlin, mobile flows, offline)
-        |-- validate-ux-implementation           (user-visible change vs approved UX)
-        `-- write-unit-tests                     (code-level tests for what changed)
+        |-- amrit-review-implementation-architecture   (architecturally significant change)
+        |-- amrit-implement-database-change            (schema, migrations, indexes)
+        |-- amrit-implement-backend-change             (services, APIs, domain logic)
+        |-- amrit-implement-frontend-change            (web UI, state, forms)
+        |-- amrit-implement-android-change             (Kotlin, mobile flows, offline)
+        |-- amrit-validate-ux-implementation           (user-visible change vs approved UX)
+        `-- amrit-write-unit-tests                     (code-level tests for what changed)
                  |
                  v
-        create-development-pr
+        amrit-create-development-pr
         ↓
 Stage 06 — Pending QA
 ```
@@ -101,15 +101,15 @@ repository covers Stage 04. See the
 
 The specialists are **conditionally selected from the ticket, the approved
 Stage 03 design, and the actual source code** — not an unconditional sequence.
-A backend-only defect runs `implement-backend-change` and `write-unit-tests`;
-an Android ticket runs `implement-android-change` and `write-unit-tests`. Only
+A backend-only defect runs `amrit-implement-backend-change` and `amrit-write-unit-tests`;
+an Android ticket runs `amrit-implement-android-change` and `amrit-write-unit-tests`. Only
 unit tests are effectively always required, because production behaviour
 changed.
 
 Ordinary use needs one command:
 
 ```bash
-/implement-jira-ticket AMRIT-1234
+/amrit-implement-jira-ticket AMRIT-1234
 ```
 
 Actual source-code inspection is mandatory in every route, for the orchestrator
@@ -120,11 +120,11 @@ skills stop instead of implementing from documentation.
 
 ## Testing across the lifecycle
 
-`test-jira-ticket` is the testing entry point. It routes a ticket to the testing
+`amrit-test-jira-ticket` is the testing entry point. It routes a ticket to the testing
 activity its lifecycle position actually calls for:
 
 ```text
-                         test-jira-ticket
+                         amrit-test-jira-ticket
                             META-SKILL
                                 |
               lifecycle-aware test orchestration
@@ -132,7 +132,7 @@ activity its lifecycle position actually calls for:
             ┌───────────────────┼───────────────────┐
             │                   │                   │
             ▼                   ▼                   ▼
-     draft-test-cases     write-unit-tests    execute-qa-validation
+     amrit-draft-test-cases     amrit-write-unit-tests    amrit-execute-qa-validation
        QA test design       code-level         QA execution
                             unit testing
             │                   │                   │
@@ -143,16 +143,16 @@ activity its lifecycle position actually calls for:
 Ordinary use needs one command:
 
 ```bash
-/test-jira-ticket AMRIT-1234
+/amrit-test-jira-ticket AMRIT-1234
 ```
 
 ### Three artifacts, never conflated
 
 | Skill | Stage | Question answered | Artifact |
 | --- | --- | --- | --- |
-| `draft-test-cases` | Stage 03 — Analysis | What must QA test to prove this requirement works? | Functional QA test **specifications** |
-| `write-unit-tests` | Stage 05 — In Development | What code-level tests verify the changed code? | Executable **unit-test code** with real results |
-| `execute-qa-validation` | Stage 07 — In QA | Does the deployed build satisfy the agreed requirements and test cases? | QA **execution results and evidence** |
+| `amrit-draft-test-cases` | Stage 03 — Analysis | What must QA test to prove this requirement works? | Functional QA test **specifications** |
+| `amrit-write-unit-tests` | Stage 05 — In Development | What code-level tests verify the changed code? | Executable **unit-test code** with real results |
+| `amrit-execute-qa-validation` | Stage 07 — In QA | Does the deployed build satisfy the agreed requirements and test cases? | QA **execution results and evidence** |
 
 These are three different deliverables with three different owners. Documentation
 in this repository never calls all three "test cases".
@@ -163,9 +163,9 @@ Each activity has an evidence gate that a lifecycle stage alone never satisfies:
 
 | Activity | Prerequisite | If absent |
 | --- | --- | --- |
-| `draft-test-cases` | Acceptance criteria or an approved requirement set | Stop and report; never invent a requirement |
-| `write-unit-tests` | An implementation exists and its source is accessible | Do not route; never invent tests for code that does not exist |
-| `execute-qa-validation` | A reachable deployed build | Blocked report with `Executed: 0`; never a PASS from documentation |
+| `amrit-draft-test-cases` | Acceptance criteria or an approved requirement set | Stop and report; never invent a requirement |
+| `amrit-write-unit-tests` | An implementation exists and its source is accessible | Do not route; never invent tests for code that does not exist |
+| `amrit-execute-qa-validation` | A reachable deployed build | Blocked report with `Executed: 0`; never a PASS from documentation |
 
 QA test design is **implementation-independent**: every expected result comes from
 an approved requirement, never from what code happens to do. At Stage 07 the
@@ -185,27 +185,27 @@ approver.
           ┌──────────────┴──────────────┐
           |                             |
           v                             v
- implement-jira-ticket             test-jira-ticket
+ amrit-implement-jira-ticket             amrit-test-jira-ticket
    Engineering META                  Testing META
           |                             |
    persona routing              lifecycle routing
           |                             |
- Backend / Frontend              draft-test-cases
- Android / DB / etc.             write-unit-tests
-          |                      execute-qa-validation
+ Backend / Frontend              amrit-draft-test-cases
+ Android / DB / etc.             amrit-write-unit-tests
+          |                      amrit-execute-qa-validation
           |
-   write-unit-tests
+   amrit-write-unit-tests
           |
- create-development-pr
+ amrit-create-development-pr
 ```
 
-`implement-jira-ticket` answers *implement this ticket*. `test-jira-ticket`
+`amrit-implement-jira-ticket` answers *implement this ticket*. `amrit-test-jira-ticket`
 answers *perform the appropriate testing activity for this ticket's lifecycle
 position*.
 
-`write-unit-tests` belongs to both paths as one specialist, never duplicated. Its
-Stage 05 relationship is unchanged — `implement-jira-ticket` selects it whenever
-production behaviour changed, ahead of `create-development-pr` — and the testing
+`amrit-write-unit-tests` belongs to both paths as one specialist, never duplicated. Its
+Stage 05 relationship is unchanged — `amrit-implement-jira-ticket` selects it whenever
+production behaviour changed, ahead of `amrit-create-development-pr` — and the testing
 meta-skill routes to the same skill when development-level testing is explicitly
 appropriate.
 
@@ -227,42 +227,42 @@ skills under `.agents/skills/`. Each project skill is a small, Windows-safe
 Both bridge locations contain every available skill:
 
 ```text
-<bridge-root>/create-brd/SKILL.md
-    -> skills/create-brd/SKILL.md
-<bridge-root>/create-product-backlog/SKILL.md
-    -> skills/create-product-backlog/SKILL.md
-<bridge-root>/create-technical-design/SKILL.md
-    -> skills/create-technical-design/SKILL.md
-<bridge-root>/draft-test-cases/SKILL.md
-    -> skills/draft-test-cases/SKILL.md
-<bridge-root>/implement-jira-ticket/SKILL.md
-    -> skills/implement-jira-ticket/SKILL.md
-<bridge-root>/review-implementation-architecture/SKILL.md
-    -> skills/review-implementation-architecture/SKILL.md
-<bridge-root>/implement-database-change/SKILL.md
-    -> skills/implement-database-change/SKILL.md
-<bridge-root>/implement-backend-change/SKILL.md
-    -> skills/implement-backend-change/SKILL.md
-<bridge-root>/implement-frontend-change/SKILL.md
-    -> skills/implement-frontend-change/SKILL.md
-<bridge-root>/implement-android-change/SKILL.md
-    -> skills/implement-android-change/SKILL.md
-<bridge-root>/validate-ux-implementation/SKILL.md
-    -> skills/validate-ux-implementation/SKILL.md
-<bridge-root>/write-unit-tests/SKILL.md
-    -> skills/write-unit-tests/SKILL.md
-<bridge-root>/create-development-pr/SKILL.md
-    -> skills/create-development-pr/SKILL.md
-<bridge-root>/execute-qa-validation/SKILL.md
-    -> skills/execute-qa-validation/SKILL.md
-<bridge-root>/test-jira-ticket/SKILL.md
-    -> skills/test-jira-ticket/SKILL.md
-<bridge-root>/perform-root-cause-analysis/SKILL.md
-    -> skills/perform-root-cause-analysis/SKILL.md
-<bridge-root>/prepare-release-notes/SKILL.md
-    -> skills/prepare-release-notes/SKILL.md
-<bridge-root>/answer-codebase-questions/SKILL.md
-    -> skills/answer-codebase-questions/SKILL.md
+<bridge-root>/amrit-create-brd/SKILL.md
+    -> skills/amrit-create-brd/SKILL.md
+<bridge-root>/amrit-create-product-backlog/SKILL.md
+    -> skills/amrit-create-product-backlog/SKILL.md
+<bridge-root>/amrit-create-technical-design/SKILL.md
+    -> skills/amrit-create-technical-design/SKILL.md
+<bridge-root>/amrit-draft-test-cases/SKILL.md
+    -> skills/amrit-draft-test-cases/SKILL.md
+<bridge-root>/amrit-implement-jira-ticket/SKILL.md
+    -> skills/amrit-implement-jira-ticket/SKILL.md
+<bridge-root>/amrit-review-implementation-architecture/SKILL.md
+    -> skills/amrit-review-implementation-architecture/SKILL.md
+<bridge-root>/amrit-implement-database-change/SKILL.md
+    -> skills/amrit-implement-database-change/SKILL.md
+<bridge-root>/amrit-implement-backend-change/SKILL.md
+    -> skills/amrit-implement-backend-change/SKILL.md
+<bridge-root>/amrit-implement-frontend-change/SKILL.md
+    -> skills/amrit-implement-frontend-change/SKILL.md
+<bridge-root>/amrit-implement-android-change/SKILL.md
+    -> skills/amrit-implement-android-change/SKILL.md
+<bridge-root>/amrit-validate-ux-implementation/SKILL.md
+    -> skills/amrit-validate-ux-implementation/SKILL.md
+<bridge-root>/amrit-write-unit-tests/SKILL.md
+    -> skills/amrit-write-unit-tests/SKILL.md
+<bridge-root>/amrit-create-development-pr/SKILL.md
+    -> skills/amrit-create-development-pr/SKILL.md
+<bridge-root>/amrit-execute-qa-validation/SKILL.md
+    -> skills/amrit-execute-qa-validation/SKILL.md
+<bridge-root>/amrit-test-jira-ticket/SKILL.md
+    -> skills/amrit-test-jira-ticket/SKILL.md
+<bridge-root>/amrit-perform-root-cause-analysis/SKILL.md
+    -> skills/amrit-perform-root-cause-analysis/SKILL.md
+<bridge-root>/amrit-prepare-release-notes/SKILL.md
+    -> skills/amrit-prepare-release-notes/SKILL.md
+<bridge-root>/amrit-answer-codebase-questions/SKILL.md
+    -> skills/amrit-answer-codebase-questions/SKILL.md
 ```
 
 Invoke a skill using the supported client workflow. Clients may also load a
@@ -382,6 +382,11 @@ On Windows, or in any shell without Bash, call the same tools through Python:
 python scripts/install.py
 python scripts/clone-amrit-repos.py
 ```
+
+Neither step installs skills: a framework clone discovers them through the
+committed project bridges. `scripts/update-skills.sh` is for installing the
+released packages into a user-level skills directory instead; see
+[Install and update skill packages from GitHub Releases](#install-and-update-skill-packages-from-github-releases).
 
 `install.sh` checks framework prerequisites only — Python, Git, the repository
 layout, the repository manifest, and that `repos/` is ignored — and reports MCP
@@ -511,9 +516,9 @@ cloned reports it as inaccessible rather than guessing.
 
 The repositories listed in the manifest come from the AMRIT repository catalog
 maintained in
-[`skills/create-technical-design/references/repository-catalog.md`](skills/create-technical-design/references/repository-catalog.md)
+[`skills/amrit-create-technical-design/references/repository-catalog.md`](skills/amrit-create-technical-design/references/repository-catalog.md)
 and
-[`skills/implement-jira-ticket/references/amrit-repository-map.md`](skills/implement-jira-ticket/references/amrit-repository-map.md),
+[`skills/amrit-implement-jira-ticket/references/amrit-repository-map.md`](skills/amrit-implement-jira-ticket/references/amrit-repository-map.md),
 whose source of truth is the central `PSMRI/AMRIT` README.
 
 ### Authentication
@@ -529,44 +534,84 @@ Full reference, including the manifest format, script exit codes, and the
 complete safety contract, is in
 [docs/installation.md](docs/installation.md#developer-workspace-and-application-repositories).
 
-## Install skill packages from GitHub Releases
+## Install and update skill packages from GitHub Releases
 
-GitHub Releases are the official distribution channel. To install a skill:
+GitHub Releases are the official distribution channel.
+
+### The update command
+
+`scripts/update-skills.sh` installs and updates the AMRIT skills from the
+latest release, so the manual steps below are only needed for a client that
+cannot read a local skills directory, such as Claude Desktop.
+
+```bash
+./scripts/update-skills.sh                  # every AMRIT skill, for Claude
+./scripts/update-skills.sh --check          # report updates, change nothing
+./scripts/update-skills.sh amrit-create-brd # one skill
+./scripts/update-skills.sh create-brd       # the same skill, by shorthand
+./scripts/update-skills.sh --all            # Claude and agent targets
+./scripts/update-skills.sh --help
+```
+
+On Windows, or in any shell without Bash, call the implementation directly:
+
+```bash
+python scripts/update-skills.py
+python scripts/update-skills.py --check
+```
+
+Initial installation and later updates are the same command. It installs into
+`~/.claude/skills/` by default, `~/.agents/skills/` with `--agents`, or an
+explicit directory with `--target`. Only `amrit-*` directories are ever
+written, so skills from other frameworks and skills you wrote yourself are
+left untouched — this is what the `amrit-` namespace makes safe.
+
+This is an explicit command. Nothing polls or updates skills in the
+background. It refuses to write into this repository's own `.claude/skills/`
+and `.agents/skills/`, which hold the Git-tracked project bridges; in a
+framework clone, update those with `git pull`.
+
+See [Update installed skills](docs/installation.md#update-installed-skills)
+for the safety model, the version marker, and GitHub rate limits.
+
+### Manual installation
+
+To install a skill by hand:
 
 1. Open the repository on GitHub.
 2. Open the **Releases** page and select the latest release, named
    **AMRIT SDLC Skills vX.Y.Z**.
 3. Open its **Assets** section.
 4. Download the required skill ZIP directly:
-   - `create-brd.zip`
-   - `create-product-backlog.zip`
-   - `create-technical-design.zip`
-   - `draft-test-cases.zip`
-   - `implement-jira-ticket.zip`
-   - `review-implementation-architecture.zip`
-   - `implement-database-change.zip`
-   - `implement-backend-change.zip`
-   - `implement-frontend-change.zip`
-   - `implement-android-change.zip`
-   - `validate-ux-implementation.zip`
-   - `write-unit-tests.zip`
-   - `create-development-pr.zip`
-   - `execute-qa-validation.zip`
-   - `test-jira-ticket.zip`
-   - `perform-root-cause-analysis.zip`
-   - `prepare-release-notes.zip`
-   - `answer-codebase-questions.zip`
+   - `amrit-create-brd.zip`
+   - `amrit-create-product-backlog.zip`
+   - `amrit-create-technical-design.zip`
+   - `amrit-draft-test-cases.zip`
+   - `amrit-implement-jira-ticket.zip`
+   - `amrit-review-implementation-architecture.zip`
+   - `amrit-implement-database-change.zip`
+   - `amrit-implement-backend-change.zip`
+   - `amrit-implement-frontend-change.zip`
+   - `amrit-implement-android-change.zip`
+   - `amrit-validate-ux-implementation.zip`
+   - `amrit-write-unit-tests.zip`
+   - `amrit-create-development-pr.zip`
+   - `amrit-execute-qa-validation.zip`
+   - `amrit-test-jira-ticket.zip`
+   - `amrit-perform-root-cause-analysis.zip`
+   - `amrit-prepare-release-notes.zip`
+   - `amrit-answer-codebase-questions.zip`
 5. Upload or install that ZIP using the relevant client workflow.
 
-For Stage 05, install `implement-jira-ticket` together with the specialist
+For Stage 05, install `amrit-implement-jira-ticket` together with the specialist
 packages relevant to the repositories you work in. The orchestrator still works
 alone — it applies a missing persona's contract inline — but each installed
 specialist keeps its own guidance and code-inspection discipline.
 
-For testing, install `test-jira-ticket` together with `draft-test-cases`,
-`write-unit-tests`, and `execute-qa-validation`. The testing meta-skill also
+For testing, install `amrit-test-jira-ticket` together with `amrit-draft-test-cases`,
+`amrit-write-unit-tests`, and `amrit-execute-qa-validation`. The testing meta-skill also
 works alone, applying a missing activity's contract inline at the same standard,
-and `write-unit-tests` serves both the implementation and testing paths from one
+and `amrit-write-unit-tests` serves both the implementation and testing paths from one
 installation.
 
 Every release contains all currently packaged skills as individual assets, so
@@ -584,24 +629,24 @@ path; ordinary users should always install from a release.
 
 ```text
 skills/                         Canonical source; edit skills here
-├── create-brd/
-├── create-product-backlog/
-├── create-technical-design/
-├── draft-test-cases/                   Stage 03 testing specialist
-├── implement-jira-ticket/              Stage 05 engineering orchestrator
-├── review-implementation-architecture/ Stage 05 specialist
-├── implement-database-change/          Stage 05 specialist
-├── implement-backend-change/           Stage 05 specialist
-├── implement-frontend-change/          Stage 05 specialist
-├── implement-android-change/           Stage 05 specialist
-├── validate-ux-implementation/         Stage 05 specialist
-├── write-unit-tests/                   Stage 05 specialist; also a testing specialist
-├── create-development-pr/
-├── execute-qa-validation/              Stage 07 testing specialist
-├── test-jira-ticket/                   Cross-stage testing orchestrator
-├── perform-root-cause-analysis/        Cross-lifecycle support & quality
-├── prepare-release-notes/              Stage 12 release documentation
-└── answer-codebase-questions/
+├── amrit-create-brd/
+├── amrit-create-product-backlog/
+├── amrit-create-technical-design/
+├── amrit-draft-test-cases/                   Stage 03 testing specialist
+├── amrit-implement-jira-ticket/              Stage 05 engineering orchestrator
+├── amrit-review-implementation-architecture/ Stage 05 specialist
+├── amrit-implement-database-change/          Stage 05 specialist
+├── amrit-implement-backend-change/           Stage 05 specialist
+├── amrit-implement-frontend-change/          Stage 05 specialist
+├── amrit-implement-android-change/           Stage 05 specialist
+├── amrit-validate-ux-implementation/         Stage 05 specialist
+├── amrit-write-unit-tests/                   Stage 05 specialist; also a testing specialist
+├── amrit-create-development-pr/
+├── amrit-execute-qa-validation/              Stage 07 testing specialist
+├── amrit-test-jira-ticket/                   Cross-stage testing orchestrator
+├── amrit-perform-root-cause-analysis/        Cross-lifecycle support & quality
+├── amrit-prepare-release-notes/              Stage 12 release documentation
+└── amrit-answer-codebase-questions/
 
 .claude/skills/                 Claude project bridges
 .agents/skills/                 Cursor and Antigravity project bridges
@@ -610,6 +655,8 @@ scripts/install.sh              Prerequisite check; POSIX entry point
 scripts/install.py              Prerequisite check; implementation
 scripts/clone-amrit-repos.sh    Workspace cloning; POSIX entry point
 scripts/clone-amrit-repos.py    Workspace cloning; implementation
+scripts/update-skills.sh        Installed-skill updates; POSIX entry point
+scripts/update-skills.py        Installed-skill updates; implementation
 scripts/amrit-python.sh         Shared root and interpreter discovery
 scripts/package-skills.py       Deterministic ZIP packaging into dist/
 scripts/validate-skills.py      Packaging and project-discovery checks
@@ -637,12 +684,13 @@ Run the complete local checks from the repository root:
 python -m unittest discover -s tests -v
 python scripts/validate-skills.py
 python scripts/package-skills.py --all
+python scripts/update-skills.py --check
 ```
 
 Package one skill when needed:
 
 ```bash
-python scripts/package-skills.py create-brd
+python scripts/package-skills.py amrit-create-brd
 ```
 
 Packages are written to ignored `dist/`.
@@ -723,32 +771,32 @@ endpoints needed by Claude Code, Cursor, and Antigravity. Their committed token
 values remain placeholders and must be replaced only in each user's local
 working copy.
 
-- `create-brd` requires connected Atlassian MCP Confluence search and page-read
+- `amrit-create-brd` requires connected Atlassian MCP Confluence search and page-read
   capabilities. Confluence is read-only by default.
-- `create-product-backlog` requires connected Atlassian MCP Confluence and Jira
+- `amrit-create-product-backlog` requires connected Atlassian MCP Confluence and Jira
   read capabilities. Jira publication is optional and requires approval of the
   specific backlog plus a separate explicit publication request.
-- `create-technical-design` requires relevant Jira, Confluence, architecture,
+- `amrit-create-technical-design` requires relevant Jira, Confluence, architecture,
   and Swagger/OpenAPI evidence. Official DeepWiki MCP repository research is
   optional and read-only.
-- `implement-jira-ticket` requires read-only Jira and Confluence capabilities,
+- `amrit-implement-jira-ticket` requires read-only Jira and Confluence capabilities,
   DeepWiki repository research, and the host's repository-editing,
   command-execution, and skill-invocation capabilities. Graphify and OpenProject
   are used read-only where the environment provides them, and neither is
   required. Jira and Confluence are never written to. Access to the actual
   checked-out source code is mandatory: the skill stops rather than implementing
   a ticket from documentation alone.
-- The Stage 05 specialists — `review-implementation-architecture`,
-  `implement-database-change`, `implement-backend-change`,
-  `implement-frontend-change`, `implement-android-change`,
-  `validate-ux-implementation`, and `write-unit-tests` — require read-only Jira
+- The Stage 05 specialists — `amrit-review-implementation-architecture`,
+  `amrit-implement-database-change`, `amrit-implement-backend-change`,
+  `amrit-implement-frontend-change`, `amrit-implement-android-change`,
+  `amrit-validate-ux-implementation`, and `amrit-write-unit-tests` — require read-only Jira
   and Confluence, DeepWiki repository research where available, and the host's
-  repository access. The four implementation specialists and `write-unit-tests`
+  repository access. The four implementation specialists and `amrit-write-unit-tests`
   also require repository-editing and command-execution capabilities;
-  `review-implementation-architecture` and `validate-ux-implementation` are
+  `amrit-review-implementation-architecture` and `amrit-validate-ux-implementation` are
   read-only. Each specialist inspects the code it owns before editing, and
   stops when that code is inaccessible.
-- `create-development-pr` requires a read-only Jira capability, local Git and
+- `amrit-create-development-pr` requires a read-only Jira capability, local Git and
   repository access through the host, and a GitHub capability for remote branch
   inspection, Pull Request lookup, Pull Request creation, and check status where
   available. Jira is never written to. Confluence, DeepWiki, and Graphify are not
@@ -756,17 +804,17 @@ working copy.
   above; it comes from the host, such as a connected GitHub capability or an
   authenticated GitHub CLI. Without it the skill performs safe local preparation
   only and reports that PR creation could not be completed.
-- `test-jira-ticket` requires read-only Jira and Confluence capabilities, host
+- `amrit-test-jira-ticket` requires read-only Jira and Confluence capabilities, host
   filesystem and repository access to establish whether an implementation exists,
   host command execution, and the host's skill-invocation capability. DeepWiki,
   Graphify, and OpenProject are used read-only where available and none is
   required. Access to a deployed QA build is required only when QA execution is
   the selected activity.
-- `draft-test-cases` requires read-only Jira and Confluence capabilities. A
+- `amrit-draft-test-cases` requires read-only Jira and Confluence capabilities. A
   configured test-management source and DeepWiki are used read-only where
   available and neither is required. It executes nothing and writes no files in
   application repositories.
-- `execute-qa-validation` requires read-only Jira and Confluence, access to a
+- `amrit-execute-qa-validation` requires read-only Jira and Confluence, access to a
   deployed QA build, and the host's command-execution and filesystem
   capabilities. Browser, device, API, and log or observability capabilities are
   used where the environment genuinely provides them; none is assumed. Selenium,
@@ -775,14 +823,14 @@ working copy.
   present in the environment. A Jira write capability is used only for a defect
   the user explicitly authorized. Without a reachable build the skill reports
   `QA status: NOT EXECUTED` and produces no verdict.
-- `perform-root-cause-analysis` requires read-only Jira and Confluence
+- `amrit-perform-root-cause-analysis` requires read-only Jira and Confluence
   capabilities, host filesystem and repository access for mandatory source-code
   inspection, and Confluence write access only for authorized publication.
   DeepWiki and Graphify are used read-only where available; neither is required.
   Jira is never written to. Source-code inspection is mandatory: the skill
   reports an evidence gap rather than fabricating a technical root cause when
   relevant code is inaccessible.
-- `prepare-release-notes` requires read-only Jira and Confluence
+- `amrit-prepare-release-notes` requires read-only Jira and Confluence
   capabilities, and Confluence write access only for authorized publication.
   Jira is never written to. No repository access, command execution,
   DeepWiki, or Graphify capability is required: release membership comes from
@@ -790,29 +838,29 @@ working copy.
   resolvable Jira version, or without access to the current Confluence
   release-note hierarchy, the skill reports the block rather than reusing a
   previous release's contents or format.
-- `answer-codebase-questions` uses read-only DeepWiki first, then Confluence
+- `amrit-answer-codebase-questions` uses read-only DeepWiki first, then Confluence
   when needed, with Graphify as the final fallback. It never uses Jira.
 
 All outputs require human review. No skill automatically approves or publishes
-content, and `create-technical-design` never modifies Jira, Confluence,
+content, and `amrit-create-technical-design` never modifies Jira, Confluence,
 repositories, or implementation files.
 
-`implement-jira-ticket` and its Stage 05 specialists edit source files by
+`amrit-implement-jira-ticket` and its Stage 05 specialists edit source files by
 design. They still never write to Jira or Confluence, never create a branch,
 commit, push, or Pull Request, and never claim architecture, DBA, code-review,
 QA, CI, or release approval; Git and Pull Request operations belong to the
-downstream `create-development-pr` skill, and every approval remains a human
+downstream `amrit-create-development-pr` skill, and every approval remains a human
 decision.
 
-`create-development-pr` creates branches, commits, pushes, and Pull Requests by
+`amrit-create-development-pr` creates branches, commits, pushes, and Pull Requests by
 design. It still never writes to Jira, never implements missing functionality,
 never stages unrelated user work or secrets, never pushes to a protected branch,
 and never approves, merges, or squash-merges a Pull Request or claims
 code-review sign-off or green CI it did not observe. Every Stage 05 skill is
 independently installable; none requires another at runtime.
 
-The testing skills hold their own boundaries. `draft-test-cases` is read-only and
-never derives an expected result from an implementation. `execute-qa-validation`
+The testing skills hold their own boundaries. `amrit-draft-test-cases` is read-only and
+never derives an expected result from an implementation. `amrit-execute-qa-validation`
 executes tests but never modifies production code, configuration, or a migration
 to make one pass, never rewrites an agreed test case to match the build, never
 produces a PASS from documentation or a green unit suite, never fabricates a
@@ -820,7 +868,7 @@ result or a defect key, and never claims to be the human QA approver. QA approva
 at Stage 08 remains a human decision, and manual-required or infrastructure-
 blocked scenarios are always reported as pending rather than assumed.
 
-`prepare-release-notes` documents a release; it never performs one. It derives
+`amrit-prepare-release-notes` documents a release; it never performs one. It derives
 the release-note format from the latest applicable Confluence release notes and
 every release value from Jira, so a historical page can show where a field
 belongs but never supplies its value. It never copies a bug list, ticket,
